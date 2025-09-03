@@ -18,7 +18,7 @@ namespace CityPulse.Services.Abstractions
 	{
 		Task<IssueReport> CreateAsync(IssueReportCreateRequest request);
 
-		
+		/// Returns suggestions for a partial location query
 		CityPulse.Models.Queue<string> GetLocationSuggestions(string query);
 	}
 }

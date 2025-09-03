@@ -21,92 +21,71 @@ body {
   margin-bottom: 60px;
 }
 
-/* City Connect vibe */
-html, body {
-  min-height: 100vh;
+.hero-carousel .carousel-item {
+	height: 420px;
+	overflow: hidden;
 }
 
-body.cityconnect-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+.hero-carousel .carousel-item img {
+	object-fit: cover;
+	height: 420px;
 }
 
-.app-container {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 960px;
-  min-height: 600px;
-  overflow: hidden;
-  margin: 24px auto;
+.text-shadow {
+	text-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 
-.header {
-  background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
-  color: #fff;
-  padding: 25px 30px;
-  text-align: center;
-  position: relative;
+.feature-panel {
+	border: 1px solid #e5e5e5;
+	border-radius: .5rem;
+	overflow: hidden;
+	background: #ffffff;
 }
 
-.header h1 {
-  font-size: 2.0em;
-  margin-bottom: 6px;
-  font-weight: 600;
+.feature-header {
+	background: #2f7fbf;
+	color: #ffffff;
+	font-weight: 600;
+	letter-spacing: .5px;
+	padding: .75rem 1rem;
 }
 
-.header p { opacity: 0.9; }
-
-.sa-flag {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 40px;
-  height: 28px;
-  background: linear-gradient(to bottom, #ff0000 0%, #ff0000 16.67%, #ffffff 16.67%, #ffffff 33.33%, #0000ff 33.33%, #0000ff 50%, #ffffff 50%, #ffffff 66.67%, #00ff00 66.67%, #00ff00 83.33%, #ffff00 83.33%, #ffff00 100%);
-  border-radius: 4px;
-  border: 2px solid rgba(255,255,255,0.3);
+.feature-body {
+	padding: 1rem;
 }
 
-.content { padding: 30px; }
-
-.menu-options { display: grid; gap: 20px; }
-.menu-option {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border: 2px solid transparent;
-  border-radius: 15px;
-  padding: 20px 24px;
-  transition: all .3s ease;
+/* Full-bleed hero and transparent navbar styling */
+header .navbar {
+	transition: background-color .3s ease;
 }
-.menu-option:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,.15); }
-.menu-option.enabled { background: linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%); border-color: #38b2ac; }
-.menu-option.enabled:hover { background: linear-gradient(135deg, #38b2ac 0%, #319795 100%); color: #fff; }
-.menu-option.disabled { background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); color: #718096; }
-.status-badge { position: absolute; top: 12px; right: 12px; background: #e53e3e; color:#fff; padding: 4px 12px; border-radius: 12px; font-size: .8em; font-weight: 600; }
-.status-badge.available { background: #38a169; }
 
-/* Form vibe */
-.form-input, .form-select, .form-textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 1em;
-  transition: all .3s ease;
-  background: #fff;
+header .navbar .navbar-brand,
+header .navbar .nav-link {
+	text-shadow: 0 1px 3px rgba(0,0,0,.5);
 }
-.form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,.1); }
-.form-textarea { resize: vertical; min-height: 120px; }
 
-.file-upload-area { border: 2px dashed #cbd5e0; border-radius: 10px; padding: 24px; text-align: center; background: #f8fafc; }
-.file-upload-area:hover { border-color: #3182ce; background: #ebf8ff; }
-.file-upload-area.has-files { border-color: #38a169; background: #f0fff4; }
-.upload-icon { font-size: 2.4em; color: #a0aec0; margin-bottom: 10px; }
-.file-upload-area.has-files .upload-icon { color: #38a169; }
+/* Make carousel go edge-to-edge under transparent header */
+body > .container-fluid:first-of-type .carousel,
+body > .container-fluid:first-of-type .carousel .carousel-item img {
+	border-radius: 0;
+}
+/* Navbar color behavior */
+body.home header .navbar .navbar-brand,
+body.home header .navbar .nav-link {
+	color: #ffffff !important;
+}
 
-.progress-slim { height: 8px; border-radius: 4px; overflow: hidden; }
-.progress-slim .fill { height: 100%; background: #e53e3e; width: 0%; transition: width .5s ease; }
+body.home header .navbar .nav-link:hover,
+body.home header .navbar .nav-link:focus {
+	color: #000000 !important;
+}
+
+body:not(.home) header .navbar {
+	background: #ffffff !important;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+body:not(.home) header .navbar .navbar-brand,
+body:not(.home) header .navbar .nav-link {
+	color: #000000 !important;
 }

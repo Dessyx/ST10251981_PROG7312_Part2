@@ -4,14 +4,13 @@
 
 <div class="alert alert-success">
     <h4>Your issue has been submitted.</h4>
-    <div class="d-flex align-items-center gap-2">
+    <p class="d-flex align-items-center gap-2">
         <span>Your reference number is:</span>
-        <code id="refNumber">@ViewBag.ReferenceNumber</code>
-        <button id="copyBtn" type="button" class="btn btn-outline-secondary btn-sm" title="Copy">
-            Copy
-        </button>
-    </div>
-    <p class="mt-2">
+        <input id="refNum" class="form-control form-control-sm" style="max-width: 280px;" readonly value="@ViewBag.ReferenceNumber" />
+        <button id="copyBtn" class="btn btn-outline-light btn-sm" type="button" title="Copy to clipboard">Copy</button>
+        <span id="copyMsg" class="small ms-2" style="display:none;">Copied!</span>
+    </p>
+    <p>
         Keep this number to track your request status in the future.
     </p>
     <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
@@ -20,27 +19,22 @@
 <script>
     (function() {
         const btn = document.getElementById('copyBtn');
-        const refEl = document.getElementById('refNumber');
-        btn?.addEventListener('click', async function() {
-            const text = refEl?.textContent?.trim();
-            if (!text) return;
+        const input = document.getElementById('refNum');
+        const msg = document.getElementById('copyMsg');
+        if (!btn || !input) return;
+        btn.addEventListener('click', async function() {
             try {
-                await navigator.clipboard.writeText(text);
-                btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 1500);
+                await navigator.clipboard.writeText(input.value);
+                msg.style.display = 'inline';
+                setTimeout(() => { msg.style.display = 'none'; }, 1500);
             } catch (e) {
-                // Fallback for older browsers
-                const area = document.createElement('textarea');
-                area.value = text;
-                document.body.appendChild(area);
-                area.select();
+                input.select();
                 document.execCommand('copy');
-                document.body.removeChild(area);
-                btn.textContent = 'Copied!';
-                setTimeout(() => btn.textContent = 'Copy', 1500);
+                msg.style.display = 'inline';
+                setTimeout(() => { msg.style.display = 'none'; }, 1500);
             }
         });
     })();
-</script>
+    </script>
 
 

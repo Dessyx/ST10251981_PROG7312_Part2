@@ -15,7 +15,7 @@ namespace CityPulse.Services
 	{
 		public string CreateReference()
 		{
-			
+		
 			var datePart = DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
 			var randomPart = Random.Shared.Next(1000, 9999);
 			return $"CP-{datePart}-{randomPart}";
@@ -94,7 +94,7 @@ namespace CityPulse.Services
 			var results = new CityPulse.Models.Queue<string>();
 			if (string.IsNullOrWhiteSpace(query)) return results;
 
-			// For now
+			
 			var seeded = new DoublyLinkedList<string>();
 			seeded.AddLast("Cape Town CBD");
 			seeded.AddLast("Johannesburg North");

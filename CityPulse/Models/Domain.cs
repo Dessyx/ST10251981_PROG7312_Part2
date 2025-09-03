@@ -59,9 +59,11 @@ namespace CityPulse.Models
 		[StringLength(4000)]
 		public string Description { get; set; } = string.Empty;
 
+		// Queue to stage uploads before persisting
 		public CityPulse.Models.Queue<IFormFile> UploadQueue { get; } = new CityPulse.Models.Queue<IFormFile>();
 	}
 
+	// Simple node for doubly linked list
 	public sealed class DoublyLinkedListNode<T>
 	{
 		public T Value { get; }
@@ -74,7 +76,7 @@ namespace CityPulse.Models
 		}
 	}
 
-
+	// Minimal doubly linked list implementation (no arrays/lists)
 	public sealed class DoublyLinkedList<T>
 	{
 		public DoublyLinkedListNode<T>? Head { get; private set; }
@@ -108,6 +110,7 @@ namespace CityPulse.Models
 		}
 	}
 
+	// Simple queue implemented via linked nodes
 	public sealed class QueueNode<T>
 	{
 		public T Value { get; }

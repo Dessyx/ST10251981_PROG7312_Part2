@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CityPulse.styles.css" asp-append-version="true" />
 </head>
-<body class="cityconnect-bg">
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+@{ var controller = ViewContext.RouteData.Values["controller"]?.ToString(); var action = ViewContext.RouteData.Values["action"]?.ToString(); var isHome = string.Equals(controller, "Home", System.StringComparison.OrdinalIgnoreCase) && string.Equals(action, "Index", System.StringComparison.OrdinalIgnoreCase); }
+<body class="@(isHome ? "home" : "")">
+    <header class="position-absolute top-0 start-0 w-100 z-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm @(isHome ? "navbar-dark bg-transparent" : "navbar-light bg-white border-bottom")">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CityPulse</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -20,21 +21,27 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid px-0">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+    <script>
+        var myCarouselEl = document.querySelector('#heroCarousel');
+        if (myCarouselEl) {
+            new bootstrap.Carousel(myCarouselEl, { interval: 5000, ride: 'carousel' });
+        }
+    </script>
 
     <footer class="border-top footer text-muted">
         <div class="container">

@@ -2,62 +2,81 @@
     ViewData["Title"] = "Report Issues";
 }
 
-<div class="app-container">
-    <div class="header">
-        <div class="sa-flag"></div>
-        <h1>City Connect</h1>
-        <p>Report an Issue</p>
+<h2>Report an Issue</h2>
+
+<form asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data" class="row g-3">
+    <div class="col-12 col-md-6">
+        <label for="location" class="form-label">Location</label>
+        <input id="location" name="location" class="form-control" placeholder="Start typing..." autocomplete="off" />
+        <div id="location-help" class="form-text">Type to see suggestions</div>
+        <div id="suggestions" class="list-group"></div>
     </div>
-    <div class="content">
-        <form asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="location" class="form-label">Location</label>
-                <input id="location" name="location" class="form-input" placeholder="Start typing..." autocomplete="off" />
-                <div id="location-help" class="form-text">Type to see suggestions</div>
-                <div id="suggestions" class="list-group"></div>
-            </div>
 
-            <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select id="category" name="category" class="form-select">
-                    <option value="Sanitation">Sanitation</option>
-                    <option value="Roads">Roads</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Water">Water</option>
-                    <option value="Electricity">Electricity</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" class="form-textarea" rows="6"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Attach images/documents (max 5MB each)</label>
-                <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
-                    <div class="upload-icon">📎</div>
-                    <p><strong>Click to upload files</strong></p>
-                    <p style="color:#718096; font-size:.9em;">Images, PDFs, or documents</p>
-                </div>
-                <input id="fileInput" type="file" name="files" multiple class="d-none" />
-            </div>
-
-            <div class="mb-3">
-                <div class="progress progress-slim">
-                    <div id="progressBar" class="fill" style="width:0%"></div>
-                </div>
-                <div id="engagement" class="form-text mt-1">Let's keep our city clean together!</div>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
-            </div>
-        </form>
+    <div class="col-12 col-md-6">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" name="category" class="form-select">
+            <option value="Sanitation">Sanitation</option>
+            <option value="Roads">Roads</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Water">Water</option>
+            <option value="Electricity">Electricity</option>
+            <option value="Other">Other</option>
+        </select>
     </div>
-</div>
+
+    <div class="col-12">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+    </div>
+
+    <div class="col-12">
+        <label class="form-label">Attach images/documents (max 5MB each)</label>
+        <input type="file" name="files" multiple class="form-control" />
+    </div>
+
+    <div class="col-12">
+        <label class="form-label">Progress</label>
+        <div class="progress">
+            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+        </div>
+        <div id="engagement" class="form-text mt-1">Let's keep our city clean together!</div>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
+    </div>
+</form>
+
+<hr class="my-4" />
+<div class="row g-3">
+    <div class="col-12 col-lg-8">
+        <h3 class="h5">Important Municipal Contacts</h3>
+        <div class="list-group">
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Emergency Services</strong>
+                    <div class="small text-muted">Police/Fire/Medical</div>
+                </div>
+                <a href="tel:10111" class="btn btn-outline-primary">10111</a>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Ambulance</strong>
+                    <div class="small text-muted">National Ambulance Number</div>
+                </div>
+                <a href="tel:10177" class="btn btn-outline-primary">10177</a>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Municipal Call Centre</strong>
+                    <div class="small text-muted">General service enquiries</div>
+                </div>
+                <a href="tel:0800111111" class="btn btn-outline-primary">0800 111 111</a>
+            </div>
+        </div>
+    </div>
+ </div>
 
 <script>
     (function() {
@@ -103,13 +122,12 @@
 
         document.getElementById('category').addEventListener('change', updateProgress);
         document.getElementById('description').addEventListener('input', updateProgress);
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', function() {
+        document.querySelector('input[type="file"]').addEventListener('change', function() {
             const files = this.files;
             for (const f of files) {
                 if (f.size > 5 * 1024 * 1024) {
                     alert('File exceeds 5MB: ' + f.name);
-                    fileInput.value = '';
+                    this.value = '';
                     break;
                 }
             }
