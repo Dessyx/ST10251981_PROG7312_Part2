@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="app-container">
+    <div class="header">
+        <div class="sa-flag"></div>
+        <h1>City Connect</h1>
+        <p>Municipal Services Portal</p>
+    </div>
+    <div class="content">
+        <div class="main-menu">
+            <h2 style="margin-bottom:10px; color:#2d3748;">Welcome, Citizen</h2>
+            <p style="color:#718096; margin-bottom: 20px;">Select a service to get started with your municipal needs.</p>
+            <div class="menu-options">
+                <div class="menu-option enabled position-relative">
+                    <span class="status-badge available">Available</span>
+                    <h3><span class="icon">🚨</span> Report Issues</h3>
+                    <p>Report problems like potholes, leaks, streetlights, or sanitation issues.</p>
+                    <div class="mt-2">
+                        <a class="btn btn-primary" asp-controller="ReportIssues" asp-action="Create">Open</a>
+                    </div>
+                </div>
+                <div class="menu-option disabled position-relative">
+                    <span class="status-badge">Coming Soon</span>
+                    <h3><span class="icon">📅</span> Local Events and Announcements</h3>
+                    <p>Stay updated with community events and municipal announcements.</p>
+                </div>
+                <div class="menu-option disabled position-relative">
+                    <span class="status-badge">Coming Soon</span>
+                    <h3><span class="icon">📊</span> Service Request Status</h3>
+                    <p>Track progress of your submitted reports and requests.</p>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+        <h5 class="mb-3">Important Municipal Contacts</h5>
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action" href="tel:+27101234567">Emergency Services: +27 10 123 4567</a>
+                    <a class="list-group-item list-group-item-action" href="tel:+27861234567">Water & Sanitation: 0861 234 567</a>
+                    <a class="list-group-item list-group-item-action" href="tel:+2780001122">Electricity Faults: 0800 001 122</a>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action" href="tel:+2780003344">Roads & Stormwater: 0800 003 344</a>
+                    <a class="list-group-item list-group-item-action" href="tel:+2780005566">Waste Management: 0800 005 566</a>
+                    <a class="list-group-item list-group-item-action" href="tel:+2786000777">General Enquiries: 0860 000 777</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-text mt-2">Tap to dial on mobile devices.</div>
+    </div>
+</div>
