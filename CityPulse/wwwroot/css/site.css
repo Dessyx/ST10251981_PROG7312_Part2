@@ -262,6 +262,121 @@ input[type="file"] {
 	}
 
 
+.card {
+	background: linear-gradient(145deg, #ffffff, #f0f4f8);
+}
+
+
+.checkmark {
+	width: 80px;
+	height: 80px;
+	stroke: #28a745;
+	stroke-width: 4;
+	stroke-miterlimit: 10;
+	stroke-dasharray: 166;
+	stroke-dashoffset: 166;
+	animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+	display: block;
+	margin: 0 auto;
+}
+
+.checkmark-circle {
+	stroke-dasharray: 166;
+	stroke-dashoffset: 166;
+	stroke-width: 4;
+	stroke: #28a745;
+	fill: none;
+	animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+	stroke-dasharray: 48;
+	stroke-dashoffset: 48;
+	animation: stroke-check 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+}
+
+@keyframes stroke {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes stroke-check {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+#copyBtn {
+	transition: all 0.2s;
+}
+
+	#copyBtn:hover {
+		transform: scale(1.05);
+	}
+
+
+#copyMsg {
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+	#copyMsg.show {
+		display: inline;
+		opacity: 1;
+	}
+
+#copyBtn {
+	padding: 0.4rem 0.6rem;
+	border-radius: 0.5rem;
+	transition: transform 0.2s, background-color 0.2s;
+}
+
+	#copyBtn:hover {
+		transform: scale(1.1);
+		background-color: #28a745;
+	}
+
+	#copyBtn img {
+		display: block;
+	}
+
+.copy-check {
+	position: absolute;
+	top: -30px;
+	right: 0;
+	font-size: 18px;
+	color: #28a745;
+	opacity: 0;
+	transform: scale(0);
+	transition: all 0.3s ease-in-out;
+	pointer-events: none;
+}
+
+#copyBtn.copied .copy-check {
+	opacity: 1;
+	transform: scale(1.2);
+	animation: floatCheck 1s forwards;
+}
+
+@keyframes floatCheck {
+	0% {
+		transform: scale(0) translateY(0);
+		opacity: 0;
+	}
+
+	50% {
+		transform: scale(1.2) translateY(-10px);
+		opacity: 1;
+	}
+
+	100% {
+		transform: scale(1) translateY(-25px);
+		opacity: 0;
+	}
+}
+
+
 @media (max-width: 768px) {
 	form {
 		padding: 1.5rem;

@@ -2,39 +2,58 @@
     ViewData["Title"] = "Report Submitted";
 }
 
-<div class="alert alert-success">
-    <h4>Your issue has been submitted.</h4>
-    <p class="d-flex align-items-center gap-2">
-        <span>Your reference number is:</span>
-        <input id="refNum" class="form-control form-control-sm" style="max-width: 280px;" readonly value="@ViewBag.ReferenceNumber" />
-        <button id="copyBtn" class="btn btn-outline-light btn-sm" type="button" title="Copy to clipboard">Copy</button>
-        <span id="copyMsg" class="small ms-2" style="display:none;">Copied!</span>
-    </p>
-    <p>
-        Keep this number to track your request status in the future.
-    </p>
-    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light py-5">
+    <div class="card shadow-lg p-4 p-md-5" style="max-width: 600px; width: 100%; border-radius: 1rem; position: relative;">
+        <div class="text-center mb-4 position-relative">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+            </svg>
+
+            <h2 class="fw-bold text-success mt-3">Issue Submitted Successfully!</h2>
+            <p class="text-muted">Your report has been logged and is now being processed.</p>
+        </div>
+
+        <div class="mb-4 d-flex flex-column flex-md-row align-items-md-center gap-2 justify-content-center position-relative">
+            <span class="fw-medium text-dark me-2">Reference Number:</span>
+            <input id="refNum" class="form-control form-control-md text-center fw-bold" style="max-width: 200px;" readonly value="@ViewBag.ReferenceNumber" />
+            <button id="copyBtn" class="btn btn-outline-success d-flex align-items-center justify-content-center position-relative" type="button" title="Copy to clipboard">
+                <img src="/images/Copy.png" alt="Copy" style="width: 20px; height: 20px;">
+                <span class="copy-check">&#10003;</span> 
+            </button>
+        </div>
+
+
+        <p class="text-center text-muted mb-4">
+            Keep this number safe to track your request status in the future.
+        </p>
+
+        <div class="text-center">
+            <a class="btn btn-success btn-lg rounded-pill px-4" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
+        </div>
+    </div>
 </div>
 
 <script>
-    (function() {
+       (function() {
         const btn = document.getElementById('copyBtn');
         const input = document.getElementById('refNum');
-        const msg = document.getElementById('copyMsg');
+
         if (!btn || !input) return;
+
         btn.addEventListener('click', async function() {
             try {
                 await navigator.clipboard.writeText(input.value);
-                msg.style.display = 'inline';
-                setTimeout(() => { msg.style.display = 'none'; }, 1500);
             } catch (e) {
                 input.select();
                 document.execCommand('copy');
-                msg.style.display = 'inline';
-                setTimeout(() => { msg.style.display = 'none'; }, 1500);
             }
+
+            btn.classList.add('copied');
+            setTimeout(() => btn.classList.remove('copied'), 1200);
         });
     })();
-    </script>
+
+</script>
 
 
