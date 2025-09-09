@@ -82,51 +82,117 @@
             </div>
         </div>
     </div>
+</div>
+
 
     <hr class="my-4" />
-    <div class="row g-3">
-        <div class="col-12 col-lg-8">
-            <h2 class="h4">Important Municipal Contacts</h2>
-            <div class="list-group">
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Emergency Services</strong>
-                        <div class="small text-muted">Police/Fire/Medical</div>
-                    </div>
-                    <a href="tel:10111" class="btn btn-outline-primary">10111</a>
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <h2 class="h4 mb-3">Important Municipal Contacts</h2>
+            <div class="list-group contact-list">
+                <div class="list-group-item">
+                    <strong>Emergency Services</strong>
+                    <div class="small text-muted">Police/Fire/Medical</div>
+                    <a href="tel:10111" class="btn btn-outline-primary mt-2">10111</a>
                 </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Ambulance</strong>
-                        <div class="small text-muted">National Ambulance Number</div>
-                    </div>
-                    <a href="tel:10177" class="btn btn-outline-primary">10177</a>
+                <div class="list-group-item">
+                    <strong>Ambulance</strong>
+                    <div class="small text-muted">National Ambulance Number</div>
+                    <a href="tel:10177" class="btn btn-outline-primary mt-2">10177</a>
                 </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Municipal Call Centre</strong>
-                        <div class="small text-muted">General service enquiries</div>
-                    </div>
-                    <a href="tel:0800111111" class="btn btn-outline-primary">0800 111 111</a>
+                <div class="list-group-item">
+                    <strong>Municipal Call Centre</strong>
+                    <div class="small text-muted">General service enquiries</div>
+                    <a href="tel:0800111111" class="btn btn-outline-primary mt-2">0800 111 111</a>
                 </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Electricity Faults</strong>
-                        <div class="small text-muted">Report outages and faults</div>
-                    </div>
-                    <a href="tel:0860037566" class="btn btn-outline-primary">0860 037 566</a>
+                <div class="list-group-item">
+                    <strong>Electricity Faults</strong>
+                    <div class="small text-muted">Report outages and faults</div>
+                    <a href="tel:0860037566" class="btn btn-outline-primary mt-2">0860 037 566</a>
                 </div>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Water & Sanitation</strong>
-                        <div class="small text-muted">Leaks, sanitation issues</div>
-                    </div>
-                    <a href="tel:0860103089" class="btn btn-outline-primary">0860 103 089</a>
+                <div class="list-group-item">
+                    <strong>Water & Sanitation</strong>
+                    <div class="small text-muted">Leaks, sanitation issues</div>
+                    <a href="tel:0860103089" class="btn btn-outline-primary mt-2">0860 103 089</a>
                 </div>
             </div>
         </div>
+
+
+        <div class="col-12 col-lg-8">
+            <h2 class="h4 mb-3">Report Statistics</h2>
+            <canvas id="reportChart" height="300"></canvas>
+
+            <h3 class="h5 mt-4">Comments from your community</h3>
+            <ul class="list-group user-comments">
+                <li class="list-group-item">“Very responsive service, thank you!”</li>
+                <li class="list-group-item">“Issue resolved quickly in my area.”</li>
+                <li class="list-group-item">“Love how easy it is to submit reports online.”</li>
+            </ul>
+        </div>
     </div>
-</div>
+
+<footer class="site-footer text-center py-3">
+    &copy; 2025 CityPulse Municipal Services. All rights reserved.
+</footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('reportChart').getContext('2d');
+        const reportChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], 
+                datasets: [
+                    {
+                        label: 'Reports Submitted',
+                        data: [50, 70, 90, 120, 100, 130], 
+                        borderColor: '#2f7fbf',
+                        backgroundColor: 'rgba(47, 127, 191, 0.2)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'Changes Made',
+                        data: [30, 50, 60, 90, 80, 100], 
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Reports/Changes'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
 
  @*                    REFERENCES
 

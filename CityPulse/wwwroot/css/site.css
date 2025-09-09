@@ -107,3 +107,171 @@ html, body {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
+
+
+
+
+
+form {
+	background: #f9f9fb;
+	padding: 2rem;
+	border-radius: 1rem;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	max-width: 900px;
+	margin: auto;
+}
+
+	form h2 {
+		text-align: center;
+		margin-bottom: 1.5rem;
+		font-weight: 700;
+		color: #2f7fbf;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+
+
+.form-label {
+	font-weight: 500;
+	color: #333;
+}
+
+
+.form-control, .form-select {
+	border-radius: 0.75rem;
+	border: 1px solid #ccc;
+	padding: 0.75rem 1rem;
+	transition: 0.3s;
+}
+
+	.form-control:focus, .form-select:focus {
+		border-color: #2f7fbf;
+		box-shadow: 0 0 0 0.2rem rgba(47, 127, 191, 0.25);
+	}
+
+
+textarea.form-control {
+	resize: vertical;
+}
+
+input[type="file"] {
+	border-radius: 0.5rem;
+	border: 1px solid #ccc;
+	padding: 0.5rem;
+}
+
+
+.btn-primary {
+	background-color: #2f7fbf;
+	border: none;
+	border-radius: 50px;
+	padding: 0.5rem 1.75rem;
+	font-weight: 600;
+	transition: 0.3s;
+}
+
+	.btn-primary:hover {
+		background-color: #4aa1f3;
+	}
+
+.btn-secondary {
+	border-radius: 50px;
+	padding: 0.5rem 1.75rem;
+}
+
+
+.progress {
+	height: 1.5rem;
+	border-radius: 0.75rem;
+	overflow: hidden;
+	background-color: #e0e0e0;
+}
+
+.progress-bar {
+	background: linear-gradient(90deg, #2f7fbf, #4aa1f3);
+	font-weight: 600;
+	color: #fff;
+	line-height: 1.5rem;
+	text-align: center;
+	transition: width 0.3s ease;
+}
+
+
+#suggestions {
+	position: absolute;
+	z-index: 1000;
+	width: 100%;
+	max-height: 150px;
+	overflow-y: auto;
+}
+
+
+#engagement {
+	font-style: italic;
+	color: #555;
+}
+
+
+.list-group-item {
+	border-radius: 0.75rem;
+	margin-bottom: 0.5rem;
+	transition: 0.3s;
+}
+
+	.list-group-item:hover {
+		background-color: #f0f7ff;
+	}
+
+	.list-group-item .btn-outline-primary {
+		border-radius: 50px;
+	}
+
+
+@media (max-width: 768px) {
+	form {
+		padding: 1.5rem;
+	}
+
+	.btn-primary, .btn-secondary {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+
+.contact-list .list-group-item {
+	border-radius: 0.75rem;
+	padding: 1rem;
+	margin-bottom: 1rem;
+	background: #f9f9fb;
+	box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+	.contact-list .list-group-item:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+	}
+
+.contact-list .btn-outline-primary {
+	border-radius: 50px;
+	padding: 0.4rem 1rem;
+}
+
+.user-comments .list-group-item {
+	border-radius: 0.5rem;
+	margin-bottom: 0.5rem;
+	background: #f1f7ff;
+}
+
+h2, h3 {
+	color: #2f7fbf;
+}
+
+#reportChart {
+	background: #fff;
+	border-radius: 1rem;
+	padding: 1rem;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+

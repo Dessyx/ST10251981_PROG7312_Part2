@@ -104,7 +104,6 @@
             if (q.length < 2) return;
             const res = await fetch('/ReportIssues/LocationSuggest?q=' + encodeURIComponent(q));
             const data = await res.json();
-            // data.suggestions is an enumerable queue; iterate as array-like
             for (const s of data.suggestions) {
                 const a = document.createElement('a');
                 a.href = '#';
