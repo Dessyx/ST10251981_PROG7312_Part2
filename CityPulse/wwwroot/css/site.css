@@ -53,39 +53,3 @@ body {
 .feature-body {
 	padding: 1rem;
 }
-
-/* Full-bleed hero and transparent navbar styling */
-header .navbar {
-	transition: background-color .3s ease;
-}
-
-header .navbar .navbar-brand,
-header .navbar .nav-link {
-	text-shadow: 0 1px 3px rgba(0,0,0,.5);
-}
-
-/* Make carousel go edge-to-edge under transparent header */
-body > .container-fluid:first-of-type .carousel,
-body > .container-fluid:first-of-type .carousel .carousel-item img {
-	border-radius: 0;
-}
-/* Navbar color behavior */
-body.home header .navbar .navbar-brand,
-body.home header .navbar .nav-link {
-	color: #ffffff !important;
-}
-
-body.home header .navbar .nav-link:hover,
-body.home header .navbar .nav-link:focus {
-	color: #000000 !important;
-}
-
-body:not(.home) header .navbar {
-	background: #ffffff !important;
-	border-bottom: 1px solid rgba(0,0,0,.1);
-}
-
-body:not(.home) header .navbar .navbar-brand,
-body:not(.home) header .navbar .nav-link {
-	color: #000000 !important;
-}
