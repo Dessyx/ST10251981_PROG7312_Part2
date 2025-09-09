@@ -111,6 +111,22 @@ html, body {
 
 
 
+.list-group .btn {
+	border: 2px solid #000;
+	border-radius: 0.5rem; 
+	color: #000; 
+	background-color: #fff; 
+	transition: all 0.3s ease; 
+}
+
+	.list-group .btn:hover {
+		background-color: #000; 
+		color: #fff; 
+		border-color: #000;
+	}
+
+
+
 
 form {
 	background: #f9f9fb;
@@ -238,6 +254,26 @@ input[type="file"] {
 	}
 }
 
+.map-container {
+	border-radius: 1rem;
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	display: flex;
+	justify-content: center; 
+	align-items: center; 
+	height: 600px; 
+}
+
+
+	.map-container iframe {
+		width: 100%; 
+		max-width: 1000px; 
+		height: 100%;
+		border: 0;
+	}
+
+
+
 
 .contact-list .list-group-item {
 	border-radius: 0.75rem;
@@ -265,7 +301,7 @@ input[type="file"] {
 }
 
 h2, h3 {
-	color: #2f7fbf;
+	color: black;
 }
 
 #reportChart {
