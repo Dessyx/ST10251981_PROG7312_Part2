@@ -23,6 +23,17 @@ a {
   border-color: #1861ac;
 }
 
+.nav-icon {
+    width: 32px; 
+    height: 32px;
+    object-fit: cover;
+}
+
+    .nav-icon:hover {
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
