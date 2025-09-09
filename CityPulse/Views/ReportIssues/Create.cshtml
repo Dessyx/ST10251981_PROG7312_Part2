@@ -2,22 +2,26 @@
     ViewData["Title"] = "Report Issues";
 }
 
-<h2>Report an Issue</h2>
+
 
 <div class="row">
     <div class="col-md-6">
+        
         <form asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data" class="row g-3">
+            <h2>Report an Issue</h2>
             <div class="col-12 col-md-6 position-relative">
                 <label for="location" class="form-label">Location</label>
-                <input id="location" name="location" class="form-control" placeholder="Start typing..." autocomplete="off" />
+                <input id="location" name="location" class="form-control"
+                       placeholder="Start typing..." autocomplete="off"
+                       title="Type your city, suburb, or area within South Africa.">
                 <div id="location-help" class="form-text">Type to see suggestions</div>
                 <div id="suggestions" class="list-group"></div>
             </div>
 
-
             <div class="col-12">
                 <label for="category" class="form-label">Category</label>
-                <select id="category" name="category" class="form-select">
+                <select id="category" name="category" class="form-select"
+                        title="Select the category that best describes your issue.">
                     <option value="Sanitation">Sanitation</option>
                     <option value="Roads">Roads</option>
                     <option value="Utilities">Utilities</option>
@@ -29,17 +33,23 @@
 
             <div class="col-12">
                 <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+                <textarea id="description" name="description" class="form-control" rows="5"
+                          title="Provide a detailed description of the issue."></textarea>
             </div>
 
             <div class="col-12">
                 <label class="form-label">Attach images/documents (max 5MB each)</label>
-                <input type="file" name="files" multiple class="form-control" />
+                <input type="file" name="files" multiple class="form-control"
+                       title="Attach any relevant images or documents to help explain the issue.">
             </div>
 
             <div class="col-12 d-flex gap-2 mt-3">
-                <button type="submit" class="btn btn-outline-dark rounded">Submit</button>
-                <a class="btn btn-outline-dark rounded" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
+                <button type="submit" class="btn btn-outline-dark rounded"
+                        title="Click to submit your report.">
+                    Submit
+                </button>
+                <a class="btn btn-outline-dark rounded" asp-controller="Home" asp-action="Index"
+                   title="Return to the main menu without submitting.">Back to Main Menu</a>
             </div>
         </form>
     </div>
@@ -65,10 +75,10 @@
     const locationInput = document.getElementById('location');
     const suggestions = document.getElementById('suggestions');
 
-       locationInput.addEventListener('input', async function () {
+    locationInput.addEventListener('input', async function () {
         const query = locationInput.value.trim();
         suggestions.innerHTML = '';
-        if (query.length < 1) return; 
+        if (query.length < 1) return;
 
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ZA&limit=5&addressdetails=1`);
         const data = await res.json();
@@ -92,5 +102,4 @@
             suggestions.appendChild(a);
         }
     });
-
 </script>
