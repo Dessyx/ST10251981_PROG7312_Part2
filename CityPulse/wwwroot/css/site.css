@@ -332,3 +332,71 @@ h2, h3 {
 
 
 
+@media (max-width: 767.98px) {
+	body {
+		font-size: 14px;
+	}
+
+	h2, h3 {
+		font-size: 1.25rem;
+	}
+
+	.hero-carousel .carousel-item {
+		height: 220px;
+	}
+
+	.map-container {
+		height: 300px;
+	}
+
+	form {
+		padding: 1rem;
+	}
+
+	.btn-primary, .btn-secondary {
+		width: 100%;
+		text-align: center;
+	}
+
+
+	.feature-panel {
+		margin-bottom: 1rem;
+	}
+}
+
+
+@media (max-width: 767.98px) {
+	body {
+		font-size: 14px;
+	}
+
+	h2, h3 {
+		font-size: 1.25rem;
+		text-align: center;
+	}
+
+	.contact-form {
+		padding: 1rem;
+	}
+
+		.contact-form .form-group {
+			margin-bottom: 1rem;
+		}
+
+		.contact-form input,
+		.contact-form textarea,
+		.contact-form select {
+			width: 100%;
+			font-size: 14px;
+		}
+
+		.contact-form button {
+			width: 100%;
+			text-align: center;
+		}
+
+
+	.contact-info {
+		margin-top: 1.5rem;
+	}
+}
