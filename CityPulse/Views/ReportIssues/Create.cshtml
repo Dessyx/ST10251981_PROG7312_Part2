@@ -1,105 +1,224 @@
 @{
-    ViewData["Title"] = "Report Issues";
+    ViewData["Title"] = "Report an Issue";
 }
 
+<div class="container my-4">
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <form asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
+                <h2>Report an Issue</h2>
 
 
-<div class="row">
-    <div class="col-md-6">
-        
-        <form asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data" class="row g-3">
-            <h2>Report an Issue</h2>
-            <div class="col-12 col-md-6 position-relative">
-                <label for="location" class="form-label">Location</label>
-                <input id="location" name="location" class="form-control"
-                       placeholder="Start typing..." autocomplete="off"
-                       title="Type your city, suburb, or area within South Africa.">
-                <div id="location-help" class="form-text">Type to see suggestions</div>
-                <div id="suggestions" class="list-group"></div>
+                <div class="mb-3">
+                    <label class="form-label">Form Completion</label>
+                    <div class="progress">
+                        <div id="formProgress" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label for="location" class="form-label">Location</label>
+                    <input id="location" name="location" class="form-control"
+                           placeholder="Start typing..." autocomplete="off">
+                    <div id="suggestions" class="list-group"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-select">
+                        <option value="Sanitation">Sanitation</option>
+                        <option value="Roads">Roads</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Water">Water</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Attach images/documents</label>
+                    <input type="file" name="files" multiple class="form-control">
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div id="map" style="width: 100%; height: 350px; border: 2px solid #ddd; border-radius: 10px;"></div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="p-2 card">
+                        <h5>Ward Stats</h5>
+                        <ul id="wardList" class="list-group list-group-flush"></ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-2 card">
+                        <h5>Verify Reports</h5>
+                        <ul id="verifyList" class="list-group list-group-flush"></ul>
+                    </div>
+                </div>
             </div>
-
-            <div class="col-12">
-                <label for="category" class="form-label">Category</label>
-                <select id="category" name="category" class="form-select"
-                        title="Select the category that best describes your issue.">
-                    <option value="Sanitation">Sanitation</option>
-                    <option value="Roads">Roads</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Water">Water</option>
-                    <option value="Electricity">Electricity</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-            <div class="col-12">
-                <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" class="form-control" rows="5"
-                          title="Provide a detailed description of the issue."></textarea>
-            </div>
-
-            <div class="col-12">
-                <label class="form-label">Attach images/documents (max 5MB each)</label>
-                <input type="file" name="files" multiple class="form-control"
-                       title="Attach any relevant images or documents to help explain the issue.">
-            </div>
-
-            <div class="col-12 d-flex gap-2 mt-3">
-                <button type="submit" class="btn btn-outline-dark rounded"
-                        title="Click to submit your report.">
-                    Submit
-                </button>
-                <a class="btn btn-outline-dark rounded" asp-controller="Home" asp-action="Index"
-                   title="Return to the main menu without submitting.">Back to Main Menu</a>
-            </div>
-        </form>
-    </div>
-
-
-    <div class="col-md-6 d-flex align-items-center justify-content-center">
-        <div id="map" style="width: 100%; height: 500px; border: 2px solid #ddd; border-radius: 10px;"></div>
+        </div>
     </div>
 </div>
-
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
+
     var map = L.map('map').setView([-30.5595, 22.9375], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    var marker;
-
+    let marker;
     const locationInput = document.getElementById('location');
     const suggestions = document.getElementById('suggestions');
+    const formProgress = document.getElementById('formProgress');
+
+
+    const reports = [
+        { ref: 'RPT-001', lat: -33.9249, lon: 18.4241, location: 'Cape Town CBD', status: 'reported', confirmations: { still: 0, fixed: 0 } },
+        { ref: 'RPT-002', lat: -26.2041, lon: 28.0473, location: 'Johannesburg Central', status: 'needs-verification', confirmations: { still: 2, fixed: 1 } },
+        { ref: 'RPT-003', lat: -29.8587, lon: 31.0218, location: 'Durban Central', status: 'resolved', confirmations: { still: 0, fixed: 3 } }
+    ];
+
+    const statusColors = { 'reported':'red', 'needs-verification':'yellow', 'resolved':'green' };
+
+    function addReportPin(report){
+        const pin = L.circleMarker([report.lat, report.lon], {
+            radius: 8,
+            color: statusColors[report.status],
+            fillColor: statusColors[report.status],
+            fillOpacity: 0.7
+        }).addTo(map);
+
+        pin.bindPopup(`
+            <b>${report.location}</b><br/>
+            Ref: ${report.ref}<br/>
+            Status: ${report.status}<br/>
+            <button onclick="confirmReport('${report.ref}','still')">Still a Problem ?</button>
+            <button onclick="confirmReport('${report.ref}','fixed')">Fixed ?</button>
+        `);
+        report.pin = pin;
+    }
+
+    function confirmReport(ref, type){
+        const report = reports.find(r=>r.ref===ref);
+        if(!report) return;
+
+        report.confirmations[type]++;
+        if(report.confirmations.fixed>=3) report.status='resolved';
+        else if(report.confirmations.still>report.confirmations.fixed) report.status='needs-verification';
+        else report.status='reported';
+
+        report.pin.setStyle({color:statusColors[report.status], fillColor:statusColors[report.status]});
+        renderWardStats();
+        renderVerificationList();
+        report.pin.closePopup();
+    }
+
+    function renderWardStats(){
+        const wardList = document.getElementById('wardList');
+        wardList.innerHTML='';
+        const wardMap={};
+        reports.forEach(r=>{
+            const ward=r.location.split(' ')[0];
+            if(!wardMap[ward]) wardMap[ward]={total:0,resolved:0,active:0};
+            wardMap[ward].total++;
+            if(r.status==='resolved') wardMap[ward].resolved++;
+            else wardMap[ward].active++;
+        });
+        for(const ward in wardMap){
+            const stats=wardMap[ward];
+            const li=document.createElement('li');
+            li.className='list-group-item';
+            li.innerHTML=`
+                ${ward} ? ${stats.total} reports, ${stats.resolved} resolved, ${stats.active} still active
+                <div class="progress mt-1">
+                    <div class="progress-bar" role="progressbar" style="width:${(stats.resolved/stats.total)*100}%">${Math.round((stats.resolved/stats.total)*100)}%</div>
+                </div>
+            `;
+            wardList.appendChild(li);
+        }
+    }
+
+    function renderVerificationList(){
+        const verifyList = document.getElementById('verifyList');
+        verifyList.innerHTML='';
+        reports.forEach(r=>{
+            const li=document.createElement('li');
+            li.className='list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML=`
+                ${r.location} <br/>
+                <small>${r.status}</small>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="confirmReport('${r.ref}','still')">?</button>
+                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">?</button>
+                </div>
+            `;
+            verifyList.appendChild(li);
+        });
+    }
+
+    function updateFormProgress(){
+        let filled=0;
+        if(locationInput.value.trim()!=='') filled++;
+        if(document.getElementById('category').value!=='') filled++;
+        if(document.getElementById('description').value.trim()!=='') filled++;
+        const percent = Math.round((filled/3)*100);
+        formProgress.style.width=percent+'%';
+        formProgress.textContent = percent+'%';
+    }
+
+    locationInput.addEventListener('input', updateFormProgress);
+    document.getElementById('category').addEventListener('change', updateFormProgress);
+    document.getElementById('description').addEventListener('input', updateFormProgress);
+
 
     locationInput.addEventListener('input', async function () {
         const query = locationInput.value.trim();
-        suggestions.innerHTML = '';
-        if (query.length < 1) return;
+        suggestions.innerHTML='';
+        if(query.length<1) return;
 
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ZA&limit=5&addressdetails=1`);
-        const data = await res.json();
+        const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ZA&limit=5&addressdetails=1`);
+        const data=await res.json();
 
-        for (const place of data) {
-            const a = document.createElement('a');
-            a.href = '#';
-            a.className = 'list-group-item list-group-item-action';
-            a.textContent = place.display_name;
+        for(const place of data){
+            const a=document.createElement('a');
+            a.href='#';
+            a.className='list-group-item list-group-item-action';
+            a.textContent=place.display_name;
 
-            a.addEventListener('click', function (e) {
+            a.addEventListener('click', function(e){
                 e.preventDefault();
-                locationInput.value = place.display_name;
-                suggestions.innerHTML = '';
-
-                if (marker) map.removeLayer(marker);
-                marker = L.marker([place.lat, place.lon]).addTo(map);
-                map.setView([place.lat, place.lon], 14);
+                locationInput.value=place.display_name;
+                suggestions.innerHTML='';
+                if(marker) map.removeLayer(marker);
+                marker=L.marker([place.lat, place.lon]).addTo(map);
+                map.setView([place.lat, place.lon],12);
+                updateFormProgress();
             });
 
             suggestions.appendChild(a);
         }
     });
+
+
+    reports.forEach(addReportPin);
+    renderWardStats();
+    renderVerificationList();
 </script>
