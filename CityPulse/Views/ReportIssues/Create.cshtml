@@ -96,8 +96,43 @@
     </div>
 </div>
 
+<!-- Success Modal -->
+<div id="successModal" class="modal d-none">
+    <div class="modal-content card shadow-lg p-4 p-md-5">
+        <span class="close">&times;</span>
+        <div class="text-center mb-4 position-relative">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+            </svg>
+
+            <h2 class="fw-bold text-success mt-3">Issue Submitted Successfully!</h2>
+            <p class="text-muted">Your report has been logged and is now being processed.</p>
+        </div>
+
+        <div class="mb-4 d-flex flex-column flex-md-row align-items-md-center gap-2 justify-content-center position-relative">
+            <span class="fw-medium text-dark me-2">Reference Number:</span>
+            <input id="refNum" class="form-control form-control-md text-center fw-bold" style="max-width: 200px;" readonly value="">
+            <button id="copyBtn" class="btn btn-outline-success d-flex align-items-center justify-content-center position-relative" type="button" title="Copy to clipboard">
+                <img src="/images/Copy.png" alt="Copy" style="width: 20px; height: 20px;">
+                <span class="copy-check">&#10003;</span>
+            </button>
+        </div>
+
+        <p class="text-center text-muted mb-4">
+            Keep this number safe to track your request status in the future.
+        </p>
+
+        <div class="text-center">
+            <button class="btn btn-success btn-lg rounded-pill px-4 close-btn">Close</button>
+        </div>
+    </div>
+</div>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
 
 <script>
     let reports = [
@@ -119,7 +154,6 @@
     const steps = document.querySelectorAll('.form-step');
     const progressBar = document.getElementById('formProgress');
 
-   
     function addReportPin(report){
         const pin = L.circleMarker([report.lat, report.lon], {
             radius: 8,
@@ -138,7 +172,6 @@
         report.pin = pin;
     }
 
-  
     function confirmReport(ref, type){
         const report = reports.find(r=>r.ref===ref);
         if(!report) return;
@@ -155,7 +188,6 @@
 
         updateCompletionProgress();
     }
-
 
     function renderWardStats(){
         const wardList = document.getElementById('wardList');
@@ -182,7 +214,6 @@
         }
     }
 
- 
     function renderVerificationList(){
         const verifyList = document.getElementById('verifyList');
         verifyList.innerHTML='';
@@ -203,7 +234,6 @@
         });
     }
 
-
     let currentStep = 0;
 
     function showStep(stepIndex){
@@ -213,7 +243,6 @@
         checkStepFields(stepIndex);
     }
 
- 
     function checkStepFields(stepIndex){
         const step = steps[stepIndex];
         let enable = true;
@@ -222,7 +251,6 @@
         step.querySelector('.next-btn').disabled = !enable;
     }
 
-  
     function updateCompletionProgress(){
         let filled = 0;
         if(locationInput.value.trim()!=='') filled++;
@@ -251,16 +279,13 @@
         updateCompletionProgress();
     });
 
-
     document.getElementById('category').addEventListener('change', ()=>{
         checkStepFields(1);
         updateCompletionProgress();
     });
 
-  
     document.getElementById('description').addEventListener('input', updateCompletionProgress);
 
- 
     locationInput.addEventListener('input', async function(){
         const query = locationInput.value.trim();
         suggestions.innerHTML='';
@@ -278,16 +303,17 @@
                 suggestions.innerHTML='';
                 if(marker) map.removeLayer(marker);
                 marker = L.marker([place.lat, place.lon]).addTo(map);
-                map.setView([place.lat, place.lon],6); 
+                map.setView([place.lat, place.lon],6);
                 checkStepFields(0);
             });
             suggestions.appendChild(a);
         });
     });
 
- 
+   
     document.getElementById('reportForm').addEventListener('submit', function(e){
         e.preventDefault();
+
         const newReport = {
             ref: 'RPT-'+(reports.length+1).toString().padStart(3,'0'),
             lat: marker ? marker.getLatLng().lat : -30.5595,
@@ -301,17 +327,47 @@
         renderWardStats();
         renderVerificationList();
 
+     
+        document.getElementById('refNum').value = newReport.ref;
+
       
-        alert('Report submitted! Returning to Home.');
+        const modal = document.getElementById('successModal');
+        modal.classList.remove('d-none');
+        document.body.style.overflow = 'hidden';
+    });
+
+   
+    const modal = document.getElementById('successModal');
+    modal.querySelector('.close').addEventListener('click', closeModal);
+    modal.querySelector('.close-btn').addEventListener('click', closeModal);
+
+    function closeModal(){
+        modal.classList.add('d-none');
+        document.body.style.overflow = 'auto';
+
         locationInput.value='';
         document.getElementById('category').value='';
         document.getElementById('description').value='';
-        if(marker) map.removeLayer(marker); marker=null;
+        if(marker) map.removeLayer(marker);
+        marker = null;
         currentStep = 0;
         showStep(currentStep);
         updateCompletionProgress();
-    });
+    }
 
+  
+    (function() {
+        const btn = document.getElementById('copyBtn');
+        const input = document.getElementById('refNum');
+        if (!btn || !input) return;
+
+        btn.addEventListener('click', async function() {
+            try { await navigator.clipboard.writeText(input.value); }
+            catch (e) { input.select(); document.execCommand('copy'); }
+            btn.classList.add('copied');
+            setTimeout(()=>btn.classList.remove('copied'), 1200);
+        });
+    })();
 
     reports.forEach(addReportPin);
     renderWardStats();
