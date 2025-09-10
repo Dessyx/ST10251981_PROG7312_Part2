@@ -5,56 +5,60 @@
 <div class="container my-4">
     <div class="row g-4">
         <div class="col-lg-6">
-            <form asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
+            <form id="reportForm" asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
                 <h2>Report an Issue</h2>
 
-
                 <div class="mb-3">
-                    <label class="form-label">Form Completion</label>
+                    <label class="form-label">Form Progress</label>
                     <div class="progress">
-                        <div id="formProgress" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+                        <div id="formProgress" class="progress-bar" role="progressbar" style="width: 0%">Step 1 of 3</div>
                     </div>
                 </div>
 
-                <div class="mb-3 position-relative">
-                    <label for="location" class="form-label">Location</label>
-                    <input id="location" name="location" class="form-control"
-                           placeholder="Start typing..." autocomplete="off">
-                    <div id="suggestions" class="list-group"></div>
+                <div class="form-step" data-step="1">
+                    <div class="mb-3 position-relative">
+                        <label for="location" class="form-label">Location</label>
+                        <input id="location" name="location" class="form-control" placeholder="Start typing..." autocomplete="off">
+                        <div id="suggestions" class="list-group"></div>
+                    </div>
+                    <button type="button" class="btn btn-primary next-btn">Next</button>
                 </div>
 
-                <div class="mb-3">
-                    <label for="category" class="form-label">Category</label>
-                    <select id="category" name="category" class="form-select">
-                        <option value="Sanitation">Sanitation</option>
-                        <option value="Roads">Roads</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Water">Water</option>
-                        <option value="Electricity">Electricity</option>
-                        <option value="Other">Other</option>
-                    </select>
+                <div class="form-step d-none" data-step="2">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="category" class="form-select">
+                            <option value="">Select category</option>
+                            <option value="Sanitation">Sanitation</option>
+                            <option value="Roads">Roads</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Water">Water</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+                    <button type="button" class="btn btn-primary next-btn">Next</button>
                 </div>
 
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+                <div class="form-step d-none" data-step="3">
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attach images/documents</label>
+                        <input type="file" name="files" multiple class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Attach images/documents</label>
-                    <input type="file" name="files" multiple class="form-control">
-                </div>
-
-                <div class="d-flex gap-2 mt-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Back to Main Menu</a>
-                </div>
             </form>
         </div>
 
-
         <div class="col-lg-6">
-            <div id="map" style="width: 100%; height: 350px; border: 2px solid #ddd; border-radius: 10px;"></div>
+            <div id="map" style="width: 100%; height: 300px; border: 2px solid #ddd; border-radius: 10px;"></div>
 
             <div class="row mt-3">
                 <div class="col-md-6">
@@ -63,6 +67,7 @@
                         <ul id="wardList" class="list-group list-group-flush"></ul>
                     </div>
                 </div>
+            
                 <div class="col-md-6">
                     <div class="p-2 card">
                         <h5>Verify Reports</h5>
@@ -87,9 +92,8 @@
     let marker;
     const locationInput = document.getElementById('location');
     const suggestions = document.getElementById('suggestions');
-    const formProgress = document.getElementById('formProgress');
 
-
+    
     const reports = [
         { ref: 'RPT-001', lat: -33.9249, lon: 18.4241, location: 'Cape Town CBD', status: 'reported', confirmations: { still: 0, fixed: 0 } },
         { ref: 'RPT-002', lat: -26.2041, lon: 28.0473, location: 'Johannesburg Central', status: 'needs-verification', confirmations: { still: 2, fixed: 1 } },
@@ -163,60 +167,76 @@
             const li=document.createElement('li');
             li.className='list-group-item d-flex justify-content-between align-items-center';
             li.innerHTML=`
-                ${r.location} <br/>
-                <small>${r.status}</small>
                 <div>
-                    <button class="btn btn-sm btn-outline-primary me-1" onclick="confirmReport('${r.ref}','still')">?</button>
-                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">?</button>
+                    <strong>${r.location}</strong><br/>
+                    <small>Status: ${r.status}</small>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="confirmReport('${r.ref}','still')">Still a Problem ?</button>
+                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">Resolved ?</button>
                 </div>
             `;
             verifyList.appendChild(li);
         });
     }
 
-    function updateFormProgress(){
-        let filled=0;
-        if(locationInput.value.trim()!=='') filled++;
-        if(document.getElementById('category').value!=='') filled++;
-        if(document.getElementById('description').value.trim()!=='') filled++;
-        const percent = Math.round((filled/3)*100);
-        formProgress.style.width=percent+'%';
-        formProgress.textContent = percent+'%';
+    const steps = document.querySelectorAll('.form-step');
+    const progressBar = document.getElementById('formProgress');
+    let currentStep = 0;
+
+    function showStep(stepIndex){
+        steps.forEach((s,i)=>{
+            s.classList.toggle('d-none', i!==stepIndex);
+        });
+        progressBar.style.width = ((stepIndex+1)/steps.length*100)+'%';
+        progressBar.textContent = `Step ${stepIndex+1} of ${steps.length}`;
     }
 
-    locationInput.addEventListener('input', updateFormProgress);
-    document.getElementById('category').addEventListener('change', updateFormProgress);
-    document.getElementById('description').addEventListener('input', updateFormProgress);
+    document.querySelectorAll('.next-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            if(currentStep < steps.length-1){
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+    });
 
+    document.querySelectorAll('.prev-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            if(currentStep > 0){
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+    });
 
+    showStep(currentStep);
+
+   
     locationInput.addEventListener('input', async function () {
         const query = locationInput.value.trim();
         suggestions.innerHTML='';
         if(query.length<1) return;
 
-        const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ZA&limit=5&addressdetails=1`);
-        const data=await res.json();
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ZA&limit=5&addressdetails=1`);
+        const data = await res.json();
 
-        for(const place of data){
-            const a=document.createElement('a');
+        data.forEach(place => {
+            const a = document.createElement('a');
             a.href='#';
             a.className='list-group-item list-group-item-action';
-            a.textContent=place.display_name;
-
+            a.textContent = place.display_name;
             a.addEventListener('click', function(e){
                 e.preventDefault();
-                locationInput.value=place.display_name;
+                locationInput.value = place.display_name;
                 suggestions.innerHTML='';
                 if(marker) map.removeLayer(marker);
-                marker=L.marker([place.lat, place.lon]).addTo(map);
+                marker = L.marker([place.lat, place.lon]).addTo(map);
                 map.setView([place.lat, place.lon],12);
-                updateFormProgress();
             });
-
             suggestions.appendChild(a);
-        }
+        });
     });
-
 
     reports.forEach(addReportPin);
     renderWardStats();
