@@ -2,15 +2,19 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;           // Imports
+using System.Threading.Tasks;					
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using CityPulse.Models;
 using CityPulse.Services.Abstractions;
 
+// ---------------------------------------- Implementation -------------------------------------------------
 namespace CityPulse.Services
 {
+
+	//-----------------------------------------------------------------------------
+	// Generate reference numbers for submitted reports
 	public sealed class ReferenceNumberService : IReferenceNumberService
 	{
 		public string CreateReference()
@@ -22,7 +26,10 @@ namespace CityPulse.Services
 		}
 	}
 
-	public sealed class LocalStorageService : IStorageService
+
+    //-----------------------------------------------------------------------------
+	// Storing images an ddocuments
+    public sealed class LocalStorageService : IStorageService
 	{
 		private readonly string _root;
 		private static readonly long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
@@ -36,7 +43,7 @@ namespace CityPulse.Services
 
 		public async Task<Attachment> SaveAsync(IFormFile file)
 		{
-			if (file == null || file.Length == 0) throw new InvalidOperationException("Empty file.");
+			if (file == null || file.Length == 0) throw new InvalidOperationException("Empty file."); // Conditions
 			if (file.Length > MaxFileSizeBytes) throw new InvalidOperationException("File exceeds 5 MB limit.");
 
 			var safeFileName = SafeName.Replace(Path.GetFileName(file.FileName), "_");
@@ -58,7 +65,10 @@ namespace CityPulse.Services
 		}
 	}
 
-	public sealed class IssueReportingService : IIssueReportingService
+
+    //-----------------------------------------------------------------------------
+	// Storing submitted reports
+    public sealed class IssueReportingService : IIssueReportingService
 	{
 		private readonly IReferenceNumberService _referenceNumberService;
 		private readonly IStorageService _storageService;
@@ -89,7 +99,10 @@ namespace CityPulse.Services
 			return report;
 		}
 
-		public CityPulse.Models.Queue<string> GetLocationSuggestions(string query)
+
+        //-----------------------------------------------------------------------------
+		// Preset posible locations 
+        public CityPulse.Models.Queue<string> GetLocationSuggestions(string query)
 		{
 			var results = new CityPulse.Models.Queue<string>();
 			if (string.IsNullOrWhiteSpace(query)) return results;
@@ -120,3 +133,5 @@ namespace CityPulse.Services
 }
 
 
+
+//-------------------------------------------<<< End of File >>>---------------------------------------------

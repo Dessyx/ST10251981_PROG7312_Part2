@@ -1,10 +1,12 @@
 using System.Threading.Tasks;
 using CityPulse.Models;
 using CityPulse.Services.Abstractions;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;    // imports
 
 namespace CityPulse.Controllers
 {
+	// ----------------------------------------------------------------------------
+	// Reporting services controller
 	public class ReportIssuesController : Controller
 	{
 		private readonly IIssueReportingService _service;
@@ -13,18 +15,19 @@ namespace CityPulse.Controllers
 		{
 			_service = service;
 		}
-
+		 //-----------------------------------------------------------------------
 		[HttpGet]
-		public IActionResult Create()
+		public IActionResult Create()  // display create view
 		{
 			return View();
 		}
 
+		//-------------------------------------------------------------------------
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([FromForm] string location, [FromForm] IssueCategory category, [FromForm] string description)
 		{
-			var request = new IssueReportCreateRequest
+			var request = new IssueReportCreateRequest // upload 
 			{
 				Location = location,
 				Category = category,
@@ -33,7 +36,7 @@ namespace CityPulse.Controllers
 
 			foreach (var file in Request.Form.Files)
 			{
-				request.UploadQueue.Enqueue(file);
+				request.UploadQueue.Enqueue(file); // upload files
 			}
 
 			if (!TryValidateModel(request))
@@ -53,10 +56,12 @@ namespace CityPulse.Controllers
 				return View();
 			}
 
-			TempData["ReferenceNumber"] = report.ReferenceNumber;
-			return RedirectToAction("Success");
-		}
-
+            TempData["ReferenceNumber"] = report.ReferenceNumber;
+            return RedirectToAction("Success");
+         
+        }
+		 
+		//---------------------------------------------------------------------
 		[HttpGet]
 		public IActionResult Success()
 		{
@@ -64,6 +69,7 @@ namespace CityPulse.Controllers
 			return View();
 		}
 
+		//--------------------------------------------------------------------
 		[HttpGet]
 		public IActionResult LocationSuggest([FromQuery] string q)
 		{
@@ -73,4 +79,5 @@ namespace CityPulse.Controllers
 	}
 }
 
+//----------------------------------------------- <<< End of File >>>--------------------------------
 

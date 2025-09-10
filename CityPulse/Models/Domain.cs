@@ -17,22 +17,22 @@ namespace CityPulse.Models
 	public sealed class IssueReport
 	{
 		[Required]
-		public string ReferenceNumber { get; set; } = string.Empty;
+		public string ReferenceNumber { get; set; } = string.Empty; // So users can track their progress later
 
 		[Required]
 		[StringLength(256)]
-		public string Location { get; set; } = string.Empty;
+		public string Location { get; set; } = string.Empty;  // location of user
 
 		[Required]
-		public IssueCategory Category { get; set; }
+		public IssueCategory Category { get; set; }  // Categeory of issue
 
 		[Required]
 		[StringLength(4000)]
-		public string Description { get; set; } = string.Empty;
+		public string Description { get; set; } = string.Empty; // optional information about issue
 
-		public DoublyLinkedList<Attachment> Attachments { get; } = new DoublyLinkedList<Attachment>();
+		public DoublyLinkedList<Attachment> Attachments { get; } = new DoublyLinkedList<Attachment>(); // images or files attached
 
-		public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
+		public DateTime CreatedUtc { get; set; } = DateTime.UtcNow; // time created
 	}
 
 	public sealed class Attachment
