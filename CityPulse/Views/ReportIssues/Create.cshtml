@@ -5,7 +5,7 @@
 <div class="container my-4">
     <div class="row g-4">
         <div class="col-lg-6">
-            <form id="reportForm" asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
+            <form id="reportForm" asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data" novalidate>
                 <h2>Report an Issue</h2>
 
                 <div class="mb-3">
@@ -15,19 +15,25 @@
                     </div>
                 </div>
 
+             
                 <div class="form-step" data-step="1">
                     <div class="mb-3 position-relative">
-                        <label for="location" class="form-label">Location</label>
-                        <input id="location" name="location" class="form-control" placeholder="Start typing..." autocomplete="off">
+                        <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                        <input id="location" name="location" class="form-control" placeholder="Start typing..." autocomplete="off" required>
+                        <div class="invalid-feedback">Please enter a location.</div>
                         <div id="suggestions" class="list-group"></div>
                     </div>
-                    <button type="button" class="btn btn-primary next-btn">Next</button>
+                    <div class="d-flex gap-2">
+                        <a href="/" class="btn btn-secondary">Home</a>
+                        <button type="button" class="btn btn-primary next-btn">Next</button>
+                    </div>
                 </div>
 
+         
                 <div class="form-step d-none" data-step="2">
                     <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <select id="category" name="category" class="form-select">
+                        <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select id="category" name="category" class="form-select" required>
                             <option value="">Select category</option>
                             <option value="Sanitation">Sanitation</option>
                             <option value="Roads">Roads</option>
@@ -36,11 +42,16 @@
                             <option value="Electricity">Electricity</option>
                             <option value="Other">Other</option>
                         </select>
+                        <div class="invalid-feedback">Please select a category.</div>
                     </div>
-                    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-                    <button type="button" class="btn btn-primary next-btn">Next</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary prev-btn">Back</button>
+                        <a href="/" class="btn btn-secondary">Home</a>
+                        <button type="button" class="btn btn-primary next-btn">Next</button>
+                    </div>
                 </div>
 
+       
                 <div class="form-step d-none" data-step="3">
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
@@ -50,30 +61,37 @@
                         <label class="form-label">Attach images/documents</label>
                         <input type="file" name="files" multiple class="form-control">
                     </div>
-                    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary prev-btn">Back</button>
+                        <a href="/" class="btn btn-secondary">Home</a>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
                 </div>
-
             </form>
         </div>
 
+  
         <div class="col-lg-6">
-            <div id="map" style="width: 100%; height: 300px; border: 2px solid #ddd; border-radius: 10px;"></div>
+            <div id="map" style="width: 100%; height: 350px; border: 2px solid #ddd; border-radius: 10px;"></div>
+        </div>
+    </div>
 
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="p-2 card">
-                        <h5>Ward Stats</h5>
-                        <ul id="wardList" class="list-group list-group-flush"></ul>
-                    </div>
-                </div>
-            
-                <div class="col-md-6">
-                    <div class="p-2 card">
-                        <h5>Verify Reports</h5>
-                        <ul id="verifyList" class="list-group list-group-flush"></ul>
-                    </div>
-                </div>
+  
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="p-2 card">
+                <h5>Verify Reports</h5>
+                <ul id="verifyList" class="list-group list-group-flush"></ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="p-2 card">
+                <h5>Ward Stats</h5>
+                <ul id="wardList" class="list-group list-group-flush"></ul>
             </div>
         </div>
     </div>
@@ -83,24 +101,23 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-
-    var map = L.map('map').setView([-30.5595, 22.9375], 6);
+    var map = L.map('map').setView([-30.5595, 22.9375], 5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
     let marker;
     const locationInput = document.getElementById('location');
+    const categoryInput = document.getElementById('category');
     const suggestions = document.getElementById('suggestions');
 
-    
     const reports = [
         { ref: 'RPT-001', lat: -33.9249, lon: 18.4241, location: 'Cape Town CBD', status: 'reported', confirmations: { still: 0, fixed: 0 } },
         { ref: 'RPT-002', lat: -26.2041, lon: 28.0473, location: 'Johannesburg Central', status: 'needs-verification', confirmations: { still: 2, fixed: 1 } },
         { ref: 'RPT-003', lat: -29.8587, lon: 31.0218, location: 'Durban Central', status: 'resolved', confirmations: { still: 0, fixed: 3 } }
     ];
 
-    const statusColors = { 'reported':'red', 'needs-verification':'yellow', 'resolved':'green' };
+    const statusColors = { 'reported':'red', 'needs-verification':'orange', 'resolved':'green' };
 
     function addReportPin(report){
         const pin = L.circleMarker([report.lat, report.lon], {
@@ -114,8 +131,8 @@
             <b>${report.location}</b><br/>
             Ref: ${report.ref}<br/>
             Status: ${report.status}<br/>
-            <button onclick="confirmReport('${report.ref}','still')">Still a Problem ?</button>
-            <button onclick="confirmReport('${report.ref}','fixed')">Fixed ?</button>
+            <button onclick="confirmReport('${report.ref}','still')" class="btn btn-sm btn-outline-danger me-1 mt-1">Still a Problem</button>
+            <button onclick="confirmReport('${report.ref}','fixed')" class="btn btn-sm btn-outline-success mt-1">Resolved</button>
         `);
         report.pin = pin;
     }
@@ -151,9 +168,11 @@
             const li=document.createElement('li');
             li.className='list-group-item';
             li.innerHTML=`
-                ${ward} ? ${stats.total} reports, ${stats.resolved} resolved, ${stats.active} still active
+                ${ward}: ${stats.total} reports, ${stats.resolved} resolved, ${stats.active} still active
                 <div class="progress mt-1">
-                    <div class="progress-bar" role="progressbar" style="width:${(stats.resolved/stats.total)*100}%">${Math.round((stats.resolved/stats.total)*100)}%</div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width:${(stats.resolved/stats.total)*100}%">
+                        ${Math.round((stats.resolved/stats.total)*100)}%
+                    </div>
                 </div>
             `;
             wardList.appendChild(li);
@@ -172,14 +191,15 @@
                     <small>Status: ${r.status}</small>
                 </div>
                 <div>
-                    <button class="btn btn-sm btn-outline-primary me-1" onclick="confirmReport('${r.ref}','still')">Still a Problem ?</button>
-                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">Resolved ?</button>
+                    <button class="btn btn-sm btn-outline-danger me-1" onclick="confirmReport('${r.ref}','still')">Still a Problem</button>
+                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">Resolved</button>
                 </div>
             `;
             verifyList.appendChild(li);
         });
     }
 
+   
     const steps = document.querySelectorAll('.form-step');
     const progressBar = document.getElementById('formProgress');
     let currentStep = 0;
@@ -194,6 +214,21 @@
 
     document.querySelectorAll('.next-btn').forEach(btn=>{
         btn.addEventListener('click', ()=>{
+            const stepEl = steps[currentStep];
+            if(stepEl.dataset.step==='1' && !locationInput.value.trim()){
+                locationInput.classList.add('is-invalid');
+                return;
+            } else {
+                locationInput.classList.remove('is-invalid');
+            }
+
+            if(stepEl.dataset.step==='2' && !categoryInput.value){
+                categoryInput.classList.add('is-invalid');
+                return;
+            } else {
+                categoryInput.classList.remove('is-invalid');
+            }
+
             if(currentStep < steps.length-1){
                 currentStep++;
                 showStep(currentStep);
@@ -232,7 +267,7 @@
                 suggestions.innerHTML='';
                 if(marker) map.removeLayer(marker);
                 marker = L.marker([place.lat, place.lon]).addTo(map);
-                map.setView([place.lat, place.lon],12);
+                map.fitBounds([[ -34, 16 ], [ -22, 32 ]]); 
             });
             suggestions.appendChild(a);
         });
