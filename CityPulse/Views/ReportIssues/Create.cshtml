@@ -2,17 +2,21 @@
     ViewData["Title"] = "Report an Issue";
 }
 
+
 <div class="container my-4">
     <div class="row g-4">
         <!-- Form -->
         <div class="col-lg-6">
             <form id="reportForm" asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
+                <a href="@Url.Action("Index", "Home")" class="back-arrow btn btn-light shadow-sm" title="Back to Home">
+                    &#8592; Back
+                </a>
                 <h2>Report an Issue</h2>
 
                 <div class="mb-3">
                     <label class="form-label">Form Progress</label>
                     <div class="progress">
-                        <div id="formProgress" class="progress-bar" role="progressbar" style="width:0%; background: linear-gradient(to right, blue, green);">Step 1 of 3</div>
+                        <div id="formProgress" class="progress-bar" role="progressbar" style="width:0%; background: linear-gradient(to right, #27A9F5, #43F773);">Step 1 of 3</div>
                     </div>
                 </div>
 
