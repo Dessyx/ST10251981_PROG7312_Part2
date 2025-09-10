@@ -4,33 +4,34 @@
 
 <div class="container my-4">
     <div class="row g-4">
+        <!-- Form -->
         <div class="col-lg-6">
-            <form id="reportForm" asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data" novalidate>
+            <form id="reportForm" asp-action="Create" asp-controller="ReportIssues" method="post" enctype="multipart/form-data">
                 <h2>Report an Issue</h2>
 
                 <div class="mb-3">
                     <label class="form-label">Form Progress</label>
                     <div class="progress">
-                        <div id="formProgress" class="progress-bar" role="progressbar" style="width: 0%">Step 1 of 3</div>
+                        <div id="formProgress" class="progress-bar" role="progressbar" style="width:0%; background: linear-gradient(to right, blue, green);">Step 1 of 3</div>
                     </div>
                 </div>
 
-             
-                <div class="form-step" data-step="1">
+                <!-- Step 1: Location -->
+                <div class="form-step" data-step="0">
                     <div class="mb-3 position-relative">
                         <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
                         <input id="location" name="location" class="form-control" placeholder="Start typing..." autocomplete="off" required>
-                        <div class="invalid-feedback">Please enter a location.</div>
                         <div id="suggestions" class="list-group"></div>
+                        <div class="invalid-feedback">Please enter a location.</div>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="/" class="btn btn-secondary">Home</a>
-                        <button type="button" class="btn btn-primary next-btn">Next</button>
+                        <button type="button" class="btn btn-outline-dark rounded prev-btn" disabled>Back</button>
+                        <button type="button" class="btn btn-outline-dark rounded next-btn" disabled>Next</button>
                     </div>
                 </div>
 
-         
-                <div class="form-step d-none" data-step="2">
+                <!-- Step 2: Category -->
+                <div class="form-step d-none" data-step="1">
                     <div class="mb-3">
                         <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
                         <select id="category" name="category" class="form-select" required>
@@ -45,14 +46,13 @@
                         <div class="invalid-feedback">Please select a category.</div>
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-secondary prev-btn">Back</button>
-                        <a href="/" class="btn btn-secondary">Home</a>
-                        <button type="button" class="btn btn-primary next-btn">Next</button>
+                        <button type="button" class="btn btn-outline-dark rounded prev-btn">Back</button>
+                        <button type="button" class="btn btn-outline-dark rounded next-btn" disabled>Next</button>
                     </div>
                 </div>
 
-       
-                <div class="form-step d-none" data-step="3">
+                <!-- Step 3: Description & Files -->
+                <div class="form-step d-none" data-step="2">
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea id="description" name="description" class="form-control" rows="5"></textarea>
@@ -62,21 +62,20 @@
                         <input type="file" name="files" multiple class="form-control">
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-secondary prev-btn">Back</button>
-                        <a href="/" class="btn btn-secondary">Home</a>
-                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="button" class="btn btn-outline-dark rounded prev-btn">Back</button>
+                        <button type="submit" class="btn btn-success rounded">Submit</button>
                     </div>
                 </div>
             </form>
         </div>
 
-  
+        <!-- Map -->
         <div class="col-lg-6">
-            <div id="map" style="width: 100%; height: 350px; border: 2px solid #ddd; border-radius: 10px;"></div>
+            <div id="map" style="width: 100%; height: 300px; border: 2px solid #ddd; border-radius: 10px;"></div>
         </div>
     </div>
 
-  
+    <!-- Confirmations -->
     <div class="row mt-3">
         <div class="col-12">
             <div class="p-2 card">
@@ -86,7 +85,7 @@
         </div>
     </div>
 
-
+    <!-- Stats -->
     <div class="row mt-3">
         <div class="col-12">
             <div class="p-2 card">
@@ -101,24 +100,26 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    var map = L.map('map').setView([-30.5595, 22.9375], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    let marker;
-    const locationInput = document.getElementById('location');
-    const categoryInput = document.getElementById('category');
-    const suggestions = document.getElementById('suggestions');
-
-    const reports = [
+    let reports = [
         { ref: 'RPT-001', lat: -33.9249, lon: 18.4241, location: 'Cape Town CBD', status: 'reported', confirmations: { still: 0, fixed: 0 } },
         { ref: 'RPT-002', lat: -26.2041, lon: 28.0473, location: 'Johannesburg Central', status: 'needs-verification', confirmations: { still: 2, fixed: 1 } },
         { ref: 'RPT-003', lat: -29.8587, lon: 31.0218, location: 'Durban Central', status: 'resolved', confirmations: { still: 0, fixed: 3 } }
     ];
 
-    const statusColors = { 'reported':'red', 'needs-verification':'orange', 'resolved':'green' };
+    const statusColors = { 'reported':'red', 'needs-verification':'yellow', 'resolved':'green' };
+    let marker;
 
+    const map = L.map('map').setView([-30.5595, 22.9375], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const locationInput = document.getElementById('location');
+    const suggestions = document.getElementById('suggestions');
+    const steps = document.querySelectorAll('.form-step');
+    const progressBar = document.getElementById('formProgress');
+
+   
     function addReportPin(report){
         const pin = L.circleMarker([report.lat, report.lon], {
             radius: 8,
@@ -131,12 +132,13 @@
             <b>${report.location}</b><br/>
             Ref: ${report.ref}<br/>
             Status: ${report.status}<br/>
-            <button onclick="confirmReport('${report.ref}','still')" class="btn btn-sm btn-outline-danger me-1 mt-1">Still a Problem</button>
-            <button onclick="confirmReport('${report.ref}','fixed')" class="btn btn-sm btn-outline-success mt-1">Resolved</button>
+            <button onclick="confirmReport('${report.ref}','still')">Still a Problem ?</button>
+            <button onclick="confirmReport('${report.ref}','fixed')">Resolved ?</button>
         `);
         report.pin = pin;
     }
 
+  
     function confirmReport(ref, type){
         const report = reports.find(r=>r.ref===ref);
         if(!report) return;
@@ -150,7 +152,10 @@
         renderWardStats();
         renderVerificationList();
         report.pin.closePopup();
+
+        updateCompletionProgress();
     }
+
 
     function renderWardStats(){
         const wardList = document.getElementById('wardList');
@@ -168,17 +173,16 @@
             const li=document.createElement('li');
             li.className='list-group-item';
             li.innerHTML=`
-                ${ward}: ${stats.total} reports, ${stats.resolved} resolved, ${stats.active} still active
+                ${ward} ? ${stats.total} reports, ${stats.resolved} resolved, ${stats.active} still active
                 <div class="progress mt-1">
-                    <div class="progress-bar bg-success" role="progressbar" style="width:${(stats.resolved/stats.total)*100}%">
-                        ${Math.round((stats.resolved/stats.total)*100)}%
-                    </div>
+                    <div class="progress-bar" role="progressbar" style="width:${(stats.resolved/stats.total)*100}%">${Math.round((stats.resolved/stats.total)*100)}%</div>
                 </div>
             `;
             wardList.appendChild(li);
         }
     }
 
+ 
     function renderVerificationList(){
         const verifyList = document.getElementById('verifyList');
         verifyList.innerHTML='';
@@ -191,72 +195,79 @@
                     <small>Status: ${r.status}</small>
                 </div>
                 <div>
-                    <button class="btn btn-sm btn-outline-danger me-1" onclick="confirmReport('${r.ref}','still')">Still a Problem</button>
-                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">Resolved</button>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="confirmReport('${r.ref}','still')">Still a Problem ?</button>
+                    <button class="btn btn-sm btn-outline-success" onclick="confirmReport('${r.ref}','fixed')">Resolved ?</button>
                 </div>
             `;
             verifyList.appendChild(li);
         });
     }
 
-   
-    const steps = document.querySelectorAll('.form-step');
-    const progressBar = document.getElementById('formProgress');
+
     let currentStep = 0;
 
     function showStep(stepIndex){
-        steps.forEach((s,i)=>{
-            s.classList.toggle('d-none', i!==stepIndex);
-        });
+        steps.forEach((s,i)=> s.classList.toggle('d-none', i!==stepIndex));
         progressBar.style.width = ((stepIndex+1)/steps.length*100)+'%';
         progressBar.textContent = `Step ${stepIndex+1} of ${steps.length}`;
+        checkStepFields(stepIndex);
     }
 
-    document.querySelectorAll('.next-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-            const stepEl = steps[currentStep];
-            if(stepEl.dataset.step==='1' && !locationInput.value.trim()){
-                locationInput.classList.add('is-invalid');
-                return;
-            } else {
-                locationInput.classList.remove('is-invalid');
-            }
+ 
+    function checkStepFields(stepIndex){
+        const step = steps[stepIndex];
+        let enable = true;
+        if(stepIndex===0) enable = locationInput.value.trim() !== '';
+        if(stepIndex===1) enable = document.getElementById('category').value !== '';
+        step.querySelector('.next-btn').disabled = !enable;
+    }
 
-            if(stepEl.dataset.step==='2' && !categoryInput.value){
-                categoryInput.classList.add('is-invalid');
-                return;
-            } else {
-                categoryInput.classList.remove('is-invalid');
-            }
+  
+    function updateCompletionProgress(){
+        let filled = 0;
+        if(locationInput.value.trim()!=='') filled++;
+        if(document.getElementById('category').value!=='') filled++;
+        if(document.getElementById('description').value.trim()!=='') filled++;
+        const percent = Math.round((filled/3)*100);
+        progressBar.style.width = percent+'%';
+    }
 
-            if(currentStep < steps.length-1){
-                currentStep++;
-                showStep(currentStep);
-            }
-        });
+    document.querySelectorAll('.next-btn').forEach(btn=>btn.addEventListener('click', ()=>{
+        if(currentStep < steps.length-1){
+            currentStep++;
+            showStep(currentStep);
+        }
+    }));
+
+    document.querySelectorAll('.prev-btn').forEach(btn=>btn.addEventListener('click', ()=>{
+        if(currentStep>0){
+            currentStep--;
+            showStep(currentStep);
+        }
+    }));
+
+    locationInput.addEventListener('input', ()=>{
+        checkStepFields(0);
+        updateCompletionProgress();
     });
 
-    document.querySelectorAll('.prev-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-            if(currentStep > 0){
-                currentStep--;
-                showStep(currentStep);
-            }
-        });
+
+    document.getElementById('category').addEventListener('change', ()=>{
+        checkStepFields(1);
+        updateCompletionProgress();
     });
 
-    showStep(currentStep);
+  
+    document.getElementById('description').addEventListener('input', updateCompletionProgress);
 
-   
-    locationInput.addEventListener('input', async function () {
+ 
+    locationInput.addEventListener('input', async function(){
         const query = locationInput.value.trim();
         suggestions.innerHTML='';
         if(query.length<1) return;
-
         const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=ZA&limit=5&addressdetails=1`);
         const data = await res.json();
-
-        data.forEach(place => {
+        data.forEach(place=>{
             const a = document.createElement('a');
             a.href='#';
             a.className='list-group-item list-group-item-action';
@@ -267,13 +278,43 @@
                 suggestions.innerHTML='';
                 if(marker) map.removeLayer(marker);
                 marker = L.marker([place.lat, place.lon]).addTo(map);
-                map.fitBounds([[ -34, 16 ], [ -22, 32 ]]); 
+                map.setView([place.lat, place.lon],6); 
+                checkStepFields(0);
             });
             suggestions.appendChild(a);
         });
     });
 
+ 
+    document.getElementById('reportForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const newReport = {
+            ref: 'RPT-'+(reports.length+1).toString().padStart(3,'0'),
+            lat: marker ? marker.getLatLng().lat : -30.5595,
+            lon: marker ? marker.getLatLng().lng : 22.9375,
+            location: locationInput.value,
+            status: 'reported',
+            confirmations: {still:0,fixed:0}
+        };
+        reports.push(newReport);
+        addReportPin(newReport);
+        renderWardStats();
+        renderVerificationList();
+
+      
+        alert('Report submitted! Returning to Home.');
+        locationInput.value='';
+        document.getElementById('category').value='';
+        document.getElementById('description').value='';
+        if(marker) map.removeLayer(marker); marker=null;
+        currentStep = 0;
+        showStep(currentStep);
+        updateCompletionProgress();
+    });
+
+
     reports.forEach(addReportPin);
     renderWardStats();
     renderVerificationList();
+    showStep(currentStep);
 </script>

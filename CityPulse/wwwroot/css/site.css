@@ -447,6 +447,29 @@ h2, h3 {
 
 
 
+.btn-secondary {
+	background-color: white !important;
+	color: black !important;
+	border: 2px solid black !important;
+	padding: 0.25rem 0.75rem !important;
+	font-size: 0.85rem !important;
+	border-radius: 8px !important;
+}
+
+.btn-success {
+	background-color: #28a745 !important;
+	color: white !important;
+	border-radius: 8px !important;
+	border: none;
+}
+
+
+#formProgress {
+	background: linear-gradient(to right, blue, green) !important;
+	color: white !important;
+	font-weight: bold;
+}
+
 @media (max-width: 767.98px) {
 	body {
 		font-size: 14px;
