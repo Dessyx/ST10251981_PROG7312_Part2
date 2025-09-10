@@ -1,10 +1,10 @@
 # 💸 Municipal Issue Reporting Web Application
 
 ## 📝 DESCRIPTION  
-This project is a web application built with ASP.NET Core MVC, C#, JavaScript, and Leaflet.js. It allows users to report municipal issues, view reports on a map, and track the verification and resolution process. The app provides a modern, interactive experience with pop-up confirmation modals, a multi-step form, and ward-level statistics.
+This project is a web application built with ASP.NET Core MVC, C#, JavaScript, and Leaflet.js. The system is a efficient and user-friendly platform for citizens to access and request various municipal services. 
 
 ## WHAT IS THE PURPOSE OF THE APP?  
-This application was built to empower residents to easily report municipal issues, increase transparency in issue resolution, and enable administrators to monitor, verify, and resolve reports efficiently. By providing real-time maps, progress tracking, and user-friendly reporting tools, the app encourages civic engagement and helps improve service delivery.
+This application was built to empower residents to easily report municipal issues, increase transparency in issue resolution, and later on enable administrators to monitor, verify, and resolve reports efficiently. By providing real-time maps, progress tracking, and user-friendly reporting tools, the app encourages engagement and helps improve service delivery.
 
 ---
 
