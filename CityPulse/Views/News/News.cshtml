@@ -2,11 +2,823 @@
     ViewData["Title"] = "News & Announcements";
 }
 
-<div class="container py-4">
+<div class="container-fluid py-4">
+    <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="display-5 fw-bold" title="Latest municipal news and announcements">News & Announcements</h1>
+            <h1 class="display-5 fw-bold text-primary" title="Latest municipal news and announcements">
+                <i class="bi bi-newspaper me-2"></i>News & Announcements
+            </h1>
             <p class="lead text-muted">Stay informed about the latest updates, events, and municipal programs in your community.</p>
         </div>
     </div>
 
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body bg-light">
+                    <h5 class="card-title mb-3"><i class="bi bi-search me-2"></i>Search & Filter Events</h5>
+                    
+                    <div class="row g-3">
+                        <!-- Search Bar -->
+                        <div class="col-12 col-lg-4">
+                            <label for="searchInput" class="form-label fw-semibold">Search Events</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="searchInput" 
+                                       placeholder="Search by title or description..."
+                                       aria-label="Search events">
+                            </div>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label for="categoryFilter" class="form-label fw-semibold">Category</label>
+                            <select class="form-select" id="categoryFilter" aria-label="Filter by category">
+                                <option value="all" selected>All Categories</option>
+                                <option value="announcement">Announcements</option>
+                                <option value="event">Community Events</option>
+                                <option value="service">Service Updates</option>
+                                <option value="notice">Public Notices</option>
+                                <option value="program">Programs</option>
+                                <option value="emergency">Emergency Alerts</option>
+                            </select>
+                        </div>
+
+                        <!-- Date From -->
+                        <div class="col-12 col-md-6 col-lg-2">
+                            <label for="dateFrom" class="form-label fw-semibold">From Date</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="dateFrom" 
+                                   aria-label="Start date">
+                        </div>
+
+                        <!-- Date To -->
+                        <div class="col-12 col-md-6 col-lg-2">
+                            <label for="dateTo" class="form-label fw-semibold">To Date</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="dateTo" 
+                                   aria-label="End date">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-12 col-md-6 col-lg-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear all filters">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Filter Chips -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold d-block">Quick Filters:</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-sm btn-outline-primary filter-chip" data-filter="today">
+                                    <i class="bi bi-calendar-day"></i> Today
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary filter-chip" data-filter="this-week">
+                                    <i class="bi bi-calendar-week"></i> This Week
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary filter-chip" data-filter="this-month">
+                                    <i class="bi bi-calendar-month"></i> This Month
+                                </button>
+                                <button class="btn btn-sm btn-outline-info filter-chip" data-filter="upcoming">
+                                    <i class="bi bi-calendar-event"></i> Upcoming Events
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <span id="resultCount" class="badge bg-primary">12</span> Events Found
+                </h5>
+                <div class="btn-group" role="group" aria-label="View options">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active" id="gridView" title="Grid view">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="listView" title="List view">
+                        <i class="bi bi-list-ul"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row g-4" id="eventsContainer">
+        
+        <!-- Featured/Pinned Event -->
+        <div class="col-12 event-card" data-category="announcement" data-date="2025-10-10">
+            <div class="card border-danger shadow-lg h-100 featured-card">
+                <div class="card-ribbon">
+                    <span class="badge bg-danger">
+                        <i class="bi bi-pin-angle-fill"></i> FEATURED
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-danger mb-2">
+                                <i class="bi bi-megaphone-fill me-1"></i>Important Announcement
+                            </span>
+                            <h4 class="card-title fw-bold mb-1">Water Infrastructure Upgrade Project Begins Next Month</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>
+                            <strong>Published:</strong> October 10, 2025
+                        </p>
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-geo-alt me-2 text-danger"></i>
+                            <strong>Affected Areas:</strong> Central Business District, Riverside, Green Valley
+                        </p>
+                    </div>
+
+                    <p class="card-text">
+                        The municipality is pleased to announce a major water infrastructure upgrade project starting November 2025. 
+                        This initiative aims to improve water quality and reduce service interruptions across the city. 
+                        Residents in affected areas will be notified in advance of any temporary disruptions.
+                    </p>
+
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn btn-danger">
+                            <i class="bi bi-file-text me-1"></i>Read Full Details
+                        </a>
+                        <button class="btn btn-outline-danger" title="Share event">
+                            <i class="bi bi-share"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" title="Save for later">
+                            <i class="bi bi-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 1 - Community Event -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="event" data-date="2025-10-28">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-people-fill me-2"></i>Community Event
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Annual City Clean-Up Day</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Date:</strong> October 28, 2025
+                        </p>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-clock me-1"></i>
+                            <strong>Time:</strong> 8:00 AM - 2:00 PM
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>Location:</strong> Various Citywide Locations
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Join us for the Annual City Clean-Up Day! Volunteers will gather at various locations throughout 
+                        the city to help keep our community beautiful. Free refreshments and certificates provided.
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-info text-white w-100">
+                            <i class="bi bi-calendar-plus me-1"></i>Register Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 2 - Service Update -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="service" data-date="2025-10-05">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-check-circle-fill me-2"></i>Service Update
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">New Municipal Mobile App Launched</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Published:</strong> October 5, 2025
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-tag me-1"></i>
+                            <strong>Category:</strong> Digital Services
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Download the new CityPulse mobile app to report issues, track service requests, and receive 
+                        real-time notifications about municipal services. Available on iOS and Android.
+                    </p>
+
+                    <div class="mt-auto d-grid gap-2">
+                        <a href="#" class="btn btn-success">
+                            <i class="bi bi-apple me-1"></i>App Store
+                        </a>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="bi bi-google-play me-1"></i>Google Play
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 3 - Public Notice -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="notice" data-date="2025-10-20">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Public Notice
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Scheduled Power Maintenance</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Date:</strong> October 20, 2025
+                        </p>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-clock me-1"></i>
+                            <strong>Time:</strong> 9:00 AM - 3:00 PM
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>Areas:</strong> Hilltop Heights, Sunset Park
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Please be advised of scheduled power maintenance. Affected areas will experience 
+                        approximately 6 hours of service interruption. We apologize for any inconvenience.
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-warning w-100">
+                            <i class="bi bi-map me-1"></i>View Affected Areas Map
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 4 - Program -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="program" data-date="2025-10-01">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header text-white" style="background-color: #6f42c1;">
+                    <h6 class="mb-0">
+                        <i class="bi bi-star-fill me-2"></i>Program
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Youth Development Program</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Opens:</strong> October 1, 2025
+                        </p>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-hourglass-split me-1"></i>
+                            <strong>Deadline:</strong> October 31, 2025
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-people me-1"></i>
+                            <strong>Age Group:</strong> 18-35 years
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        The municipality is accepting applications for the Youth Development Program. 
+                        Free skills training, mentorship, and employment opportunities available. Limited spaces!
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn w-100 text-white" style="background-color: #6f42c1;">
+                            <i class="bi bi-file-earmark-text me-1"></i>Apply Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 5 - Community Event -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="event" data-date="2025-10-15">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-music-note-beamed me-2"></i>Community Event
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Community Music Festival</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Date:</strong> October 15, 2025
+                        </p>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-clock me-1"></i>
+                            <strong>Time:</strong> 4:00 PM - 10:00 PM
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>Location:</strong> City Central Park
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Enjoy an evening of live music, food vendors, and family activities at our annual 
+                        Community Music Festival. Free entry for all residents!
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-info text-white w-100">
+                            <i class="bi bi-info-circle me-1"></i>View Schedule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 6 - Service Update -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="service" data-date="2025-09-28">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-check-circle-fill me-2"></i>Service Update
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Road Resurfacing Completed</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Completed:</strong> September 28, 2025
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>Location:</strong> Main Street
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        The Main Street resurfacing project has been completed two weeks ahead of schedule. 
+                        Thank you for your patience during the construction period.
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-outline-success w-100">
+                            <i class="bi bi-camera me-1"></i>View Photos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 7 - Announcement -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="announcement" data-date="2025-09-22">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-recycle me-2"></i>Announcement
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">New Recycling Centers Opening</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Opening:</strong> November 1, 2025
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>Locations:</strong> 5 Centers Citywide
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Five new recycling centers will open across the city to promote environmental sustainability. 
+                        Drop-off facilities available for paper, plastic, glass, and electronics.
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-primary w-100">
+                            <i class="bi bi-pin-map me-1"></i>Find Nearest Center
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 8 - Emergency Alert -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="emergency" data-date="2025-10-13">
+            <div class="card h-100 shadow-sm border-danger hover-lift">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-exclamation-octagon-fill me-2"></i>Emergency Alert
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Weather Advisory</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Alert Date:</strong> October 13, 2025
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-cloud-lightning-rain me-1"></i>
+                            <strong>Type:</strong> Severe Weather Warning
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Heavy rainfall and strong winds expected over the next 48 hours. Residents are advised 
+                        to stay informed and take necessary precautions.
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-danger w-100">
+                            <i class="bi bi-shield-exclamation me-1"></i>Safety Guidelines
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Card 9 - Program -->
+        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="program" data-date="2025-09-15">
+            <div class="card h-100 shadow-sm hover-lift">
+                <div class="card-header text-white" style="background-color: #6f42c1;">
+                    <h6 class="mb-0">
+                        <i class="bi bi-trophy me-2"></i>Program
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Summer Recreation Wrap-Up</h5>
+                    
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <strong>Ended:</strong> September 15, 2025
+                        </p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-people me-1"></i>
+                            <strong>Participants:</strong> Over 2,000 children
+                        </p>
+                    </div>
+
+                    <p class="card-text flex-grow-1">
+                        Our summer recreation programs concluded successfully with record participation. 
+                        Thank you to all families and volunteers who made it possible!
+                    </p>
+
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-images me-1"></i>View Gallery
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- No Results Message (Hidden by default) -->
+    <div class="row d-none" id="noResults">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-search display-1 text-muted"></i>
+                    <h4 class="mt-3">No Events Found</h4>
+                    <p class="text-muted">Try adjusting your search criteria or filters.</p>
+                    <button class="btn btn-primary" id="resetSearch">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Reset Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter Subscription Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-gradient text-white shadow-lg border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-envelope-heart display-4 mb-3"></i>
+                    <h3 class="fw-bold mb-3">Never Miss an Update!</h3>
+                    <p class="lead mb-4">Subscribe to our newsletter and get the latest news and event notifications delivered to your inbox.</p>
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-md-8 col-lg-6">
+                            <div class="input-group input-group-lg shadow">
+                                <input type="email" 
+                                       class="form-control" 
+                                       placeholder="Enter your email address" 
+                                       aria-label="Email address"
+                                       id="newsletterEmail">
+                                <button class="btn btn-light text-primary fw-bold" type="button">
+                                    <i class="bi bi-send-fill me-1"></i>Subscribe
+                                </button>
+                            </div>
+                            <small class="d-block mt-2 opacity-75">We respect your privacy. Unsubscribe anytime.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    /* Card Hover Effects */
+    .hover-lift {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.125);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
+        border-color: rgba(0,0,0,0.2);
+    }
+
+    /* Featured Card Styling */
+    .featured-card {
+        position: relative;
+        border: 2px solid #dc3545;
+        background: linear-gradient(to bottom, #fff9f9, #ffffff);
+    }
+
+    .card-ribbon {
+        position: absolute;
+        top: 15px;
+        right: -5px;
+        z-index: 1;
+    }
+
+    .card-ribbon .badge {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    /* Filter Chip Styling */
+    .filter-chip {
+        transition: all 0.2s ease;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .filter-chip:hover {
+        transform: scale(1.05);
+    }
+
+    .filter-chip.active {
+        background-color: var(--bs-primary);
+        color: white;
+        border-color: var(--bs-primary);
+    }
+
+    /* Search Section Styling */
+    .bg-light {
+        background-color: #f8f9fa !important;
+        border-radius: 10px;
+    }
+
+    /* Category Badge Colors */
+    .bg-info { background-color: #17a2b8 !important; }
+    .bg-success { background-color: #28a745 !important; }
+    .bg-warning { background-color: #ffc107 !important; }
+    .bg-danger { background-color: #dc3545 !important; }
+    .bg-primary { background-color: #007bff !important; }
+
+    /* Card Body Flex Layout */
+    .card-body.d-flex.flex-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Gradient Background for Newsletter */
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Form Control Focus Effects */
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    /* View Toggle Buttons */
+    #gridView.active, #listView.active {
+        background-color: var(--bs-primary);
+        color: white;
+        border-color: var(--bs-primary);
+    }
+
+    /* Responsive Card Heights */
+    .event-card .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-card .card-body {
+        flex: 1;
+    }
+
+    /* Icon Styling */
+    .bi {
+        vertical-align: middle;
+    }
+
+    /* Bootstrap Icon Colors */
+    .text-primary { color: #007bff !important; }
+    .text-danger { color: #dc3545 !important; }
+    .text-info { color: #17a2b8 !important; }
+    .text-success { color: #28a745 !important; }
+    .text-warning { color: #ffc107 !important; }
+
+    /* Smooth Transitions */
+    * {
+        transition: all 0.2s ease;
+    }
+
+    /* Result Count Badge */
+    #resultCount {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+        font-weight: 600;
+    }
+</style>
+
+<!-- JavaScript for Search and Filter Functionality (UI interactions only) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // Get all filter elements
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const dateFrom = document.getElementById('dateFrom');
+        const dateTo = document.getElementById('dateTo');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const filterChips = document.querySelectorAll('.filter-chip');
+        const eventsContainer = document.getElementById('eventsContainer');
+        const resultCount = document.getElementById('resultCount');
+        const noResults = document.getElementById('noResults');
+        const gridViewBtn = document.getElementById('gridView');
+        const listViewBtn = document.getElementById('listView');
+
+        // Search functionality (UI placeholder)
+        searchInput.addEventListener('input', function() {
+            console.log('Searching for:', this.value);
+            // TODO: Implement actual search logic with sorted dictionary
+            filterEvents();
+        });
+
+        // Category filter
+        categoryFilter.addEventListener('change', function() {
+            console.log('Category selected:', this.value);
+            // TODO: Implement category filtering with sorted dictionary
+            filterEvents();
+        });
+
+        // Date filters
+        dateFrom.addEventListener('change', function() {
+            console.log('Date from:', this.value);
+            // TODO: Implement date range filtering with sorted dictionary
+            filterEvents();
+        });
+
+        dateTo.addEventListener('change', function() {
+            console.log('Date to:', this.value);
+            // TODO: Implement date range filtering with sorted dictionary
+            filterEvents();
+        });
+
+        // Clear filters button
+        clearFiltersBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            categoryFilter.value = 'all';
+            dateFrom.value = '';
+            dateTo.value = '';
+            filterChips.forEach(chip => chip.classList.remove('active'));
+            filterEvents();
+        });
+
+        // Quick filter chips
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                filterChips.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                console.log('Quick filter:', filter);
+                
+                // TODO: Implement quick filter logic
+                const today = new Date();
+                
+                switch(filter) {
+                    case 'today':
+                        dateFrom.value = today.toISOString().split('T')[0];
+                        dateTo.value = today.toISOString().split('T')[0];
+                        break;
+                    case 'this-week':
+                        // Calculate this week's date range
+                        break;
+                    case 'this-month':
+                        // Calculate this month's date range
+                        break;
+                    case 'upcoming':
+                        dateFrom.value = today.toISOString().split('T')[0];
+                        dateTo.value = '';
+                        break;
+                }
+                
+                filterEvents();
+            });
+        });
+
+        // View toggle
+        gridViewBtn.addEventListener('click', function() {
+            gridViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+            // TODO: Switch to grid view layout
+            console.log('Grid view selected');
+        });
+
+        listViewBtn.addEventListener('click', function() {
+            listViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+            // TODO: Switch to list view layout
+            console.log('List view selected');
+        });
+
+        // Main filter function (UI placeholder)
+        function filterEvents() {
+            // TODO: Implement actual filtering logic using sorted dictionary from backend
+            const eventCards = document.querySelectorAll('.event-card');
+            let visibleCount = 0;
+
+            eventCards.forEach(card => {
+                // Placeholder: Show all cards for now
+                card.style.display = 'block';
+                visibleCount++;
+            });
+
+            // Update result count
+            resultCount.textContent = visibleCount;
+
+            // Show/hide no results message
+            if (visibleCount === 0) {
+                eventsContainer.classList.add('d-none');
+                noResults.classList.remove('d-none');
+            } else {
+                eventsContainer.classList.remove('d-none');
+                noResults.classList.add('d-none');
+            }
+        }
+
+        // Reset search button
+        document.getElementById('resetSearch')?.addEventListener('click', function() {
+            clearFiltersBtn.click();
+        });
+
+        // Initialize
+        console.log('News & Announcements page initialized');
+        console.log('Total events loaded:', document.querySelectorAll('.event-card').length);
+    });
+</script>
