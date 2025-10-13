@@ -148,6 +148,108 @@ namespace CityPulse.Models
 			return true;
 		}
 	}
+
+	// Announcement Models
+	public enum AnnouncementCategory
+	{
+		Announcement,
+		Event,
+		ServiceUpdate,
+		Notice,
+		Program,
+		Emergency
+	}
+
+	public enum AnnouncementPriority
+	{
+		Low = 3,
+		Normal = 2,
+		High = 1,
+		Critical = 0
+	}
+
+	public sealed class Announcement
+	{
+		public Guid Id { get; set; }
+		public string Title { get; set; } = string.Empty;
+		public string Description { get; set; } = string.Empty;
+		public AnnouncementCategory Category { get; set; }
+		public DateTime Date { get; set; }
+		public string? Location { get; set; }
+		public string? Duration { get; set; }
+		public string? AgeGroup { get; set; }
+		public string? AffectedAreas { get; set; }
+		public string? ContactInfo { get; set; }
+		public bool IsFeatured { get; set; }
+		public AnnouncementPriority Priority { get; set; }
+		public DateTime CreatedAt { get; set; }
+		public string CreatedBy { get; set; } = string.Empty;
+	}
+
+	public sealed class AdminLoginViewModel
+	{
+		[Required]
+		[Display(Name = "Username")]
+		public string Username { get; set; } = string.Empty;
+
+		[Required]
+		[DataType(DataType.Password)]
+		[Display(Name = "Password")]
+		public string Password { get; set; } = string.Empty;
+	}
+
+	public sealed class AdminDashboardViewModel
+	{
+		public int TotalAnnouncements { get; set; }
+		public List<Announcement> RecentAnnouncements { get; set; } = new();
+	}
+
+	public sealed class AnnouncementViewModel
+	{
+		[Required]
+		[StringLength(200)]
+		[Display(Name = "Title")]
+		public string Title { get; set; } = string.Empty;
+
+		[Required]
+		[StringLength(2000)]
+		[Display(Name = "Description")]
+		public string Description { get; set; } = string.Empty;
+
+		[Required]
+		[Display(Name = "Category")]
+		public AnnouncementCategory Category { get; set; }
+
+		[Required]
+		[Display(Name = "Date")]
+		public DateTime Date { get; set; } = DateTime.Now;
+
+		[StringLength(200)]
+		[Display(Name = "Location")]
+		public string? Location { get; set; }
+
+		[StringLength(100)]
+		[Display(Name = "Duration")]
+		public string? Duration { get; set; }
+
+		[StringLength(100)]
+		[Display(Name = "Age Group")]
+		public string? AgeGroup { get; set; }
+
+		[StringLength(500)]
+		[Display(Name = "Affected Areas")]
+		public string? AffectedAreas { get; set; }
+
+		[StringLength(200)]
+		[Display(Name = "Contact Information")]
+		public string? ContactInfo { get; set; }
+
+		[Display(Name = "Featured")]
+		public bool IsFeatured { get; set; }
+
+		[Display(Name = "Priority")]
+		public AnnouncementPriority Priority { get; set; } = AnnouncementPriority.Normal;
+	}
 }
 
 

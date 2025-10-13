@@ -130,6 +130,331 @@ namespace CityPulse.Services
 			return results;
 		}
 	}
+
+	//-----------------------------------------------------------------------------
+	// Announcement Service with Advanced Data Structures
+	public sealed class AnnouncementService : IAnnouncementService
+	{
+		// Primary storage: SortedDictionary for date-based organization
+		private readonly SortedDictionary<DateTime, List<Announcement>> _announcementsByDate;
+		
+		// Secondary indexes for efficient lookups
+		private readonly Dictionary<AnnouncementCategory, List<Announcement>> _announcementsByCategory;
+		private readonly Dictionary<Guid, Announcement> _announcementsById;
+		private readonly Dictionary<string, HashSet<Guid>> _searchIndex; // Inverted index for text search
+		
+		// Sets for unique values
+		private readonly HashSet<string> _uniqueCategories;
+		private readonly HashSet<DateTime> _uniqueDates;
+		
+		// Priority queue for featured/important announcements
+		private readonly PriorityQueue<Announcement, int> _priorityQueue;
+		
+		// Stack for recently viewed announcements
+		private readonly Stack<Announcement> _recentlyViewed;
+		
+		// Queue for pending announcements (admin workflow)
+		private readonly System.Collections.Generic.Queue<Announcement> _pendingAnnouncements;
+
+		public AnnouncementService()
+		{
+			_announcementsByDate = new SortedDictionary<DateTime, List<Announcement>>();
+			_announcementsByCategory = new Dictionary<AnnouncementCategory, List<Announcement>>();
+			_announcementsById = new Dictionary<Guid, Announcement>();
+			_searchIndex = new Dictionary<string, HashSet<Guid>>();
+			_uniqueCategories = new HashSet<string>();
+			_uniqueDates = new HashSet<DateTime>();
+			_priorityQueue = new PriorityQueue<Announcement, int>();
+			_recentlyViewed = new Stack<Announcement>();
+			_pendingAnnouncements = new System.Collections.Generic.Queue<Announcement>();
+			
+			// Initialize category lists
+			foreach (AnnouncementCategory category in Enum.GetValues<AnnouncementCategory>())
+			{
+				_announcementsByCategory[category] = new List<Announcement>();
+				_uniqueCategories.Add(category.ToString());
+			}
+			
+			SeedDefaultData();
+		}
+
+		public void AddAnnouncement(Announcement announcement)
+		{
+			// Add to primary storage
+			if (!_announcementsByDate.ContainsKey(announcement.Date.Date))
+			{
+				_announcementsByDate[announcement.Date.Date] = new List<Announcement>();
+			}
+			_announcementsByDate[announcement.Date.Date].Add(announcement);
+			
+			// Add to category index
+			_announcementsByCategory[announcement.Category].Add(announcement);
+			
+			// Add to ID index
+			_announcementsById[announcement.Id] = announcement;
+			
+			// Add to search index
+			AddToSearchIndex(announcement);
+			
+			// Add to sets
+			_uniqueDates.Add(announcement.Date.Date);
+			
+			// Add to priority queue if featured or high priority
+			if (announcement.IsFeatured || announcement.Priority <= AnnouncementPriority.High)
+			{
+				_priorityQueue.Enqueue(announcement, (int)announcement.Priority);
+			}
+		}
+
+		public List<Announcement> GetAllAnnouncements()
+		{
+			var allAnnouncements = new List<Announcement>();
+			foreach (var dateGroup in _announcementsByDate.Values)
+			{
+				allAnnouncements.AddRange(dateGroup);
+			}
+			return allAnnouncements.OrderByDescending(a => a.Date).ToList();
+		}
+
+		public List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category)
+		{
+			return _announcementsByCategory[category].OrderByDescending(a => a.Date).ToList();
+		}
+
+		public List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate)
+		{
+			var results = new List<Announcement>();
+			foreach (var kvp in _announcementsByDate)
+			{
+				if (kvp.Key >= startDate.Date && kvp.Key <= endDate.Date)
+				{
+					results.AddRange(kvp.Value);
+				}
+			}
+			return results.OrderByDescending(a => a.Date).ToList();
+		}
+
+		public List<Announcement> GetRecentAnnouncements(int count)
+		{
+			return GetAllAnnouncements().Take(count).ToList();
+		}
+
+		public List<Announcement> GetFeaturedAnnouncements()
+		{
+			var featured = new List<Announcement>();
+			var tempQueue = new PriorityQueue<Announcement, int>();
+			
+			// Copy priority queue to avoid modifying original
+			while (_priorityQueue.Count > 0)
+			{
+				var announcement = _priorityQueue.Dequeue();
+				featured.Add(announcement);
+				tempQueue.Enqueue(announcement, (int)announcement.Priority);
+			}
+			
+			// Restore priority queue
+			while (tempQueue.Count > 0)
+			{
+				var announcement = tempQueue.Dequeue();
+				_priorityQueue.Enqueue(announcement, (int)announcement.Priority);
+			}
+			
+			return featured.OrderBy(a => a.Priority).ToList();
+		}
+
+		public List<Announcement> SearchAnnouncements(string searchTerm)
+		{
+			if (string.IsNullOrWhiteSpace(searchTerm))
+				return GetAllAnnouncements();
+			
+			var searchWords = searchTerm.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			var matchingIds = new HashSet<Guid>();
+			
+			foreach (var word in searchWords)
+			{
+				if (_searchIndex.ContainsKey(word))
+				{
+					if (matchingIds.Count == 0)
+					{
+						matchingIds = new HashSet<Guid>(_searchIndex[word]);
+					}
+					else
+					{
+						matchingIds.IntersectWith(_searchIndex[word]);
+					}
+				}
+			}
+			
+			var results = new List<Announcement>();
+			foreach (var id in matchingIds)
+			{
+				if (_announcementsById.ContainsKey(id))
+				{
+					results.Add(_announcementsById[id]);
+				}
+			}
+			
+			return results.OrderByDescending(a => a.Date).ToList();
+		}
+
+		public Announcement? GetAnnouncementById(Guid id)
+		{
+			return _announcementsById.ContainsKey(id) ? _announcementsById[id] : null;
+		}
+
+		public HashSet<string> GetUniqueCategories()
+		{
+			return new HashSet<string>(_uniqueCategories);
+		}
+
+		public HashSet<DateTime> GetUniqueDates()
+		{
+			return new HashSet<DateTime>(_uniqueDates);
+		}
+
+		private void AddToSearchIndex(Announcement announcement)
+		{
+			var text = $"{announcement.Title} {announcement.Description}".ToLower();
+			var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			
+			foreach (var word in words)
+			{
+				var cleanWord = new string(word.Where(c => char.IsLetterOrDigit(c)).ToArray());
+				if (!string.IsNullOrEmpty(cleanWord))
+				{
+					if (!_searchIndex.ContainsKey(cleanWord))
+					{
+						_searchIndex[cleanWord] = new HashSet<Guid>();
+					}
+					_searchIndex[cleanWord].Add(announcement.Id);
+				}
+			}
+		}
+
+		public void SeedDefaultData()
+		{
+			var defaultAnnouncements = new List<Announcement>
+			{
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Water Infrastructure Upgrade Project Begins Next Month",
+					Description = "The municipality is pleased to announce a major water infrastructure upgrade project starting November 2025. This initiative aims to improve water quality and reduce service interruptions across the city. Residents in affected areas will be notified in advance of any temporary disruptions.",
+					Category = AnnouncementCategory.Announcement,
+					Date = new DateTime(2025, 10, 10),
+					AffectedAreas = "Central Business District, Riverside, Green Valley",
+					IsFeatured = true,
+					Priority = AnnouncementPriority.High,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Annual City Clean-Up Day - October 28, 2025",
+					Description = "Join us for the Annual City Clean-Up Day! Volunteers will gather at various locations throughout the city to help keep our community beautiful. Free refreshments and community service certificates will be provided to all participants.",
+					Category = AnnouncementCategory.Event,
+					Date = new DateTime(2025, 10, 28),
+					Location = "Various Citywide Locations",
+					Duration = "8:00 AM - 2:00 PM",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "New Municipal Mobile App Launched",
+					Description = "Download the new CityPulse mobile app to report issues, track service requests, and receive real-time notifications about municipal services. Available now on iOS and Android platforms.",
+					Category = AnnouncementCategory.ServiceUpdate,
+					Date = new DateTime(2025, 10, 5),
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Scheduled Power Maintenance - October 20, 2025",
+					Description = "Please be advised of scheduled power maintenance on October 20, 2025, from 9:00 AM to 3:00 PM. Affected areas include Hilltop Heights and Sunset Park. We apologize for any inconvenience.",
+					Category = AnnouncementCategory.Notice,
+					Date = new DateTime(2025, 10, 20),
+					Duration = "Approximately 6 hours",
+					AffectedAreas = "Hilltop Heights, Sunset Park",
+					Priority = AnnouncementPriority.High,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Youth Development Program Registration Open",
+					Description = "The municipality is now accepting applications for the Youth Development Program. This initiative offers free skills training, mentorship, and employment opportunities for youth aged 18-35. Limited spaces available.",
+					Category = AnnouncementCategory.Program,
+					Date = new DateTime(2025, 10, 1),
+					AgeGroup = "18-35 years",
+					Duration = "Deadline: October 31, 2025",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Community Music Festival",
+					Description = "Enjoy an evening of live music, food vendors, and family activities at our annual Community Music Festival. Free entry for all residents!",
+					Category = AnnouncementCategory.Event,
+					Date = new DateTime(2025, 10, 15),
+					Location = "City Central Park",
+					Duration = "4:00 PM - 10:00 PM",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Road Resurfacing Project Completed Ahead of Schedule",
+					Description = "The Main Street resurfacing project has been completed two weeks ahead of schedule. Thank you for your patience during the construction period.",
+					Category = AnnouncementCategory.ServiceUpdate,
+					Date = new DateTime(2025, 9, 28),
+					Location = "Main Street",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "New Recycling Centers Opening Citywide",
+					Description = "Five new recycling centers will open across the city to promote environmental sustainability. Drop-off facilities available for paper, plastic, glass, and electronics.",
+					Category = AnnouncementCategory.Announcement,
+					Date = new DateTime(2025, 9, 22),
+					Location = "5 Centers Citywide",
+					Duration = "Opening: November 1, 2025",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Weather Advisory",
+					Description = "Heavy rainfall and strong winds expected over the next 48 hours. Residents are advised to stay informed and take necessary precautions.",
+					Category = AnnouncementCategory.Emergency,
+					Date = new DateTime(2025, 10, 13),
+					Priority = AnnouncementPriority.Critical,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				}
+			};
+
+			foreach (var announcement in defaultAnnouncements)
+			{
+				AddAnnouncement(announcement);
+			}
+		}
+	}
 }
 
 

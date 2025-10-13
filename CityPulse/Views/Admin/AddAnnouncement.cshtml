@@ -1,0 +1,318 @@
+@model CityPulse.Models.AnnouncementViewModel
+@{
+    ViewData["Title"] = "Add Announcement";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Announcement
+                    </h1>
+                    <p class="text-muted">Create and publish a new announcement or event</p>
+                </div>
+                <div>
+                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="AddAnnouncement" method="post" id="announcementForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Basic Information -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>Basic Information
+                                </h5>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label asp-for="Title" class="form-label fw-semibold">Title *</label>
+                                <input asp-for="Title" class="form-control" placeholder="Enter announcement title" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label asp-for="Category" class="form-label fw-semibold">Category *</label>
+                                <select asp-for="Category" class="form-select" id="categorySelect" onchange="updateFormFields()">
+                                    <option value="">Select Category</option>
+                                    <option value="Announcement">Announcement</option>
+                                    <option value="Event">Community Event</option>
+                                    <option value="ServiceUpdate">Service Update</option>
+                                    <option value="Notice">Public Notice</option>
+                                    <option value="Program">Program</option>
+                                    <option value="Emergency">Emergency Alert</option>
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label fw-semibold">Description *</label>
+                                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter detailed description"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label asp-for="Date" class="form-label fw-semibold">Date *</label>
+                                <input asp-for="Date" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label asp-for="Priority" class="form-label fw-semibold">Priority</label>
+                                <select asp-for="Priority" class="form-select">
+                                    <option value="Low">Low</option>
+                                    <option value="Normal" selected>Normal</option>
+                                    <option value="High">High</option>
+                                    <option value="Critical">Critical</option>
+                                </select>
+                                <span asp-validation-for="Priority" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Fields Based on Category -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-gear me-2"></i>Category-Specific Information
+                                </h5>
+                            </div>
+
+                            <!-- Location Field (for Events, Programs, Notices) -->
+                            <div class="col-12 col-md-6" id="locationField" style="display: none;">
+                                <label asp-for="Location" class="form-label fw-semibold">
+                                    <i class="bi bi-geo-alt me-1"></i>Location
+                                </label>
+                                <input asp-for="Location" class="form-control" placeholder="Enter location" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+
+                            <!-- Duration Field (for Events, Programs, Notices) -->
+                            <div class="col-12 col-md-6" id="durationField" style="display: none;">
+                                <label asp-for="Duration" class="form-label fw-semibold">
+                                    <i class="bi bi-clock me-1"></i>Duration
+                                </label>
+                                <input asp-for="Duration" class="form-control" placeholder="e.g., 8:00 AM - 2:00 PM" />
+                                <span asp-validation-for="Duration" class="text-danger"></span>
+                            </div>
+
+                            <!-- Age Group Field (for Programs) -->
+                            <div class="col-12 col-md-6" id="ageGroupField" style="display: none;">
+                                <label asp-for="AgeGroup" class="form-label fw-semibold">
+                                    <i class="bi bi-people me-1"></i>Age Group
+                                </label>
+                                <input asp-for="AgeGroup" class="form-control" placeholder="e.g., 18-35 years" />
+                                <span asp-validation-for="AgeGroup" class="text-danger"></span>
+                            </div>
+
+                            <!-- Affected Areas Field (for Notices, Announcements, Emergency) -->
+                            <div class="col-12" id="affectedAreasField" style="display: none;">
+                                <label asp-for="AffectedAreas" class="form-label fw-semibold">
+                                    <i class="bi bi-map me-1"></i>Affected Areas
+                                </label>
+                                <input asp-for="AffectedAreas" class="form-control" placeholder="Enter affected areas" />
+                                <span asp-validation-for="AffectedAreas" class="text-danger"></span>
+                            </div>
+
+                            <!-- Contact Information Field (for Programs, Events) -->
+                            <div class="col-12" id="contactInfoField" style="display: none;">
+                                <label asp-for="ContactInfo" class="form-label fw-semibold">
+                                    <i class="bi bi-telephone me-1"></i>Contact Information
+                                </label>
+                                <input asp-for="ContactInfo" class="form-control" placeholder="Enter contact details" />
+                                <span asp-validation-for="ContactInfo" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h5 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-sliders me-2"></i>Additional Options
+                                </h5>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input asp-for="IsFeatured" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsFeatured" class="form-check-label fw-semibold">
+                                        <i class="bi bi-star me-1"></i>Featured Announcement
+                                    </label>
+                                    <div class="form-text">Featured announcements appear prominently on the news page</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                                        <i class="bi bi-x-circle me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-1"></i>Create Announcement
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Help -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-info-circle me-2"></i>Category Guidelines
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-primary me-2">Announcement</span>
+                                <small class="text-muted">General municipal announcements and updates</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-info me-2">Event</span>
+                                <small class="text-muted">Community events, festivals, and gatherings</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-success me-2">Service Update</span>
+                                <small class="text-muted">Updates about municipal services and infrastructure</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-warning me-2">Notice</span>
+                                <small class="text-muted">Public notices, maintenance schedules, and warnings</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-secondary me-2">Program</span>
+                                <small class="text-muted">Municipal programs, workshops, and initiatives</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-start">
+                                <span class="badge bg-danger me-2">Emergency</span>
+                                <small class="text-muted">Emergency alerts and critical safety information</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFormFields() {
+        const category = document.getElementById('categorySelect').value;
+        
+        // Hide all dynamic fields first
+        document.getElementById('locationField').style.display = 'none';
+        document.getElementById('durationField').style.display = 'none';
+        document.getElementById('ageGroupField').style.display = 'none';
+        document.getElementById('affectedAreasField').style.display = 'none';
+        document.getElementById('contactInfoField').style.display = 'none';
+        
+        // Show relevant fields based on category
+        switch(category) {
+            case 'Event':
+                document.getElementById('locationField').style.display = 'block';
+                document.getElementById('durationField').style.display = 'block';
+                document.getElementById('contactInfoField').style.display = 'block';
+                break;
+            case 'Program':
+                document.getElementById('locationField').style.display = 'block';
+                document.getElementById('durationField').style.display = 'block';
+                document.getElementById('ageGroupField').style.display = 'block';
+                document.getElementById('contactInfoField').style.display = 'block';
+                break;
+            case 'Notice':
+                document.getElementById('locationField').style.display = 'block';
+                document.getElementById('durationField').style.display = 'block';
+                document.getElementById('affectedAreasField').style.display = 'block';
+                break;
+            case 'Announcement':
+                document.getElementById('affectedAreasField').style.display = 'block';
+                break;
+            case 'Emergency':
+                document.getElementById('affectedAreasField').style.display = 'block';
+                break;
+            case 'ServiceUpdate':
+                document.getElementById('locationField').style.display = 'block';
+                break;
+        }
+        
+        // Update placeholder text based on category
+        updatePlaceholders(category);
+    }
+    
+    function updatePlaceholders(category) {
+        const locationInput = document.querySelector('input[name="Location"]');
+        const durationInput = document.querySelector('input[name="Duration"]');
+        const ageGroupInput = document.querySelector('input[name="AgeGroup"]');
+        const affectedAreasInput = document.querySelector('input[name="AffectedAreas"]');
+        const contactInfoInput = document.querySelector('input[name="ContactInfo"]');
+        
+        switch(category) {
+            case 'Event':
+                if (locationInput) locationInput.placeholder = 'e.g., City Central Park, Community Center';
+                if (durationInput) durationInput.placeholder = 'e.g., 8:00 AM - 2:00 PM, All Day';
+                if (contactInfoInput) contactInfoInput.placeholder = 'e.g., events@citypulse.gov.za, (021) 123-4567';
+                break;
+            case 'Program':
+                if (locationInput) locationInput.placeholder = 'e.g., Municipal Building, Online';
+                if (durationInput) durationInput.placeholder = 'e.g., 6 weeks, Deadline: Oct 31, 2025';
+                if (ageGroupInput) ageGroupInput.placeholder = 'e.g., 18-35 years, All ages';
+                if (contactInfoInput) contactInfoInput.placeholder = 'e.g., programs@citypulse.gov.za, (021) 123-4567';
+                break;
+            case 'Notice':
+                if (locationInput) locationInput.placeholder = 'e.g., Main Street, Citywide';
+                if (durationInput) durationInput.placeholder = 'e.g., 6 hours, 2 days';
+                if (affectedAreasInput) affectedAreasInput.placeholder = 'e.g., Hilltop Heights, Sunset Park';
+                break;
+            case 'Announcement':
+                if (affectedAreasInput) affectedAreasInput.placeholder = 'e.g., Central Business District, Riverside, Green Valley';
+                break;
+            case 'Emergency':
+                if (affectedAreasInput) affectedAreasInput.placeholder = 'e.g., All areas, Specific neighborhoods';
+                break;
+            case 'ServiceUpdate':
+                if (locationInput) locationInput.placeholder = 'e.g., Main Street, Citywide';
+                break;
+        }
+    }
+    
+    // Initialize form on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateFormFields();
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

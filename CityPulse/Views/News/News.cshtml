@@ -1,3 +1,4 @@
+@model List<CityPulse.Models.Announcement>
 @{
     ViewData["Title"] = "News & Announcements";
 }
@@ -39,12 +40,12 @@
                             <label for="categoryFilter" class="form-label fw-semibold">Category</label>
                             <select class="form-select" id="categoryFilter" aria-label="Filter by category">
                                 <option value="all" selected>All Categories</option>
-                                <option value="announcement">Announcements</option>
-                                <option value="event">Community Events</option>
-                                <option value="service">Service Updates</option>
-                                <option value="notice">Public Notices</option>
-                                <option value="program">Programs</option>
-                                <option value="emergency">Emergency Alerts</option>
+                                <option value="Announcement">Announcements</option>
+                                <option value="Event">Community Events</option>
+                                <option value="ServiceUpdate">Service Updates</option>
+                                <option value="Notice">Public Notices</option>
+                                <option value="Program">Programs</option>
+                                <option value="Emergency">Emergency Alerts</option>
                             </select>
                         </div>
 
@@ -104,7 +105,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
-                    <span id="resultCount" class="badge bg-primary">12</span> Events Found
+                    <span id="resultCount" class="badge bg-primary">@Model.Count</span> Events Found
                 </h5>
                 <div class="btn-group" role="group" aria-label="View options">
                     <button type="button" class="btn btn-sm btn-outline-secondary active" id="gridView" title="Grid view">
@@ -121,399 +122,113 @@
     <!-- Events Grid -->
     <div class="row g-4" id="eventsContainer">
         
-        <!-- Featured/Pinned Event -->
-        <div class="col-12 event-card" data-category="announcement" data-date="2025-10-10">
-            <div class="card border-danger shadow-lg h-100 featured-card">
-                <div class="card-ribbon">
-                    <span class="badge bg-danger">
-                        <i class="bi bi-pin-angle-fill"></i> FEATURED
-                    </span>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <span class="badge bg-danger mb-2">
-                                <i class="bi bi-megaphone-fill me-1"></i>Important Announcement
+        @foreach (var announcement in Model)
+        {
+            <div class="col-12 @(announcement.Category == CityPulse.Models.AnnouncementCategory.Event ? "col-md-6 col-lg-4" : "col-md-6 col-lg-4") event-card" 
+                 data-category="@announcement.Category.ToString().ToLower()" 
+                 data-date="@announcement.Date.ToString("yyyy-MM-dd")">
+                
+                @if (announcement.IsFeatured)
+                {
+                    <!-- Featured Announcement -->
+                    <div class="card border-danger shadow-lg h-100 featured-card">
+                        <div class="card-ribbon">
+                            <span class="badge bg-danger">
+                                <i class="bi bi-pin-angle-fill"></i> FEATURED
                             </span>
-                            <h4 class="card-title fw-bold mb-1">Water Infrastructure Upgrade Project Begins Next Month</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <span class="badge @GetCategoryBadgeClass(announcement.Category) mb-2">
+                                        <i class="@GetCategoryIcon(announcement.Category) me-2"></i>@announcement.Category
+                                    </span>
+                                    <h4 class="card-title fw-bold mb-1">@announcement.Title</h4>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <p class="text-muted small mb-1">
+                                    <i class="bi bi-calendar-event me-2 text-primary"></i>
+                                    <strong>Published:</strong> @announcement.Date.ToString("MMM dd, yyyy")
+                                </p>
+                                @if (!string.IsNullOrEmpty(announcement.AffectedAreas))
+                                {
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-geo-alt me-2 text-danger"></i>
+                                        <strong>Affected Areas:</strong> @announcement.AffectedAreas
+                                    </p>
+                                }
+                            </div>
+
+                            <p class="card-text">@announcement.Description</p>
+
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-danger">
+                                    <i class="bi bi-file-text me-1"></i>Read Full Details
+                                </a>
+                                <button class="btn btn-outline-danger" title="Share event">
+                                    <i class="bi bi-share"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" title="Save for later">
+                                    <i class="bi bi-bookmark"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted mb-1">
-                            <i class="bi bi-calendar-event me-2 text-primary"></i>
-                            <strong>Published:</strong> October 10, 2025
-                        </p>
-                        <p class="text-muted mb-0">
-                            <i class="bi bi-geo-alt me-2 text-danger"></i>
-                            <strong>Affected Areas:</strong> Central Business District, Riverside, Green Valley
-                        </p>
-                    </div>
+                }
+                else
+                {
+                    <!-- Regular Announcement -->
+                    <div class="card h-100 shadow-sm hover-lift">
+                        <div class="card-header @GetCategoryHeaderClass(announcement.Category)">
+                            <h6 class="mb-0">
+                                <i class="@GetCategoryIcon(announcement.Category) me-2"></i>@announcement.Category
+                            </h6>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">@announcement.Title</h5>
+                            
+                            <div class="mb-3">
+                                <p class="text-muted small mb-1">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    <strong>Date:</strong> @announcement.Date.ToString("MMM dd, yyyy")
+                                </p>
+                                @if (!string.IsNullOrEmpty(announcement.Location))
+                                {
+                                    <p class="text-muted small mb-1">
+                                        <i class="bi bi-geo-alt me-1"></i>
+                                        <strong>Location:</strong> @announcement.Location
+                                    </p>
+                                }
+                                @if (!string.IsNullOrEmpty(announcement.Duration))
+                                {
+                                    <p class="text-muted small mb-1">
+                                        <i class="bi bi-clock me-1"></i>
+                                        <strong>Duration:</strong> @announcement.Duration
+                                    </p>
+                                }
+                                @if (!string.IsNullOrEmpty(announcement.AgeGroup))
+                                {
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-people me-1"></i>
+                                        <strong>Age Group:</strong> @announcement.AgeGroup
+                                    </p>
+                                }
+                            </div>
 
-                    <p class="card-text">
-                        The municipality is pleased to announce a major water infrastructure upgrade project starting November 2025. 
-                        This initiative aims to improve water quality and reduce service interruptions across the city. 
-                        Residents in affected areas will be notified in advance of any temporary disruptions.
-                    </p>
+                            <p class="card-text flex-grow-1">@announcement.Description</p>
 
-                    <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-danger">
-                            <i class="bi bi-file-text me-1"></i>Read Full Details
-                        </a>
-                        <button class="btn btn-outline-danger" title="Share event">
-                            <i class="bi bi-share"></i>
-                        </button>
-                        <button class="btn btn-outline-danger" title="Save for later">
-                            <i class="bi bi-bookmark"></i>
-                        </button>
+                            <div class="mt-auto">
+                                <a href="#" class="btn @GetCategoryButtonClass(announcement.Category) w-100">
+                                    <i class="@GetCategoryButtonIcon(announcement.Category) me-1"></i>@GetCategoryButtonText(announcement.Category)
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
-        </div>
-
-        <!-- Event Card 1 - Community Event -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="event" data-date="2025-10-28">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0">
-                        <i class="bi bi-people-fill me-2"></i>Community Event
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Annual City Clean-Up Day</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Date:</strong> October 28, 2025
-                        </p>
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-clock me-1"></i>
-                            <strong>Time:</strong> 8:00 AM - 2:00 PM
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-geo-alt me-1"></i>
-                            <strong>Location:</strong> Various Citywide Locations
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Join us for the Annual City Clean-Up Day! Volunteers will gather at various locations throughout 
-                        the city to help keep our community beautiful. Free refreshments and certificates provided.
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-info text-white w-100">
-                            <i class="bi bi-calendar-plus me-1"></i>Register Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 2 - Service Update -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="service" data-date="2025-10-05">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header bg-success text-white">
-                    <h6 class="mb-0">
-                        <i class="bi bi-check-circle-fill me-2"></i>Service Update
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">New Municipal Mobile App Launched</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Published:</strong> October 5, 2025
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-tag me-1"></i>
-                            <strong>Category:</strong> Digital Services
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Download the new CityPulse mobile app to report issues, track service requests, and receive 
-                        real-time notifications about municipal services. Available on iOS and Android.
-                    </p>
-
-                    <div class="mt-auto d-grid gap-2">
-                        <a href="#" class="btn btn-success">
-                            <i class="bi bi-apple me-1"></i>App Store
-                        </a>
-                        <a href="#" class="btn btn-outline-success">
-                            <i class="bi bi-google-play me-1"></i>Google Play
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 3 - Public Notice -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="notice" data-date="2025-10-20">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header bg-warning text-dark">
-                    <h6 class="mb-0">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Public Notice
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Scheduled Power Maintenance</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Date:</strong> October 20, 2025
-                        </p>
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-clock me-1"></i>
-                            <strong>Time:</strong> 9:00 AM - 3:00 PM
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-geo-alt me-1"></i>
-                            <strong>Areas:</strong> Hilltop Heights, Sunset Park
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Please be advised of scheduled power maintenance. Affected areas will experience 
-                        approximately 6 hours of service interruption. We apologize for any inconvenience.
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-warning w-100">
-                            <i class="bi bi-map me-1"></i>View Affected Areas Map
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 4 - Program -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="program" data-date="2025-10-01">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header text-white" style="background-color: #6f42c1;">
-                    <h6 class="mb-0">
-                        <i class="bi bi-star-fill me-2"></i>Program
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Youth Development Program</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Opens:</strong> October 1, 2025
-                        </p>
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-hourglass-split me-1"></i>
-                            <strong>Deadline:</strong> October 31, 2025
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-people me-1"></i>
-                            <strong>Age Group:</strong> 18-35 years
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        The municipality is accepting applications for the Youth Development Program. 
-                        Free skills training, mentorship, and employment opportunities available. Limited spaces!
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn w-100 text-white" style="background-color: #6f42c1;">
-                            <i class="bi bi-file-earmark-text me-1"></i>Apply Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 5 - Community Event -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="event" data-date="2025-10-15">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0">
-                        <i class="bi bi-music-note-beamed me-2"></i>Community Event
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Community Music Festival</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Date:</strong> October 15, 2025
-                        </p>
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-clock me-1"></i>
-                            <strong>Time:</strong> 4:00 PM - 10:00 PM
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-geo-alt me-1"></i>
-                            <strong>Location:</strong> City Central Park
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Enjoy an evening of live music, food vendors, and family activities at our annual 
-                        Community Music Festival. Free entry for all residents!
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-info text-white w-100">
-                            <i class="bi bi-info-circle me-1"></i>View Schedule
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 6 - Service Update -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="service" data-date="2025-09-28">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header bg-success text-white">
-                    <h6 class="mb-0">
-                        <i class="bi bi-check-circle-fill me-2"></i>Service Update
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Road Resurfacing Completed</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Completed:</strong> September 28, 2025
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-geo-alt me-1"></i>
-                            <strong>Location:</strong> Main Street
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        The Main Street resurfacing project has been completed two weeks ahead of schedule. 
-                        Thank you for your patience during the construction period.
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-outline-success w-100">
-                            <i class="bi bi-camera me-1"></i>View Photos
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 7 - Announcement -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="announcement" data-date="2025-09-22">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0">
-                        <i class="bi bi-recycle me-2"></i>Announcement
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">New Recycling Centers Opening</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Opening:</strong> November 1, 2025
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-geo-alt me-1"></i>
-                            <strong>Locations:</strong> 5 Centers Citywide
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Five new recycling centers will open across the city to promote environmental sustainability. 
-                        Drop-off facilities available for paper, plastic, glass, and electronics.
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-primary w-100">
-                            <i class="bi bi-pin-map me-1"></i>Find Nearest Center
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 8 - Emergency Alert -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="emergency" data-date="2025-10-13">
-            <div class="card h-100 shadow-sm border-danger hover-lift">
-                <div class="card-header bg-danger text-white">
-                    <h6 class="mb-0">
-                        <i class="bi bi-exclamation-octagon-fill me-2"></i>Emergency Alert
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Weather Advisory</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Alert Date:</strong> October 13, 2025
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-cloud-lightning-rain me-1"></i>
-                            <strong>Type:</strong> Severe Weather Warning
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Heavy rainfall and strong winds expected over the next 48 hours. Residents are advised 
-                        to stay informed and take necessary precautions.
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-danger w-100">
-                            <i class="bi bi-shield-exclamation me-1"></i>Safety Guidelines
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Card 9 - Program -->
-        <div class="col-12 col-md-6 col-lg-4 event-card" data-category="program" data-date="2025-09-15">
-            <div class="card h-100 shadow-sm hover-lift">
-                <div class="card-header text-white" style="background-color: #6f42c1;">
-                    <h6 class="mb-0">
-                        <i class="bi bi-trophy me-2"></i>Program
-                    </h6>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">Summer Recreation Wrap-Up</h5>
-                    
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <strong>Ended:</strong> September 15, 2025
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-people me-1"></i>
-                            <strong>Participants:</strong> Over 2,000 children
-                        </p>
-                    </div>
-
-                    <p class="card-text flex-grow-1">
-                        Our summer recreation programs concluded successfully with record participation. 
-                        Thank you to all families and volunteers who made it possible!
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-outline-secondary w-100">
-                            <i class="bi bi-images me-1"></i>View Gallery
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        }
     </div>
 
     <!-- No Results Message (Hidden by default) -->
@@ -560,6 +275,92 @@
         </div>
     </div>
 </div>
+
+@functions {
+    string GetCategoryBadgeClass(CityPulse.Models.AnnouncementCategory category)
+    {
+        return category switch
+        {
+            CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary",
+            CityPulse.Models.AnnouncementCategory.Event => "bg-info",
+            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success",
+            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning",
+            CityPulse.Models.AnnouncementCategory.Program => "bg-secondary",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetCategoryHeaderClass(CityPulse.Models.AnnouncementCategory category)
+    {
+        return category switch
+        {
+            CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary text-white",
+            CityPulse.Models.AnnouncementCategory.Event => "bg-info text-white",
+            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success text-white",
+            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning text-dark",
+            CityPulse.Models.AnnouncementCategory.Program => "bg-secondary text-white",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+
+    string GetCategoryIcon(CityPulse.Models.AnnouncementCategory category)
+    {
+        return category switch
+        {
+            CityPulse.Models.AnnouncementCategory.Announcement => "bi bi-megaphone-fill",
+            CityPulse.Models.AnnouncementCategory.Event => "bi bi-people-fill",
+            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bi bi-check-circle-fill",
+            CityPulse.Models.AnnouncementCategory.Notice => "bi bi-exclamation-triangle-fill",
+            CityPulse.Models.AnnouncementCategory.Program => "bi bi-star-fill",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bi bi-exclamation-octagon-fill",
+            _ => "bi bi-info-circle-fill"
+        };
+    }
+
+    string GetCategoryButtonClass(CityPulse.Models.AnnouncementCategory category)
+    {
+        return category switch
+        {
+            CityPulse.Models.AnnouncementCategory.Announcement => "btn-primary",
+            CityPulse.Models.AnnouncementCategory.Event => "btn-info text-white",
+            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "btn-success",
+            CityPulse.Models.AnnouncementCategory.Notice => "btn-warning",
+            CityPulse.Models.AnnouncementCategory.Program => "btn-secondary text-white",
+            CityPulse.Models.AnnouncementCategory.Emergency => "btn-danger",
+            _ => "btn-secondary"
+        };
+    }
+
+    string GetCategoryButtonIcon(CityPulse.Models.AnnouncementCategory category)
+    {
+        return category switch
+        {
+            CityPulse.Models.AnnouncementCategory.Announcement => "bi bi-file-text",
+            CityPulse.Models.AnnouncementCategory.Event => "bi bi-calendar-plus",
+            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bi bi-download",
+            CityPulse.Models.AnnouncementCategory.Notice => "bi bi-map",
+            CityPulse.Models.AnnouncementCategory.Program => "bi bi-file-earmark-text",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bi bi-shield-exclamation",
+            _ => "bi bi-info-circle"
+        };
+    }
+
+    string GetCategoryButtonText(CityPulse.Models.AnnouncementCategory category)
+    {
+        return category switch
+        {
+            CityPulse.Models.AnnouncementCategory.Announcement => "Read More",
+            CityPulse.Models.AnnouncementCategory.Event => "Register Now",
+            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "Download",
+            CityPulse.Models.AnnouncementCategory.Notice => "View Map",
+            CityPulse.Models.AnnouncementCategory.Program => "Apply Now",
+            CityPulse.Models.AnnouncementCategory.Emergency => "Safety Guidelines",
+            _ => "Learn More"
+        };
+    }
+}
 
 <!-- Custom Styles -->
 <style>
@@ -685,7 +486,7 @@
     }
 </style>
 
-<!-- JavaScript for Search and Filter Functionality (UI interactions only) -->
+<!-- JavaScript for Search and Filter Functionality -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         
@@ -702,30 +503,22 @@
         const gridViewBtn = document.getElementById('gridView');
         const listViewBtn = document.getElementById('listView');
 
-        // Search functionality (UI placeholder)
+        // Search functionality
         searchInput.addEventListener('input', function() {
-            console.log('Searching for:', this.value);
-            // TODO: Implement actual search logic with sorted dictionary
             filterEvents();
         });
 
         // Category filter
         categoryFilter.addEventListener('change', function() {
-            console.log('Category selected:', this.value);
-            // TODO: Implement category filtering with sorted dictionary
             filterEvents();
         });
 
         // Date filters
         dateFrom.addEventListener('change', function() {
-            console.log('Date from:', this.value);
-            // TODO: Implement date range filtering with sorted dictionary
             filterEvents();
         });
 
         dateTo.addEventListener('change', function() {
-            console.log('Date to:', this.value);
-            // TODO: Implement date range filtering with sorted dictionary
             filterEvents();
         });
 
@@ -746,9 +539,6 @@
                 this.classList.add('active');
                 
                 const filter = this.dataset.filter;
-                console.log('Quick filter:', filter);
-                
-                // TODO: Implement quick filter logic
                 const today = new Date();
                 
                 switch(filter) {
@@ -757,10 +547,18 @@
                         dateTo.value = today.toISOString().split('T')[0];
                         break;
                     case 'this-week':
-                        // Calculate this week's date range
+                        const startOfWeek = new Date(today);
+                        startOfWeek.setDate(today.getDate() - today.getDay());
+                        const endOfWeek = new Date(startOfWeek);
+                        endOfWeek.setDate(startOfWeek.getDate() + 6);
+                        dateFrom.value = startOfWeek.toISOString().split('T')[0];
+                        dateTo.value = endOfWeek.toISOString().split('T')[0];
                         break;
                     case 'this-month':
-                        // Calculate this month's date range
+                        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                        dateFrom.value = startOfMonth.toISOString().split('T')[0];
+                        dateTo.value = endOfMonth.toISOString().split('T')[0];
                         break;
                     case 'upcoming':
                         dateFrom.value = today.toISOString().split('T')[0];
@@ -776,27 +574,56 @@
         gridViewBtn.addEventListener('click', function() {
             gridViewBtn.classList.add('active');
             listViewBtn.classList.remove('active');
-            // TODO: Switch to grid view layout
-            console.log('Grid view selected');
+            eventsContainer.className = 'row g-4';
         });
 
         listViewBtn.addEventListener('click', function() {
             listViewBtn.classList.add('active');
             gridViewBtn.classList.remove('active');
-            // TODO: Switch to list view layout
-            console.log('List view selected');
+            eventsContainer.className = 'row g-2';
         });
 
-        // Main filter function (UI placeholder)
+        // Main filter function
         function filterEvents() {
-            // TODO: Implement actual filtering logic using sorted dictionary from backend
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+            const fromDate = dateFrom.value;
+            const toDate = dateTo.value;
+            
             const eventCards = document.querySelectorAll('.event-card');
             let visibleCount = 0;
 
             eventCards.forEach(card => {
-                // Placeholder: Show all cards for now
-                card.style.display = 'block';
-                visibleCount++;
+                const cardCategory = card.dataset.category;
+                const cardDate = card.dataset.date;
+                const cardText = card.textContent.toLowerCase();
+                
+                let showCard = true;
+                
+                // Search filter
+                if (searchTerm && !cardText.includes(searchTerm)) {
+                    showCard = false;
+                }
+                
+                // Category filter
+                if (selectedCategory !== 'all' && cardCategory !== selectedCategory.toLowerCase()) {
+                    showCard = false;
+                }
+                
+                // Date filter
+                if (fromDate && cardDate < fromDate) {
+                    showCard = false;
+                }
+                if (toDate && cardDate > toDate) {
+                    showCard = false;
+                }
+                
+                if (showCard) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
             });
 
             // Update result count
