@@ -1,105 +1,73 @@
 @model CityPulse.Models.AdminLoginViewModel
 @{
     ViewData["Title"] = "Admin Login";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null; // Remove default layout for full control
 }
 
-<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light">
-    <div class="row w-100 justify-content-center">
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-5">
-                    <!-- Header -->
-                    <div class="text-center mb-4">
-                        <div class="mb-3">
-                            <img src="/images/Profile.png" alt="Admin" class="rounded-circle" style="width: 80px; height: 80px;">
-                        </div>
-                        <h2 class="fw-bold text-primary">Admin Login</h2>
-                        <p class="text-muted">Access the CityPulse administration panel</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - CityPulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/admin-login.css">
+</head>
+<body>
+    <div class="admin-login-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+        <div class="admin-form-container" style="width: 400px;">
+            <div class="admin-form">
+                <!-- Header -->
+                <div class="text-center" style="margin-bottom: 20px;">
+                    <div class="d-flex justify-content-center" style="margin-bottom: 15px;">
+                        <img src="/images/Profile.png" alt="Admin" class="rounded-circle" style="width: 60px; height: 60px;">
+                    </div>
+                    <h1 style="margin-bottom: 8px;">Login</h1>
+                    <div class="demo-credentials" style="margin: 0;">
+                        <p style="color: #666; font-size: 14px; margin: 0;">Access the CityPulse administration panel</p>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <form asp-action="Login" method="post" style="width: 100%;">
+                    <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Username">
+                            <i class="fas fa-user me-2"></i>Username
+                        </label>
+                        <input asp-for="Username" placeholder="Enter your username" />
+                        <span asp-validation-for="Username" class="field-validation-error"></span>
                     </div>
 
-                    <!-- Login Form -->
-                    <form asp-action="Login" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                        
-                        <div class="mb-3">
-                            <label asp-for="Username" class="form-label fw-semibold">
-                                <i class="bi bi-person-fill me-2"></i>Username
-                            </label>
-                            <input asp-for="Username" class="form-control form-control-lg" placeholder="Enter your username" />
-                            <span asp-validation-for="Username" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="Password" class="form-label fw-semibold">
-                                <i class="bi bi-lock-fill me-2"></i>Password
-                            </label>
-                            <input asp-for="Password" class="form-control form-control-lg" placeholder="Enter your password" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                            </button>
-                        </div>
-                    </form>
-
-                    <!-- Demo Credentials -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <h6 class="fw-bold text-muted mb-2">
-                            <i class="bi bi-info-circle me-1"></i>Demo Credentials
-                        </h6>
-                        <small class="text-muted">
-                            <strong>Username:</strong> admin<br>
-                            <strong>Password:</strong> admin123
-                        </small>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label asp-for="Password">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <input asp-for="Password" placeholder="Enter your password" />
+                        <span asp-validation-for="Password" class="field-validation-error"></span>
                     </div>
 
-                    <!-- Back to Home -->
-                    <div class="text-center mt-4">
-                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
-                            <i class="bi bi-arrow-left me-1"></i>Back to Home
-                        </a>
-                    </div>
+                    <button type="submit" style="margin-top: 10px;">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </button>
+                </form>
+
+
+                <!-- Back to Home -->
+                <div class="back-link">
+                    <a asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Home
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<style>
-    .min-vh-100 {
-        min-height: 100vh;
-    }
-    
-    .card {
-        border-radius: 15px;
-    }
-    
-    .form-control:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    }
-    
-    .bg-light {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-</style>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

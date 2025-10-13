@@ -26,7 +26,7 @@ namespace CityPulse.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Simple authentication (in production, use proper authentication)
+              
                 if (model.Username == "admin" && model.Password == "admin123")
                 {
                     HttpContext.Session.SetString("IsAdmin", "true");
