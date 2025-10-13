@@ -21,20 +21,27 @@ namespace CityPulse.Services.Abstractions
 		CityPulse.Models.Queue<string> GetLocationSuggestions(string query);
 	}
 
-	public interface IAnnouncementService
-	{
-		void AddAnnouncement(Announcement announcement);
-		List<Announcement> GetAllAnnouncements();
-		List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category);
-		List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate);
-		List<Announcement> GetRecentAnnouncements(int count);
-		List<Announcement> GetFeaturedAnnouncements();
-		List<Announcement> SearchAnnouncements(string searchTerm);
-		Announcement? GetAnnouncementById(Guid id);
-		HashSet<string> GetUniqueCategories();
-		HashSet<DateTime> GetUniqueDates();
-		void SeedDefaultData();
-	}
+    public interface IAnnouncementService
+    {
+        void AddAnnouncement(Announcement announcement);
+        List<Announcement> GetAllAnnouncements();
+        List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category);
+        List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate);
+        List<Announcement> GetRecentAnnouncements(int count);
+        List<Announcement> GetFeaturedAnnouncements();
+        List<Announcement> SearchAnnouncements(string searchTerm);
+        Announcement? GetAnnouncementById(Guid id);
+        HashSet<string> GetUniqueCategories();
+        HashSet<DateTime> GetUniqueDates();
+        void SeedDefaultData();
+    }
+
+   
+    public interface IAdminAuthenticationService
+    {
+        bool ValidateCredentials(string username, string password);
+        bool UserExists(string username);
+    }
 }
 
 

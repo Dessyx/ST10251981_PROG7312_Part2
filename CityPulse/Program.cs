@@ -8,6 +8,7 @@ builder.Services.AddSingleton<CityPulse.Services.Abstractions.IReferenceNumberSe
 builder.Services.AddSingleton<CityPulse.Services.Abstractions.IStorageService, CityPulse.Services.LocalStorageService>();
 builder.Services.AddScoped<CityPulse.Services.Abstractions.IIssueReportingService, CityPulse.Services.IssueReportingService>();
 builder.Services.AddSingleton<CityPulse.Services.Abstractions.IAnnouncementService, CityPulse.Services.AnnouncementService>();
+builder.Services.AddSingleton<CityPulse.Services.Abstractions.IAdminAuthenticationService, CityPulse.Services.AdminAuthenticationService>();
 
 // Session support for admin authentication
 builder.Services.AddDistributedMemoryCache();

@@ -8,11 +8,13 @@ namespace CityPulse.Controllers
     {
         private readonly ILogger<AdminController> _logger;
         private readonly IAnnouncementService _announcementService;
+        private readonly IAdminAuthenticationService _authService;
 
-        public AdminController(ILogger<AdminController> logger, IAnnouncementService announcementService)
+        public AdminController(ILogger<AdminController> logger, IAnnouncementService announcementService, IAdminAuthenticationService authService)
         {
             _logger = logger;
             _announcementService = announcementService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -26,10 +28,11 @@ namespace CityPulse.Controllers
         {
             if (ModelState.IsValid)
             {
-              
-                if (model.Username == "admin" && model.Password == "admin123")
+                // Use secure authentication service to validate credentials
+                if (_authService.ValidateCredentials(model.Username, model.Password))
                 {
                     HttpContext.Session.SetString("IsAdmin", "true");
+                    HttpContext.Session.SetString("AdminUsername", model.Username);
                     return RedirectToAction("Dashboard");
                 }
                 else
