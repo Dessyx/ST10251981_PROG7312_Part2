@@ -7,7 +7,7 @@
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="display-5 fw-bold text-primary" title="Latest municipal news and announcements">
+            <h1 class="display-5 fw-bold text-dark" title="Latest municipal news and announcements">
                 <i class="bi bi-newspaper me-2"></i>News & Announcements
             </h1>
             <p class="lead text-muted">Stay informed about the latest updates, events, and municipal programs in your community.</p>
@@ -17,8 +17,8 @@
     <!-- Search and Filter Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-body bg-light">
+            <div class="card shadow-sm border-dark" style="border-width: 2px; border-radius: 15px; overflow: visible;">
+                <div class="card-body bg-white" style="border-radius: 15px;">
                     <h5 class="card-title mb-3"><i class="bi bi-search me-2"></i>Search & Filter Events</h5>
                     
                     <div class="row g-3">
@@ -26,19 +26,20 @@
                         <div class="col-12 col-lg-4">
                             <label for="searchInput" class="form-label fw-semibold">Search Events</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <span class="input-group-text bg-white" style="border-radius: 20px 0 0 20px;"><i class="bi bi-search"></i></span>
                                 <input type="text" 
                                        class="form-control" 
                                        id="searchInput" 
                                        placeholder="Search by title or description..."
-                                       aria-label="Search events">
+                                       aria-label="Search events"
+                                       style="border-radius: 0 20px 20px 0;">
                             </div>
                         </div>
 
                         <!-- Category Filter -->
                         <div class="col-12 col-md-6 col-lg-3">
                             <label for="categoryFilter" class="form-label fw-semibold">Category</label>
-                            <select class="form-select" id="categoryFilter" aria-label="Filter by category">
+                            <select class="form-select" id="categoryFilter" aria-label="Filter by category" style="border-radius: 20px;">
                                 <option value="all" selected>All Categories</option>
                                 <option value="Announcement">Announcements</option>
                                 <option value="Event">Community Events</option>
@@ -55,7 +56,8 @@
                             <input type="date" 
                                    class="form-control" 
                                    id="dateFrom" 
-                                   aria-label="Start date">
+                                   aria-label="Start date"
+                                   style="border-radius: 20px;">
                         </div>
 
                         <!-- Date To -->
@@ -64,12 +66,13 @@
                             <input type="date" 
                                    class="form-control" 
                                    id="dateTo" 
-                                   aria-label="End date">
+                                   aria-label="End date"
+                                   style="border-radius: 20px;">
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="col-12 col-md-6 col-lg-1 d-flex align-items-end">
-                            <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear all filters">
+                        <div class="col-12 col-md-6 col-lg-1 d-flex align-items-center" style="margin-top: 2.3rem;">
+                            <button type="button" class="btn btn-sm btn-outline-dark w-100" id="clearFilters" title="Clear all filters" style="border-radius: 20px;">
                                 <i class="bi bi-x-circle"></i> Clear
                             </button>
                         </div>
@@ -80,16 +83,16 @@
                         <div class="col-12">
                             <label class="form-label fw-semibold d-block">Quick Filters:</label>
                             <div class="d-flex flex-wrap gap-2">
-                                <button class="btn btn-sm btn-outline-primary filter-chip" data-filter="today">
+                                <button class="btn btn-sm filter-chip filter-chip-blue" data-filter="today">
                                     <i class="bi bi-calendar-day"></i> Today
                                 </button>
-                                <button class="btn btn-sm btn-outline-primary filter-chip" data-filter="this-week">
+                                <button class="btn btn-sm filter-chip filter-chip-green" data-filter="this-week">
                                     <i class="bi bi-calendar-week"></i> This Week
                                 </button>
-                                <button class="btn btn-sm btn-outline-primary filter-chip" data-filter="this-month">
+                                <button class="btn btn-sm filter-chip filter-chip-orange" data-filter="this-month">
                                     <i class="bi bi-calendar-month"></i> This Month
                                 </button>
-                                <button class="btn btn-sm btn-outline-info filter-chip" data-filter="upcoming">
+                                <button class="btn btn-sm filter-chip filter-chip-blue-alt" data-filter="upcoming">
                                     <i class="bi bi-calendar-event"></i> Upcoming Events
                                 </button>
                             </div>
@@ -105,15 +108,21 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
-                    <span id="resultCount" class="badge bg-primary">@Model.Count</span> Events Found
+                    <span id="resultCount" class="badge bg-dark text-white rounded-circle">@Model.Count</span> Events Found
                 </h5>
-                <div class="btn-group" role="group" aria-label="View options">
-                    <button type="button" class="btn btn-sm btn-outline-secondary active" id="gridView" title="Grid view">
-                        <i class="bi bi-grid-3x3-gap"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="listView" title="List view">
-                        <i class="bi bi-list-ul"></i>
-                    </button>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted small">View:</span>
+                    <div class="btn-group view-toggle" role="group" aria-label="View options">
+                        <input type="radio" class="btn-check" name="viewOptions" id="gridView" autocomplete="off" checked>
+                        <label class="btn btn-outline-dark view-toggle-label" for="gridView" title="Grid view">
+                            <i class="bi bi-grid-3x3-gap"></i> Grid
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="viewOptions" id="listView" autocomplete="off">
+                        <label class="btn btn-outline-dark view-toggle-label" for="listView" title="List view">
+                            <i class="bi bi-list-ul"></i> List
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -284,7 +293,7 @@
             CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary",
             CityPulse.Models.AnnouncementCategory.Event => "bg-info",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success",
-            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning",
+            CityPulse.Models.AnnouncementCategory.Notice => "bg-notice-orange",
             CityPulse.Models.AnnouncementCategory.Program => "bg-secondary",
             CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger",
             _ => "bg-secondary"
@@ -298,7 +307,7 @@
             CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary text-white",
             CityPulse.Models.AnnouncementCategory.Event => "bg-info text-white",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success text-white",
-            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning text-dark",
+            CityPulse.Models.AnnouncementCategory.Notice => "bg-notice-orange text-white",
             CityPulse.Models.AnnouncementCategory.Program => "bg-secondary text-white",
             CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger text-white",
             _ => "bg-secondary text-white"
@@ -326,7 +335,7 @@
             CityPulse.Models.AnnouncementCategory.Announcement => "btn-primary",
             CityPulse.Models.AnnouncementCategory.Event => "btn-info text-white",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "btn-success",
-            CityPulse.Models.AnnouncementCategory.Notice => "btn-warning",
+            CityPulse.Models.AnnouncementCategory.Notice => "btn-notice-orange",
             CityPulse.Models.AnnouncementCategory.Program => "btn-secondary text-white",
             CityPulse.Models.AnnouncementCategory.Emergency => "btn-danger",
             _ => "btn-secondary"
@@ -401,22 +410,83 @@
         transition: all 0.2s ease;
         border-radius: 20px;
         font-weight: 500;
+        border: 2px solid transparent;
     }
 
     .filter-chip:hover {
         transform: scale(1.05);
     }
 
-    .filter-chip.active {
-        background-color: var(--bs-primary);
-        color: white;
-        border-color: var(--bs-primary);
+    /* Blue chip (Today) */
+    .filter-chip-blue {
+        background-color: #d9e6f8;
+        color: #2f7fbf;
+        border-color: #2f7fbf;
     }
-
-    /* Search Section Styling */
-    .bg-light {
-        background-color: #f8f9fa !important;
-        border-radius: 10px;
+    
+    .filter-chip-blue:hover {
+        background-color: #2f7fbf;
+        color: white;
+    }
+    
+    .filter-chip-blue.active {
+        background-color: #2f7fbf;
+        color: white;
+        border-color: #2f7fbf;
+    }
+    
+    /* Green chip (This Week) */
+    .filter-chip-green {
+        background-color: #d4f2db;
+        color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .filter-chip-green:hover {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .filter-chip-green.active {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+    
+    /* Orange chip (This Month) */
+    .filter-chip-orange {
+        background-color: #ffe5cc;
+        color: #fd7e14;
+        border-color: #fd7e14;
+    }
+    
+    .filter-chip-orange:hover {
+        background-color: #fd7e14;
+        color: white;
+    }
+    
+    .filter-chip-orange.active {
+        background-color: #fd7e14;
+        color: white;
+        border-color: #fd7e14;
+    }
+    
+    /* Blue Alt chip (Upcoming Events) */
+    .filter-chip-blue-alt {
+        background-color: #cce5ff;
+        color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .filter-chip-blue-alt:hover {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .filter-chip-blue-alt.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
     }
 
     /* Category Badge Colors */
@@ -425,6 +495,20 @@
     .bg-warning { background-color: #ffc107 !important; }
     .bg-danger { background-color: #dc3545 !important; }
     .bg-primary { background-color: #007bff !important; }
+    .bg-notice-orange { background-color: #fd7e14 !important; }
+    
+    /* Notice Orange Button */
+    .btn-notice-orange {
+        background-color: #fd7e14;
+        border-color: #fd7e14;
+        color: white;
+    }
+    
+    .btn-notice-orange:hover {
+        background-color: #e66d0a;
+        border-color: #e66d0a;
+        color: white;
+    }
 
     /* Card Body Flex Layout */
     .card-body.d-flex.flex-column {
@@ -444,10 +528,29 @@
     }
 
     /* View Toggle Buttons */
-    #gridView.active, #listView.active {
-        background-color: var(--bs-primary);
+    .view-toggle {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .view-toggle-label {
+        border-radius: 0;
+        min-width: 100px;
+        padding: 0.375rem 1.25rem;
+    }
+
+    .view-toggle label:first-of-type {
+        border-radius: 20px 0 0 20px;
+    }
+
+    .view-toggle label:last-of-type {
+        border-radius: 0 20px 20px 0;
+    }
+
+    .btn-check:checked + label {
+        background-color: #212529;
         color: white;
-        border-color: var(--bs-primary);
+        border-color: #212529;
     }
 
     /* Responsive Card Heights */
@@ -481,8 +584,13 @@
     /* Result Count Badge */
     #resultCount {
         font-size: 1rem;
-        padding: 0.5rem 0.75rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 600;
+        padding: 0;
     }
 </style>
 
@@ -571,16 +679,16 @@
         });
 
         // View toggle
-        gridViewBtn.addEventListener('click', function() {
-            gridViewBtn.classList.add('active');
-            listViewBtn.classList.remove('active');
-            eventsContainer.className = 'row g-4';
+        gridViewBtn.addEventListener('change', function() {
+            if (this.checked) {
+                eventsContainer.className = 'row g-4';
+            }
         });
 
-        listViewBtn.addEventListener('click', function() {
-            listViewBtn.classList.add('active');
-            gridViewBtn.classList.remove('active');
-            eventsContainer.className = 'row g-2';
+        listViewBtn.addEventListener('change', function() {
+            if (this.checked) {
+                eventsContainer.className = 'row g-2';
+            }
         });
 
         // Main filter function
