@@ -26,7 +26,9 @@
                         <div class="col-12 col-lg-4">
                             <label for="searchInput" class="form-label fw-semibold">Search Events</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white" style="border-radius: 20px 0 0 20px;"><i class="bi bi-search"></i></span>
+                                <span class="input-group-text bg-white" style="border-radius: 20px 0 0 20px;">
+                                    <img src="/images/Search.png" alt="Search" style="width: 16px; height: 16px;">
+                                </span>
                                 <input type="text" 
                                        class="form-control" 
                                        id="searchInput" 
@@ -564,6 +566,80 @@
         flex: 1;
     }
 
+    /* List View Styling */
+    .list-view-mode .event-card {
+        margin-bottom: 1rem;
+    }
+
+    .list-view-mode .event-card .card {
+        flex-direction: row !important;
+        height: auto !important;
+    }
+
+    .list-view-mode .event-card .card-header {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        min-width: 60px;
+        max-width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0 !important;
+    }
+
+    .list-view-mode .event-card .card-header h6 {
+        transform: rotate(180deg);
+        white-space: nowrap;
+        margin: 0;
+    }
+
+    .list-view-mode .event-card .card-body {
+        flex-direction: row !important;
+        padding: 1.25rem;
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .list-view-mode .event-card .card-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .list-view-mode .event-card .card-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+    }
+
+    .list-view-mode .event-card .btn {
+        white-space: nowrap;
+    }
+
+    .list-view-mode .featured-card {
+        flex-direction: column !important;
+    }
+
+    .list-view-mode .featured-card .card-body {
+        flex-direction: column !important;
+    }
+
+    /* List view info section */
+    .list-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .list-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+    }
+
     /* Icon Styling */
     .bi {
         vertical-align: middle;
@@ -682,12 +758,28 @@
         gridViewBtn.addEventListener('change', function() {
             if (this.checked) {
                 eventsContainer.className = 'row g-4';
+                eventsContainer.classList.remove('list-view-mode');
+                // Reset all cards to grid layout
+                const eventCards = document.querySelectorAll('.event-card');
+                eventCards.forEach(card => {
+                    const isEvent = card.querySelector('.card-header')?.textContent.includes('Event');
+                    if (isEvent) {
+                        card.className = 'col-12 col-md-6 col-lg-4 event-card';
+                    } else {
+                        card.className = 'col-12 col-md-6 col-lg-4 event-card';
+                    }
+                });
             }
         });
 
         listViewBtn.addEventListener('change', function() {
             if (this.checked) {
-                eventsContainer.className = 'row g-2';
+                eventsContainer.className = 'row g-2 list-view-mode';
+                // Change all cards to full width list layout
+                const eventCards = document.querySelectorAll('.event-card');
+                eventCards.forEach(card => {
+                    card.className = 'col-12 event-card';
+                });
             }
         });
 

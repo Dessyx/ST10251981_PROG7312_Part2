@@ -447,6 +447,84 @@ namespace CityPulse.Services
 					Priority = AnnouncementPriority.Critical,
 					CreatedAt = DateTime.Now,
 					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Free Swimming Lessons for Kids",
+					Description = "The municipal swimming pool is offering free swimming lessons for children aged 6-12. Classes run every Saturday morning for 8 weeks. Registration is now open at the City Recreation Center.",
+					Category = AnnouncementCategory.Event,
+					Date = new DateTime(2025, 11, 2),
+					Location = "Municipal Swimming Pool",
+					Duration = "9:00 AM - 11:00 AM (Saturdays)",
+					AgeGroup = "6-12 years",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "New Online Payment System for Municipal Bills",
+					Description = "We've upgraded our online payment portal for water, electricity, and property taxes. The new system offers faster processing, multiple payment options, and automatic receipts. Visit our website to register today!",
+					Category = AnnouncementCategory.ServiceUpdate,
+					Date = new DateTime(2025, 10, 25),
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Small Business Development Workshop Series",
+					Description = "Join our comprehensive 6-week workshop series designed to help local entrepreneurs grow their businesses. Topics include marketing, finance, and digital presence. Limited to 30 participants - register early!",
+					Category = AnnouncementCategory.Program,
+					Date = new DateTime(2025, 11, 5),
+					Location = "City Business Hub",
+					Duration = "Every Wednesday, 6:00 PM - 8:00 PM",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Halloween Community Block Party",
+					Description = "Bring the whole family for a spooktacular evening! Enjoy trick-or-treating, costume contests, face painting, and live entertainment. Safe, family-friendly fun for all ages.",
+					Category = AnnouncementCategory.Event,
+					Date = new DateTime(2025, 10, 31),
+					Location = "Market Square",
+					Duration = "5:00 PM - 9:00 PM",
+					AgeGroup = "All ages welcome",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Road Closure: Bridge Maintenance November 10-12",
+					Description = "The Oak Street Bridge will be closed for routine maintenance and safety inspections. Alternative routes via Elm Avenue and Pine Street will be clearly marked. Expect minor delays during peak hours.",
+					Category = AnnouncementCategory.Notice,
+					Date = new DateTime(2025, 11, 10),
+					Location = "Oak Street Bridge",
+					Duration = "November 10-12, 2025 (3 days)",
+					AffectedAreas = "Oak Street, Downtown Area",
+					Priority = AnnouncementPriority.High,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
+				},
+				new Announcement
+				{
+					Id = Guid.NewGuid(),
+					Title = "Public WiFi Zones Expanded Throughout City",
+					Description = "We're excited to announce the expansion of free public WiFi to 15 new locations including parks, libraries, and community centers. Access is free for all residents and requires simple registration.",
+					Category = AnnouncementCategory.Announcement,
+					Date = new DateTime(2025, 10, 18),
+					Location = "15 locations citywide",
+					Priority = AnnouncementPriority.Normal,
+					CreatedAt = DateTime.Now,
+					CreatedBy = "System"
 				}
 			};
 

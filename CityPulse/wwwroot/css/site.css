@@ -6,6 +6,17 @@ html, body {
 	font-size: 14px;
 }
 
+/* Navbar Logo Styling */
+.navbar-logo {
+	height: 40px;
+	width: auto;
+	transition: transform 0.2s ease;
+}
+
+.navbar-logo:hover {
+	transform: scale(1.05);
+}
+
 @media (min-width: 768px) {
 	html {
 		font-size: 16px;
