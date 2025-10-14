@@ -4,7 +4,7 @@ using CityPulse.Services.Abstractions;
 
 namespace CityPulse.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : Controller   // TODO : Remove the business logic from this controller 
     {
         private readonly ILogger<AdminController> _logger;
         private readonly IAnnouncementService _announcementService;
@@ -54,7 +54,7 @@ namespace CityPulse.Controllers
             var viewModel = new AdminDashboardViewModel
             {
                 TotalAnnouncements = _announcementService.GetAllAnnouncements().Count,
-                RecentAnnouncements = _announcementService.GetRecentAnnouncements(5)
+                RecentAnnouncements = _announcementService.GetUpcomingAnnouncements(10)
             };
 
             return View(viewModel);

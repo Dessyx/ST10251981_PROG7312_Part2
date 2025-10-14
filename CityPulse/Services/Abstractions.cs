@@ -28,6 +28,8 @@ namespace CityPulse.Services.Abstractions
         List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category);
         List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate);
         List<Announcement> GetRecentAnnouncements(int count);
+        List<Announcement> GetRecentlyCreatedAnnouncements(int count);
+        List<Announcement> GetUpcomingAnnouncements(int count);
         List<Announcement> GetFeaturedAnnouncements();
         List<Announcement> SearchAnnouncements(string searchTerm);
         Announcement? GetAnnouncementById(Guid id);

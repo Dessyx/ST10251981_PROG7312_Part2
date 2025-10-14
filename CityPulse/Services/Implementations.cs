@@ -235,10 +235,28 @@ namespace CityPulse.Services
 			return results.OrderByDescending(a => a.Date).ToList();
 		}
 
-		public List<Announcement> GetRecentAnnouncements(int count)
-		{
-			return GetAllAnnouncements().Take(count).ToList();
-		}
+	public List<Announcement> GetRecentAnnouncements(int count)
+	{
+		return GetAllAnnouncements().Take(count).ToList();
+	}
+
+	public List<Announcement> GetRecentlyCreatedAnnouncements(int count)
+	{
+		return GetAllAnnouncements()
+			.OrderByDescending(a => a.CreatedAt)
+			.Take(count)
+			.ToList();
+	}
+
+	public List<Announcement> GetUpcomingAnnouncements(int count)
+	{
+		var today = DateTime.Now.Date;
+		return GetAllAnnouncements()
+			.Where(a => a.Date.Date >= today)
+			.OrderBy(a => a.Date)
+			.Take(count)
+			.ToList();
+	}
 
 		public List<Announcement> GetFeaturedAnnouncements()
 		{
