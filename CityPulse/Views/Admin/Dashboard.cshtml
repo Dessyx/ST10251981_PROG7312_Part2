@@ -3,182 +3,364 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container-fluid py-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
+<div class="admin-wrapper">
+    <!-- Sidebar Navigation -->
+    <nav class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0"><i class="bi bi-shield-check me-2"></i>Admin Panel</h5>
+                <a asp-action="Logout" class="btn btn-sm btn-outline-light" style="border-radius: 10px;" title="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+            <small class="text-muted">@Context.Session.GetString("AdminUsername")</small>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link active" data-target="dashboard-section">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link" data-target="verify-reports-section">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span>Verify Reports</span>
+                </a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a class="sidebar-nav-link" data-target="analytics-section">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="admin-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="content-section active">
+            <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="display-6 fw-bold text-primary">
-                        <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
-                    </h1>
-                    <p class="text-muted">Manage announcements and monitor system activity</p>
+                    <h2 class="fw-bold mb-1">Dashboard Overview</h2>
+                    <p class="text-muted mb-0">Welcome back! Here's what's happening today.</p>
                 </div>
-                <div>
-                    <a asp-action="AddAnnouncement" class="btn btn-primary me-2">
-                        <i class="bi bi-plus-circle me-1"></i>Add Announcement
-                    </a>
-                    <a asp-action="Logout" class="btn btn-outline-secondary">
-                        <i class="bi bi-box-arrow-right me-1"></i>Logout
-                    </a>
+                <a asp-action="AddAnnouncement" class="btn btn-dark" style="border-radius: 20px;">
+                    <i class="bi bi-plus-circle me-1"></i>Add Announcement
+                </a>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card stat-card border-primary shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small">Total Announcements</p>
+                                    <h2 class="fw-bold text-primary mb-0">@Model.TotalAnnouncements</h2>
+                                </div>
+                                <div>
+                                    <i class="bi bi-newspaper stat-icon text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card stat-card border-info shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small">Active Events</p>
+                                    <h2 class="fw-bold text-info mb-0">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Event)</h2>
+                                </div>
+                                <div>
+                                    <i class="bi bi-calendar-event stat-icon text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card stat-card border-success shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small">Service Updates</p>
+                                    <h2 class="fw-bold text-success mb-0">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.ServiceUpdate)</h2>
+                                </div>
+                                <div>
+                                    <i class="bi bi-tools stat-icon text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card stat-card border-danger shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 small">Emergency Alerts</p>
+                                    <h2 class="fw-bold text-danger mb-0">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Emergency)</h2>
+                                </div>
+                                <div>
+                                    <i class="bi bi-exclamation-triangle stat-icon text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Statistics Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card bg-primary text-white shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title text-white-50">Total Announcements</h6>
-                            <h2 class="fw-bold">@Model.TotalAnnouncements</h2>
+            <!-- Upcoming Announcements -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card table-card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-calendar-event me-2"></i>Upcoming Announcements
+                            </h5>
                         </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-newspaper display-4 opacity-75"></i>
+                        <div class="card-body">
+                            @if (Model.RecentAnnouncements.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Category</th>
+                                                <th>Date</th>
+                                                <th>Priority</th>
+                                                <th>Featured</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var announcement in Model.RecentAnnouncements)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@announcement.Title</strong>
+                                                        @if (announcement.IsFeatured)
+                                                        {
+                                                            <span class="badge bg-warning ms-2">Featured</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge @GetCategoryBadgeClass(announcement.Category)">
+                                                            @announcement.Category
+                                                        </span>
+                                                    </td>
+                                                    <td>@announcement.Date.ToString("MMM dd, yyyy")</td>
+                                                    <td>
+                                                        <span class="badge @GetPriorityBadgeClass(announcement.Priority)">
+                                                            @announcement.Priority
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        @if (announcement.IsFeatured)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted"></i>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="empty-state">
+                                    <i class="bi bi-calendar-x display-1"></i>
+                                    <h5 class="mt-3 fw-bold">No upcoming announcements</h5>
+                                    <p class="text-muted">All current announcements are in the past. Add a new one!</p>
+                                    <a asp-action="AddAnnouncement" class="btn btn-dark" style="border-radius: 20px;">
+                                        <i class="bi bi-plus-circle me-1"></i>Add Announcement
+                                    </a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card bg-success text-white shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title text-white-50">Active Events</h6>
-                            <h2 class="fw-bold">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Event)</h2>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-calendar-event display-4 opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
+        <!-- Verify Reports Section -->
+        <div id="verify-reports-section" class="content-section">
+            <div class="mb-4">
+                <h2 class="fw-bold mb-1">Verify Reported Issues</h2>  // TODO: I shall add this functionality in part 3 
+                <p class="text-muted mb-0">Review and verify community-reported issues</p>
             </div>
-        </div>
 
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card bg-warning text-dark shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title text-dark-50">Service Updates</h6>
-                            <h2 class="fw-bold">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.ServiceUpdate)</h2>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-tools display-4 opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card bg-danger text-white shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title text-white-50">Emergency Alerts</h6>
-                            <h2 class="fw-bold">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Emergency)</h2>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="bi bi-exclamation-triangle display-4 opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Upcoming Announcements -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
+            <div class="card table-card shadow-sm">
+                <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="bi bi-calendar-event me-2"></i>Upcoming Announcements
+                        <i class="bi bi-clipboard-check me-2"></i>Pending Verification
                     </h5>
                 </div>
                 <div class="card-body">
-                    @if (Model.RecentAnnouncements.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Category</th>
-                                        <th>Date</th>
-                                        <th>Priority</th>
-                                        <th>Featured</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var announcement in Model.RecentAnnouncements)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <strong>@announcement.Title</strong>
-                                                @if (announcement.IsFeatured)
-                                                {
-                                                    <span class="badge bg-warning ms-2">Featured</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <span class="badge @GetCategoryBadgeClass(announcement.Category)">
-                                                    @announcement.Category
-                                                </span>
-                                            </td>
-                                            <td>@announcement.Date.ToString("MMM dd, yyyy")</td>
-                                            <td>
-                                                <span class="badge @GetPriorityBadgeClass(announcement.Priority)">
-                                                    @announcement.Priority
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @if (announcement.IsFeatured)
-                                                {
-                                                    <i class="bi bi-star-fill text-warning"></i>
-                                                }
-                                                else
-                                                {
-                                                    <i class="bi bi-star text-muted"></i>
-                                                }
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary" title="View Details">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-secondary" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-4">
-                            <i class="bi bi-calendar-x display-1 text-muted"></i>
-                            <h5 class="mt-3">No upcoming announcements</h5>
-                            <p class="text-muted">All current announcements are in the past. Add a new one!</p>
-                            <a asp-action="AddAnnouncement" class="btn btn-primary">
-                                <i class="bi bi-plus-circle me-1"></i>Add Announcement
-                            </a>
-                        </div>
-                    }
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Date Reported</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>CP-20251014-1234</strong></td>
+                                    <td><span class="badge bg-warning text-dark">Roads</span></td>
+                                    <td>Cape Town CBD</td>
+                                    <td>Oct 12, 2025</td>
+                                    <td><span class="badge bg-info">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success" style="border-radius: 10px;">
+                                            <i class="bi bi-check-circle"></i> Verify
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" style="border-radius: 10px;">
+                                            <i class="bi bi-x-circle"></i> Reject
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CP-20251014-5678</strong></td>
+                                    <td><span class="badge bg-primary">Water</span></td>
+                                    <td>Johannesburg North</td>
+                                    <td>Oct 13, 2025</td>
+                                    <td><span class="badge bg-info">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success" style="border-radius: 10px;">
+                                            <i class="bi bi-check-circle"></i> Verify
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" style="border-radius: 10px;">
+                                            <i class="bi bi-x-circle"></i> Reject
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CP-20251013-9012</strong></td>
+                                    <td><span class="badge bg-danger">Sanitation</span></td>
+                                    <td>Durban Central</td>
+                                    <td>Oct 13, 2025</td>
+                                    <td><span class="badge bg-info">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success" style="border-radius: 10px;">
+                                            <i class="bi bi-check-circle"></i> Verify
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" style="border-radius: 10px;">
+                                            <i class="bi bi-x-circle"></i> Reject
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Analytics Section -->
+        <div id="analytics-section" class="content-section">  // TODO: I shall add this functionality in part 3 
+            <div class="mb-4">
+                <h2 class="fw-bold mb-1">Analytics & Reports</h2>
+                <p class="text-muted mb-0">Track system performance and user engagement</p>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card table-card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-pie-chart me-2"></i>Reports by Category
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card table-card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-graph-up me-2"></i>Monthly Trends
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="trendChart" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card stat-card border-primary shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body text-center">
+                            <i class="bi bi-file-earmark-text text-primary" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mt-2">234</h3>
+                            <p class="text-muted mb-0">Total Reports</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card stat-card border-success shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body text-center">
+                            <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mt-2">189</h3>
+                            <p class="text-muted mb-0">Resolved</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card stat-card border-warning shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body text-center">
+                            <i class="bi bi-clock-history text-warning" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mt-2">32</h3>
+                            <p class="text-muted mb-0">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card stat-card border-info shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people text-info" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mt-2">1,245</h3>
+                            <p class="text-muted mb-0">Active Users</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true">
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/admin-dashboard.js" asp-append-version="true"></script>
+}
 
 @functions {
     string GetCategoryBadgeClass(CityPulse.Models.AnnouncementCategory category)
@@ -188,7 +370,7 @@
             CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary",
             CityPulse.Models.AnnouncementCategory.Event => "bg-info",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success",
-            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning",
+            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning text-dark",
             CityPulse.Models.AnnouncementCategory.Program => "bg-secondary",
             CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger",
             _ => "bg-secondary"
@@ -200,8 +382,8 @@
         return priority switch
         {
             CityPulse.Models.AnnouncementPriority.Critical => "bg-danger",
-            CityPulse.Models.AnnouncementPriority.High => "bg-warning",
-            CityPulse.Models.AnnouncementPriority.Normal => "bg-primary",
+            CityPulse.Models.AnnouncementPriority.High => "bg-warning text-dark",
+            CityPulse.Models.AnnouncementPriority.Normal => "bg-info",
             CityPulse.Models.AnnouncementPriority.Low => "bg-secondary",
             _ => "bg-secondary"
         };
