@@ -75,9 +75,13 @@ ASP.NET Core MVC, C#, JavaScript, Leaflet.js, Bootstrap 5, HTML5, CSS3
 1. Report municipal issues via a multi-step form
 2. Select location from search suggestions or map
 3. Upload images/documents with reports
-4. 4.Track report progress in real-time
-5.Verify reports as “Still a Problem” or “Resolved”
-6.View ward-level statistics and interactive map pins
+4. Track report progress in real-time
+5. Verify reports as “Still a Problem” or “Resolved”
+6. View ward-level statistics and interactive map pins
+7. Search for announcements/news using keywords from titles or descriptions
+8. Filter announcements by category and date range
+9. View a variety of announcements
+10. Admins can login and create announcements 
 
 ### Additional Features:
 
@@ -85,6 +89,8 @@ ASP.NET Core MVC, C#, JavaScript, Leaflet.js, Bootstrap 5, HTML5, CSS3
 - Styled buttons for clear navigation (Back, Next, Submit)
 - Responsive design for mobile and desktop
 - Custom in-memory structures (DoublyLinkedList, Queue) for attachments and uploads
+
+## Data Structures
 
 
 ## 📺 YOUTUBE LINK:
