@@ -24,6 +24,7 @@ namespace CityPulse.Services.Abstractions
     public interface IAnnouncementService
     {
         void AddAnnouncement(Announcement announcement);
+        Announcement CreateAnnouncementFromViewModel(AnnouncementViewModel viewModel, string createdBy);
         List<Announcement> GetAllAnnouncements();
         List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category);
         List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate);
@@ -32,7 +33,9 @@ namespace CityPulse.Services.Abstractions
         List<Announcement> GetUpcomingAnnouncements(int count);
         List<Announcement> GetFeaturedAnnouncements();
         List<Announcement> SearchAnnouncements(string searchTerm);
+        List<Announcement> SearchWithFilters(string? searchTerm, string? category, DateTime? dateFrom, DateTime? dateTo, int maxResults);
         Announcement? GetAnnouncementById(Guid id);
+        AdminDashboardViewModel GetDashboardViewModel();
         HashSet<string> GetUniqueCategories();
         HashSet<DateTime> GetUniqueDates();
         void SeedDefaultData();

@@ -23,25 +23,8 @@ namespace CityPulse.Controllers
         [HttpGet]
         public IActionResult Search(string searchTerm, string category, DateTime? dateFrom, DateTime? endDate)
         {
-            var announcements = _announcementService.GetAllAnnouncements();
-
-            // Apply filters
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                announcements = _announcementService.SearchAnnouncements(searchTerm);
-            }
-
-            if (!string.IsNullOrEmpty(category) && Enum.TryParse<CityPulse.Models.AnnouncementCategory>(category, out var categoryEnum))
-            {
-                announcements = announcements.Where(a => a.Category == categoryEnum).ToList();
-            }
-
-            if (dateFrom.HasValue && endDate.HasValue)
-            {
-                announcements = announcements.Where(a => a.Date >= dateFrom.Value && a.Date <= endDate.Value).ToList();
-            }
-
-            return Json(new { announcements = announcements.Take(20) });
+            var announcements = _announcementService.SearchWithFilters(searchTerm, category, dateFrom, endDate, 20);
+            return Json(new { announcements });
         }
     }
 }

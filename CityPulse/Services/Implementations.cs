@@ -258,6 +258,64 @@ namespace CityPulse.Services
 			.ToList();
 	}
 
+	public Announcement CreateAnnouncementFromViewModel(AnnouncementViewModel viewModel, string createdBy)
+	{
+		var announcement = new Announcement
+		{
+			Id = Guid.NewGuid(),
+			Title = viewModel.Title,
+			Description = viewModel.Description,
+			Category = viewModel.Category,
+			Date = viewModel.Date,
+			Location = viewModel.Location,
+			Duration = viewModel.Duration,
+			AgeGroup = viewModel.AgeGroup,
+			AffectedAreas = viewModel.AffectedAreas,
+			ContactInfo = viewModel.ContactInfo,
+			IsFeatured = viewModel.IsFeatured,
+			Priority = viewModel.Priority,
+			CreatedAt = DateTime.Now,
+			CreatedBy = createdBy
+		};
+
+		AddAnnouncement(announcement);
+		return announcement;
+	}
+
+	public List<Announcement> SearchWithFilters(string? searchTerm, string? category, DateTime? dateFrom, DateTime? dateTo, int maxResults)
+	{
+		var announcements = GetAllAnnouncements();
+
+		// Apply search term filter
+		if (!string.IsNullOrEmpty(searchTerm))
+		{
+			announcements = SearchAnnouncements(searchTerm);
+		}
+
+		// Apply category filter
+		if (!string.IsNullOrEmpty(category) && Enum.TryParse<AnnouncementCategory>(category, out var categoryEnum))
+		{
+			announcements = announcements.Where(a => a.Category == categoryEnum).ToList();
+		}
+
+		// Apply date range filter
+		if (dateFrom.HasValue && dateTo.HasValue)
+		{
+			announcements = announcements.Where(a => a.Date >= dateFrom.Value && a.Date <= dateTo.Value).ToList();
+		}
+
+		return announcements.Take(maxResults).ToList();
+	}
+
+	public AdminDashboardViewModel GetDashboardViewModel()
+	{
+		return new AdminDashboardViewModel
+		{
+			TotalAnnouncements = GetAllAnnouncements().Count,
+			RecentAnnouncements = GetUpcomingAnnouncements(10)
+		};
+	}
+
 		public List<Announcement> GetFeaturedAnnouncements()
 		{
 			var featured = new List<Announcement>();

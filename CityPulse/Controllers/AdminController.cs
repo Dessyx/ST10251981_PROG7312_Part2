@@ -4,7 +4,7 @@ using CityPulse.Services.Abstractions;
 
 namespace CityPulse.Controllers
 {
-    public class AdminController : Controller   // TODO : Remove the business logic from this controller 
+    public class AdminController : Controller 
     {
         private readonly ILogger<AdminController> _logger;
         private readonly IAnnouncementService _announcementService;
@@ -51,12 +51,7 @@ namespace CityPulse.Controllers
                 return RedirectToAction("Login");
             }
 
-            var viewModel = new AdminDashboardViewModel
-            {
-                TotalAnnouncements = _announcementService.GetAllAnnouncements().Count,
-                RecentAnnouncements = _announcementService.GetUpcomingAnnouncements(10)
-            };
-
+            var viewModel = _announcementService.GetDashboardViewModel();
             return View(viewModel);
         }
 
@@ -82,26 +77,8 @@ namespace CityPulse.Controllers
 
             if (ModelState.IsValid)
             {
-                var announcement = new Announcement
-                {
-                    Id = Guid.NewGuid(),
-                    Title = model.Title,
-                    Description = model.Description,
-                    Category = model.Category,
-                    Date = model.Date,
-                    Location = model.Location,
-                    Duration = model.Duration,
-                    AgeGroup = model.AgeGroup,
-                    AffectedAreas = model.AffectedAreas,
-                    ContactInfo = model.ContactInfo,
-                    IsFeatured = model.IsFeatured,
-                    Priority = model.Priority,
-                    CreatedAt = DateTime.Now,
-                    CreatedBy = "Admin"
-                };
-
-                _announcementService.AddAnnouncement(announcement);
-                TempData["SuccessMessage"] = "Announcement added successfully!";
+                var username = HttpContext.Session.GetString("AdminUsername") ?? "Admin";
+                _announcementService.CreateAnnouncementFromViewModel(model, username);
                 return RedirectToAction("Dashboard");
             }
 
