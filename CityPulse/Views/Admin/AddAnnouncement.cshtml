@@ -3,229 +3,311 @@
     ViewData["Title"] = "Add Announcement";
 }
 
-<div class="container-fluid py-4">
+<div class="container-fluid py-3">
     <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="display-6 fw-bold text-primary">
-                        <i class="bi bi-plus-circle me-2"></i>Add New Announcement
-                    </h1>
-                    <p class="text-muted">Create and publish a new announcement or event</p>
-                </div>
-                <div>
-                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
-                    </a>
-                </div>
+    <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Announcement
+                </h3>
             </div>
+            <a asp-action="Dashboard" class="btn btn-outline-dark" style="border-radius: 15px;">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
         </div>
     </div>
 
     <!-- Form -->
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <form asp-action="AddAnnouncement" method="post" id="announcementForm">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    <div class="row">
+        <div class="col-12">
+            <form asp-action="AddAnnouncement" method="post" id="announcementForm">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                        <!-- Basic Information -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <h5 class="fw-bold text-primary mb-3">
-                                    <i class="bi bi-info-circle me-2"></i>Basic Information
-                                </h5>
+                <!-- Progress Tracker Inside Form -->
+                <div class="card shadow-sm mb-3" style="border-radius: 15px;">
+                    <div class="card-body p-3">
+                        <div class="form-progress-tracker">
+                            <div class="progress-step active" data-step="1">
+                                <div class="progress-step-circle">
+                                    <i class="bi bi-bookmark-check"></i>
+                                </div>
+                                <span class="progress-step-label">Category</span>
+                                <div class="progress-step-line"></div>
                             </div>
-
-                            <div class="col-12 col-md-6">
-                                <label asp-for="Title" class="form-label fw-semibold">Title *</label>
-                                <input asp-for="Title" class="form-control" placeholder="Enter announcement title" />
-                                <span asp-validation-for="Title" class="text-danger"></span>
+                            <div class="progress-step" data-step="2">
+                                <div class="progress-step-circle">
+                                    <i class="bi bi-info-circle"></i>
+                                </div>
+                                <span class="progress-step-label">Basic Info</span>
+                                <div class="progress-step-line"></div>
                             </div>
-
-                            <div class="col-12 col-md-6">
-                                <label asp-for="Category" class="form-label fw-semibold">Category *</label>
-                                <select asp-for="Category" class="form-select" id="categorySelect" onchange="updateFormFields()">
-                                    <option value="">Select Category</option>
-                                    <option value="Announcement">Announcement</option>
-                                    <option value="Event">Community Event</option>
-                                    <option value="ServiceUpdate">Service Update</option>
-                                    <option value="Notice">Public Notice</option>
-                                    <option value="Program">Program</option>
-                                    <option value="Emergency">Emergency Alert</option>
-                                </select>
-                                <span asp-validation-for="Category" class="text-danger"></span>
+                            <div class="progress-step" data-step="3">
+                                <div class="progress-step-circle">
+                                    <i class="bi bi-gear"></i>
+                                </div>
+                                <span class="progress-step-label">Details</span>
+                                <div class="progress-step-line"></div>
                             </div>
-
-                            <div class="col-12">
-                                <label asp-for="Description" class="form-label fw-semibold">Description *</label>
-                                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter detailed description"></textarea>
-                                <span asp-validation-for="Description" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <label asp-for="Date" class="form-label fw-semibold">Date *</label>
-                                <input asp-for="Date" class="form-control" type="datetime-local" />
-                                <span asp-validation-for="Date" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <label asp-for="Priority" class="form-label fw-semibold">Priority</label>
-                                <select asp-for="Priority" class="form-select">
-                                    <option value="Low">Low</option>
-                                    <option value="Normal" selected>Normal</option>
-                                    <option value="High">High</option>
-                                    <option value="Critical">Critical</option>
-                                </select>
-                                <span asp-validation-for="Priority" class="text-danger"></span>
+                            <div class="progress-step" data-step="4">
+                                <div class="progress-step-circle">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <span class="progress-step-label">Review</span>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Dynamic Fields Based on Category -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <h5 class="fw-bold text-primary mb-3">
-                                    <i class="bi bi-gear me-2"></i>Category-Specific Information
-                                </h5>
+                <!-- Step 1: Category Selection -->
+                <div class="form-step active" data-step="1">
+                    <div class="card shadow-sm" style="border-radius: 15px; min-height: 350px;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold text-dark mb-3">
+                                <i class="bi bi-bookmark-check me-2"></i>Select Category
+                            </h5>
+
+                            <!-- Category Guidelines -->
+                            <div class="category-guidelines mb-3 p-3" style="background-color: #f8f9fa; border-radius: 10px;">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="d-flex align-items-center">
+                                                <span style="width: 10px; height: 10px; background-color: #007bff; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                                                <small style="font-size: 0.75rem;"><strong>Announcement</strong></small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span style="width: 10px; height: 10px; background-color: #17a2b8; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                                                <small style="font-size: 0.75rem;"><strong>Event</strong></small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span style="width: 10px; height: 10px; background-color: #28a745; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                                                <small style="font-size: 0.75rem;"><strong>Service Update</strong></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="d-flex align-items-center">
+                                                <span style="width: 10px; height: 10px; background-color: #ffc107; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                                                <small style="font-size: 0.75rem;"><strong>Notice</strong></small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span style="width: 10px; height: 10px; background-color: #6c757d; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                                                <small style="font-size: 0.75rem;"><strong>Program</strong></small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span style="width: 10px; height: 10px; background-color: #dc3545; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                                                <small style="font-size: 0.75rem;"><strong>Emergency</strong></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
+                            <div class="mb-3">
+                                <label asp-for="Category" class="form-label fw-semibold mb-2">Category *</label>
+                                <select asp-for="Category" class="form-select" id="categorySelect" style="border-radius: 15px; padding: 0.6rem; position: relative; z-index: 200;">
+                                    <option value="">Choose a category...</option>
+                                    <option value="Announcement">Announcement</option>
+                                    <option value="Event">Event</option>
+                                    <option value="ServiceUpdate">Service Update</option>
+                                    <option value="Notice">Notice</option>
+                                    <option value="Program">Program</option>
+                                    <option value="Emergency">Emergency</option>
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger small"></span>
+                            </div>
+
+                            <div class="flex-grow-1"></div>
+
+                            <div class="step-navigation mt-auto">
+                                <div></div>
+                                <button type="button" class="btn btn-dark next-step" style="border-radius: 15px;" disabled>
+                                    Next <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Basic Information -->
+                <div class="form-step" data-step="2">
+                    <div class="card shadow-sm" style="border-radius: 15px; min-height: 350px;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold text-dark mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                            </h5>
+                            <div class="row g-3 flex-grow-1">
+                                <div class="col-12">
+                                    <label asp-for="Title" class="form-label fw-semibold mb-2">Title *</label>
+                                    <input asp-for="Title" class="form-control" id="titleInput" placeholder="Enter announcement title" style="border-radius: 15px; padding: 0.6rem;" />
+                                    <div class="invalid-feedback">Title must be at least 5 characters</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label asp-for="Description" class="form-label fw-semibold mb-2">Description *</label>
+                                    <textarea asp-for="Description" class="form-control" id="descriptionInput" rows="3" placeholder="Enter detailed description" style="border-radius: 15px; padding: 0.6rem;"></textarea>
+                                    <div class="invalid-feedback">Description must be at least 20 characters</div>
+                                </div>
+
+                                <div class="col-6">
+                                    <label asp-for="Date" class="form-label fw-semibold mb-2">Date *</label>
+                                    <input asp-for="Date" class="form-control" id="dateInput" type="datetime-local" style="border-radius: 15px; padding: 0.6rem;" />
+                                    <div class="invalid-feedback">Select a future date</div>
+                                </div>
+
+                                <div class="col-6">
+                                    <label asp-for="Priority" class="form-label fw-semibold mb-2">Priority</label>
+                                    <select asp-for="Priority" class="form-select" style="border-radius: 15px; padding: 0.6rem;">
+                                        <option value="Low">Low</option>
+                                        <option value="Normal" selected>Normal</option>
+                                        <option value="High">High</option>
+                                        <option value="Critical">Critical</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="step-navigation">
+                                <button type="button" class="btn btn-outline-dark prev-step" style="border-radius: 20px;">
+                                    <i class="bi bi-arrow-left me-1"></i> Back
+                                </button>
+                                <button type="button" class="btn btn-dark next-step" style="border-radius: 20px;">
+                                    Next <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Category-Specific Information -->
+                <div class="form-step" data-step="3">
+                    <div class="card shadow-sm" style="border-radius: 15px; min-height: 350px;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold text-dark mb-3">
+                                <i class="bi bi-gear me-2"></i>Category-Specific Information
+                            </h5>
+                            <div class="row g-3 flex-grow-1">
+
                             <!-- Location Field (for Events, Programs, Notices) -->
-                            <div class="col-12 col-md-6" id="locationField" style="display: none;">
-                                <label asp-for="Location" class="form-label fw-semibold">
+                            <div class="col-6" id="locationField" style="display: none;">
+                                <label asp-for="Location" class="form-label fw-semibold mb-2">
                                     <i class="bi bi-geo-alt me-1"></i>Location
                                 </label>
-                                <input asp-for="Location" class="form-control" placeholder="Enter location" />
-                                <span asp-validation-for="Location" class="text-danger"></span>
+                                <input asp-for="Location" class="form-control" placeholder="Location" style="border-radius: 15px; padding: 0.6rem;" />
                             </div>
 
                             <!-- Duration Field (for Events, Programs, Notices) -->
-                            <div class="col-12 col-md-6" id="durationField" style="display: none;">
-                                <label asp-for="Duration" class="form-label fw-semibold">
+                            <div class="col-6" id="durationField" style="display: none;">
+                                <label asp-for="Duration" class="form-label fw-semibold mb-2">
                                     <i class="bi bi-clock me-1"></i>Duration
                                 </label>
-                                <input asp-for="Duration" class="form-control" placeholder="e.g., 8:00 AM - 2:00 PM" />
-                                <span asp-validation-for="Duration" class="text-danger"></span>
+                                <input asp-for="Duration" class="form-control" placeholder="8:00 AM - 2:00 PM" style="border-radius: 15px; padding: 0.6rem;" />
                             </div>
 
                             <!-- Age Group Field (for Programs) -->
-                            <div class="col-12 col-md-6" id="ageGroupField" style="display: none;">
-                                <label asp-for="AgeGroup" class="form-label fw-semibold">
+                            <div class="col-6" id="ageGroupField" style="display: none;">
+                                <label asp-for="AgeGroup" class="form-label fw-semibold mb-2">
                                     <i class="bi bi-people me-1"></i>Age Group
                                 </label>
-                                <input asp-for="AgeGroup" class="form-control" placeholder="e.g., 18-35 years" />
-                                <span asp-validation-for="AgeGroup" class="text-danger"></span>
+                                <input asp-for="AgeGroup" class="form-control" placeholder="18-35 years" style="border-radius: 15px; padding: 0.6rem;" />
                             </div>
 
                             <!-- Affected Areas Field (for Notices, Announcements, Emergency) -->
                             <div class="col-12" id="affectedAreasField" style="display: none;">
-                                <label asp-for="AffectedAreas" class="form-label fw-semibold">
+                                <label asp-for="AffectedAreas" class="form-label fw-semibold mb-2">
                                     <i class="bi bi-map me-1"></i>Affected Areas
                                 </label>
-                                <input asp-for="AffectedAreas" class="form-control" placeholder="Enter affected areas" />
-                                <span asp-validation-for="AffectedAreas" class="text-danger"></span>
+                                <input asp-for="AffectedAreas" class="form-control" placeholder="Affected areas" style="border-radius: 15px; padding: 0.6rem;" />
                             </div>
 
                             <!-- Contact Information Field (for Programs, Events) -->
                             <div class="col-12" id="contactInfoField" style="display: none;">
-                                <label asp-for="ContactInfo" class="form-label fw-semibold">
+                                <label asp-for="ContactInfo" class="form-label fw-semibold mb-2">
                                     <i class="bi bi-telephone me-1"></i>Contact Information
                                 </label>
-                                <input asp-for="ContactInfo" class="form-control" placeholder="Enter contact details" />
-                                <span asp-validation-for="ContactInfo" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <!-- Additional Options -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <h5 class="fw-bold text-primary mb-3">
-                                    <i class="bi bi-sliders me-2"></i>Additional Options
-                                </h5>
+                                <input asp-for="ContactInfo" class="form-control" placeholder="Contact details" style="border-radius: 15px; padding: 0.6rem;" />
                             </div>
 
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input asp-for="IsFeatured" class="form-check-input" type="checkbox" />
-                                    <label asp-for="IsFeatured" class="form-check-label fw-semibold">
-                                        <i class="bi bi-star me-1"></i>Featured Announcement
-                                    </label>
-                                    <div class="form-text">Featured announcements appear prominently on the news page</div>
-                                </div>
                             </div>
-                        </div>
 
-                        <!-- Action Buttons -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="d-flex gap-2 justify-content-end">
-                                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
-                                        <i class="bi bi-x-circle me-1"></i>Cancel
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-circle me-1"></i>Create Announcement
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Category Help -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3">
-                        <i class="bi bi-info-circle me-2"></i>Category Guidelines
-                    </h6>
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex align-items-start">
-                                <span class="badge bg-primary me-2">Announcement</span>
-                                <small class="text-muted">General municipal announcements and updates</small>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex align-items-start">
-                                <span class="badge bg-info me-2">Event</span>
-                                <small class="text-muted">Community events, festivals, and gatherings</small>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex align-items-start">
-                                <span class="badge bg-success me-2">Service Update</span>
-                                <small class="text-muted">Updates about municipal services and infrastructure</small>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex align-items-start">
-                                <span class="badge bg-warning me-2">Notice</span>
-                                <small class="text-muted">Public notices, maintenance schedules, and warnings</small>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex align-items-start">
-                                <span class="badge bg-secondary me-2">Program</span>
-                                <small class="text-muted">Municipal programs, workshops, and initiatives</small>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="d-flex align-items-start">
-                                <span class="badge bg-danger me-2">Emergency</span>
-                                <small class="text-muted">Emergency alerts and critical safety information</small>
+                            <div class="step-navigation mt-auto">
+                                <button type="button" class="btn btn-outline-dark prev-step" style="border-radius: 15px;">
+                                    <i class="bi bi-arrow-left me-1"></i> Back
+                                </button>
+                                <button type="button" class="btn btn-dark next-step" style="border-radius: 15px;">
+                                    Next <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Step 4: Review & Options -->
+                <div class="form-step" data-step="4">
+                    <div class="card shadow-sm" style="border-radius: 15px; min-height: 350px;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold text-dark mb-3">
+                                <i class="bi bi-check-circle me-2"></i>Review & Submit
+                            </h5>
+                            
+                            <div class="flex-grow-1">
+                                <div class="form-check mb-4">
+                                    <input asp-for="IsFeatured" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsFeatured" class="form-check-label">
+                                        <i class="bi bi-star me-1"></i>Featured Announcement
+                                    </label>
+                                    <div class="form-text small">Featured announcements appear prominently on the news page</div>
+                                </div>
+
+                                <div class="alert alert-info" style="border-radius: 15px;">
+                                    <h6 class="fw-bold mb-1"><i class="bi bi-info-circle me-2"></i>Ready to Create</h6>
+                                    <p class="mb-0 small">Click "Create Announcement" to publish your content.</p>
+                                </div>
+                            </div>
+
+                            <div class="step-navigation mt-auto">
+                                <button type="button" class="btn btn-outline-dark prev-step" style="border-radius: 15px;">
+                                    <i class="bi bi-arrow-left me-1"></i> Back
+                                </button>
+                                <button type="submit" class="btn btn-success" style="border-radius: 15px;">
+                                    <i class="bi bi-check-circle me-1"></i>Create Announcement
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-body text-center p-3">
+                <div class="mb-2">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold text-success mb-2">Success!</h5>
+                <p class="text-muted mb-3 small">Announcement created successfully</p>
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-sm btn-success" style="border-radius: 15px;">
+                        <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-dark" style="border-radius: 15px;" id="addAnotherBtn">
+                        <i class="bi bi-plus-circle me-1"></i>Add Another
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/add-announcement.css" asp-append-version="true">
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

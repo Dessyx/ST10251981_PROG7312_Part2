@@ -10,7 +10,7 @@ using CityPulse.Models;
 using CityPulse.Services.Abstractions;
 using System.Security.Cryptography;
 
-// ---------------------------------------- Implementation -------------------------------------------------
+// ---------------------------------------- Implementation class -------------------------------------------------
 namespace CityPulse.Services
 {
 
@@ -18,42 +18,46 @@ namespace CityPulse.Services
 	// Generate reference numbers for submitted reports
 	public sealed class ReferenceNumberService : IReferenceNumberService
 	{
-		public string CreateReference()
+		//-----------------------------------------------------------------------
+		public string CreateReference()  // creates a unique reference number
 		{
-		
-			var datePart = DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-			var randomPart = Random.Shared.Next(1000, 9999);
-			return $"CP-{datePart}-{randomPart}";
+			
+			var datePart = DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);  
+			var randomPart = Random.Shared.Next(1000, 9999);  
+			return $"CP-{datePart}-{randomPart}";  
 		}
 	}
 
 
     //-----------------------------------------------------------------------------
-	// Storing images an ddocuments
+	// Storing images and documents
     public sealed class LocalStorageService : IStorageService
 	{
-		private readonly string _root;
-		private static readonly long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
-		private static readonly Regex SafeName = new Regex("[^a-zA-Z0-9_.-]", RegexOptions.Compiled);
+		private readonly string _root;  
+		private static readonly long MaxFileSizeBytes = 5 * 1024 * 1024; 
+		private static readonly Regex SafeName = new Regex("[^a-zA-Z0-9_.-]", RegexOptions.Compiled);  
 
-		public LocalStorageService(IWebHostEnvironment env)
+		//-----------------------------------------------------------------------
+		public LocalStorageService(IWebHostEnvironment env)  
 		{
-			_root = Path.Combine(env.WebRootPath ?? "wwwroot", "uploads");
-			Directory.CreateDirectory(_root);
+			_root = Path.Combine(env.WebRootPath ?? "wwwroot", "uploads");  
+			Directory.CreateDirectory(_root);  
 		}
 
-		public async Task<Attachment> SaveAsync(IFormFile file)
+		//-----------------------------------------------------------------------
+		public async Task<Attachment> SaveAsync(IFormFile file)  
 		{
-			if (file == null || file.Length == 0) throw new InvalidOperationException("Empty file."); // Conditions
+			// Validate file
+			if (file == null || file.Length == 0) throw new InvalidOperationException("Empty file.");
 			if (file.Length > MaxFileSizeBytes) throw new InvalidOperationException("File exceeds 5 MB limit.");
 
-			var safeFileName = SafeName.Replace(Path.GetFileName(file.FileName), "_");
-			var uniqueName = $"{Guid.NewGuid():N}_{safeFileName}";
-			var fullPath = Path.Combine(_root, uniqueName);
+			var safeFileName = SafeName.Replace(Path.GetFileName(file.FileName), "_"); 
+			var uniqueName = $"{Guid.NewGuid():N}_{safeFileName}";  
+			var fullPath = Path.Combine(_root, uniqueName);  
 
 			await using (var stream = File.Create(fullPath))
 			{
-				await file.CopyToAsync(stream);
+				await file.CopyToAsync(stream);  
 			}
 
 			return new Attachment
@@ -74,41 +78,45 @@ namespace CityPulse.Services
 		private readonly IReferenceNumberService _referenceNumberService;
 		private readonly IStorageService _storageService;
 
+		//-----------------------------------------------------------------------
 		public IssueReportingService(IReferenceNumberService referenceNumberService, IStorageService storageService)
 		{
 			_referenceNumberService = referenceNumberService;
 			_storageService = storageService;
 		}
 
-		public async Task<IssueReport> CreateAsync(IssueReportCreateRequest request)
+		//-----------------------------------------------------------------------
+		public async Task<IssueReport> CreateAsync(IssueReportCreateRequest request)  // create new issue report
 		{
-			if (request == null) throw new ArgumentNullException(nameof(request));
+			if (request == null) throw new ArgumentNullException(nameof(request));  
+			
+			// Create issue report
 			var report = new IssueReport
 			{
-				ReferenceNumber = _referenceNumberService.CreateReference(),
+				ReferenceNumber = _referenceNumberService.CreateReference(),  // generate reference number
 				Location = request.Location,
 				Category = request.Category,
 				Description = request.Description
 			};
 
+			// Process uploaded files
 			while (request.UploadQueue.TryDequeue(out var file))
 			{
-				var saved = await _storageService.SaveAsync(file);
-				report.Attachments.AddLast(saved);
+				var saved = await _storageService.SaveAsync(file);  
+				report.Attachments.AddLast(saved);  
 			}
 
 			return report;
 		}
 
 
-        //-----------------------------------------------------------------------------
-		// Preset posible locations 
+        //-----------------------------------------------------------------------
         public CityPulse.Models.Queue<string> GetLocationSuggestions(string query)
 		{
-			var results = new CityPulse.Models.Queue<string>();
-			if (string.IsNullOrWhiteSpace(query)) return results;
+			var results = new CityPulse.Models.Queue<string>();  // queue for results
+			if (string.IsNullOrWhiteSpace(query)) return results;  
 
-			
+			// Seed location data 
 			var seeded = new DoublyLinkedList<string>();
 			seeded.AddLast("Cape Town CBD");
 			seeded.AddLast("Johannesburg North");
@@ -117,15 +125,16 @@ namespace CityPulse.Services
 			seeded.AddLast("Gqeberha");
 			seeded.AddLast("Bloemfontein");
 
+			// Search for matching locations
 			var node = seeded.Head;
 			query = query.Trim();
 			while (node != null)
 			{
-				if (node.Value.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+				if (node.Value.StartsWith(query, StringComparison.OrdinalIgnoreCase))  
 				{
-					results.Enqueue(node.Value);
+					results.Enqueue(node.Value); 
 				}
-				node = node.Next;
+				node = node.Next;  
 			}
 
 			return results;
@@ -157,10 +166,11 @@ namespace CityPulse.Services
 		// Queue for pending announcements (admin workflow)
 		private readonly System.Collections.Generic.Queue<Announcement> _pendingAnnouncements;
 
-		public AnnouncementService()
+		//-----------------------------------------------------------------------
+		public AnnouncementService()  // initialize announcement service
 		{
 			_announcementsByDate = new SortedDictionary<DateTime, List<Announcement>>();
-			_announcementsByCategory = new Dictionary<AnnouncementCategory, List<Announcement>>();
+			_announcementsByCategory = new Dictionary<AnnouncementCategory, List<Announcement>>();      // Initialise the data structures
 			_announcementsById = new Dictionary<Guid, Announcement>();
 			_searchIndex = new Dictionary<string, HashSet<Guid>>();
 			_uniqueCategories = new HashSet<string>();
@@ -169,97 +179,96 @@ namespace CityPulse.Services
 			_recentlyViewed = new Stack<Announcement>();
 			_pendingAnnouncements = new System.Collections.Generic.Queue<Announcement>();
 			
-			// Initialize category lists
+			// Initialize category lists for all announcement categories
 			foreach (AnnouncementCategory category in Enum.GetValues<AnnouncementCategory>())
 			{
 				_announcementsByCategory[category] = new List<Announcement>();
 				_uniqueCategories.Add(category.ToString());
 			}
 			
-			SeedDefaultData();
+			SeedDefaultData();  
 		}
 
-		public void AddAnnouncement(Announcement announcement)
+		//-----------------------------------------------------------------------
+		public void AddAnnouncement(Announcement announcement)  // add announcement to all data structures
 		{
-			// Add to primary storage
 			if (!_announcementsByDate.ContainsKey(announcement.Date.Date))
 			{
 				_announcementsByDate[announcement.Date.Date] = new List<Announcement>();
 			}
-			_announcementsByDate[announcement.Date.Date].Add(announcement);
-			
-			// Add to category index
+			_announcementsByDate[announcement.Date.Date].Add(announcement);			
 			_announcementsByCategory[announcement.Category].Add(announcement);
-			
-			// Add to ID index
 			_announcementsById[announcement.Id] = announcement;
-			
-			// Add to search index
 			AddToSearchIndex(announcement);
-			
-			// Add to sets
 			_uniqueDates.Add(announcement.Date.Date);
-			
-			// Add to priority queue if featured or high priority
+
 			if (announcement.IsFeatured || announcement.Priority <= AnnouncementPriority.High)
 			{
 				_priorityQueue.Enqueue(announcement, (int)announcement.Priority);
 			}
 		}
 
-		public List<Announcement> GetAllAnnouncements()
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetAllAnnouncements()  // retrieve all announcements sorted by date
 		{
 			var allAnnouncements = new List<Announcement>();
 			foreach (var dateGroup in _announcementsByDate.Values)
 			{
-				allAnnouncements.AddRange(dateGroup);
+				allAnnouncements.AddRange(dateGroup);  
 			}
-			return allAnnouncements.OrderByDescending(a => a.Date).ToList();
+			return allAnnouncements.OrderByDescending(a => a.Date).ToList();  
 		}
 
-		public List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category)
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetAnnouncementsByCategory(AnnouncementCategory category)  // get announcements by category
 		{
 			return _announcementsByCategory[category].OrderByDescending(a => a.Date).ToList();
 		}
 
-		public List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate)
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetAnnouncementsByDateRange(DateTime startDate, DateTime endDate)  // get announcements within date range
 		{
 			var results = new List<Announcement>();
 			foreach (var kvp in _announcementsByDate)
 			{
-				if (kvp.Key >= startDate.Date && kvp.Key <= endDate.Date)
+				if (kvp.Key >= startDate.Date && kvp.Key <= endDate.Date)  
 				{
-					results.AddRange(kvp.Value);
+					results.AddRange(kvp.Value);  
 				}
 			}
 			return results.OrderByDescending(a => a.Date).ToList();
 		}
 
-	public List<Announcement> GetRecentAnnouncements(int count)
+	//-----------------------------------------------------------------------
+	public List<Announcement> GetRecentAnnouncements(int count)  // get most recent announcements
 	{
 		return GetAllAnnouncements().Take(count).ToList();
 	}
 
-	public List<Announcement> GetRecentlyCreatedAnnouncements(int count)
+	//-----------------------------------------------------------------------
+	public List<Announcement> GetRecentlyCreatedAnnouncements(int count)  // get recently created announcements
 	{
 		return GetAllAnnouncements()
-			.OrderByDescending(a => a.CreatedAt)
+			.OrderByDescending(a => a.CreatedAt)  // sort by creation time
 			.Take(count)
 			.ToList();
 	}
 
-	public List<Announcement> GetUpcomingAnnouncements(int count)
+	//-----------------------------------------------------------------------
+	public List<Announcement> GetUpcomingAnnouncements(int count)  // get upcoming future announcements
 	{
 		var today = DateTime.Now.Date;
 		return GetAllAnnouncements()
-			.Where(a => a.Date.Date >= today)
-			.OrderBy(a => a.Date)
+			.Where(a => a.Date.Date >= today)  
+			.OrderBy(a => a.Date)  
 			.Take(count)
 			.ToList();
 	}
 
-	public Announcement CreateAnnouncementFromViewModel(AnnouncementViewModel viewModel, string createdBy)
+	//-----------------------------------------------------------------------
+	public Announcement CreateAnnouncementFromViewModel(AnnouncementViewModel viewModel, string createdBy)  
 	{
+
 		var announcement = new Announcement
 		{
 			Id = Guid.NewGuid(),
@@ -278,50 +287,51 @@ namespace CityPulse.Services
 			CreatedBy = createdBy
 		};
 
-		AddAnnouncement(announcement);
+		AddAnnouncement(announcement);  
 		return announcement;
 	}
 
-	public List<Announcement> SearchWithFilters(string? searchTerm, string? category, DateTime? dateFrom, DateTime? dateTo, int maxResults)
+	//-----------------------------------------------------------------------
+	public List<Announcement> SearchWithFilters(string? searchTerm, string? category, DateTime? dateFrom, DateTime? dateTo, int maxResults)  // advanced search with filters
 	{
 		var announcements = GetAllAnnouncements();
 
-		// Apply search term filter
 		if (!string.IsNullOrEmpty(searchTerm))
 		{
 			announcements = SearchAnnouncements(searchTerm);
 		}
 
-		// Apply category filter
+		// category filter
 		if (!string.IsNullOrEmpty(category) && Enum.TryParse<AnnouncementCategory>(category, out var categoryEnum))
 		{
 			announcements = announcements.Where(a => a.Category == categoryEnum).ToList();
 		}
 
-		// Apply date range filter
+		// date range filter
 		if (dateFrom.HasValue && dateTo.HasValue)
 		{
 			announcements = announcements.Where(a => a.Date >= dateFrom.Value && a.Date <= dateTo.Value).ToList();
 		}
 
-		return announcements.Take(maxResults).ToList();
+		return announcements.Take(maxResults).ToList();  
 	}
 
-	public AdminDashboardViewModel GetDashboardViewModel()
+	//-----------------------------------------------------------------------
+	public AdminDashboardViewModel GetDashboardViewModel()  // get announcements for dashboard
 	{
 		return new AdminDashboardViewModel
 		{
-			TotalAnnouncements = GetAllAnnouncements().Count,
-			RecentAnnouncements = GetUpcomingAnnouncements(10)
+			TotalAnnouncements = GetAllAnnouncements().Count,  
+			RecentAnnouncements = GetUpcomingAnnouncements(10)  
 		};
 	}
 
-		public List<Announcement> GetFeaturedAnnouncements()
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetFeaturedAnnouncements()  // get featured announcements 
 		{
 			var featured = new List<Announcement>();
 			var tempQueue = new PriorityQueue<Announcement, int>();
 			
-			// Copy priority queue to avoid modifying original
 			while (_priorityQueue.Count > 0)
 			{
 				var announcement = _priorityQueue.Dequeue();
@@ -329,17 +339,18 @@ namespace CityPulse.Services
 				tempQueue.Enqueue(announcement, (int)announcement.Priority);
 			}
 			
-			// Restore priority queue
 			while (tempQueue.Count > 0)
 			{
 				var announcement = tempQueue.Dequeue();
 				_priorityQueue.Enqueue(announcement, (int)announcement.Priority);
 			}
 			
-			return featured.OrderBy(a => a.Priority).ToList();
+			return featured.OrderBy(a => a.Priority).ToList();  
 		}
 
-		public List<Announcement> SearchAnnouncements(string searchTerm)
+        //-----------------------------------------------------------------------
+        // Full-text search using inverted index to search announcements
+        public List<Announcement> SearchAnnouncements(string searchTerm)  
 		{
 			if (string.IsNullOrWhiteSpace(searchTerm))
 				return GetAllAnnouncements();
@@ -353,15 +364,16 @@ namespace CityPulse.Services
 				{
 					if (matchingIds.Count == 0)
 					{
-						matchingIds = new HashSet<Guid>(_searchIndex[word]);
+						matchingIds = new HashSet<Guid>(_searchIndex[word]);  
 					}
 					else
 					{
-						matchingIds.IntersectWith(_searchIndex[word]);
+						matchingIds.IntersectWith(_searchIndex[word]);  
 					}
 				}
 			}
 			
+			// Retrieve actual announcement objects
 			var results = new List<Announcement>();
 			foreach (var id in matchingIds)
 			{
@@ -374,41 +386,47 @@ namespace CityPulse.Services
 			return results.OrderByDescending(a => a.Date).ToList();
 		}
 
-		public Announcement? GetAnnouncementById(Guid id)
+		//-----------------------------------------------------------------------
+		public Announcement? GetAnnouncementById(Guid id)  // get specific announcement by ID
 		{
 			return _announcementsById.ContainsKey(id) ? _announcementsById[id] : null;
 		}
 
-		public HashSet<string> GetUniqueCategories()
+		//-----------------------------------------------------------------------
+		public HashSet<string> GetUniqueCategories()  // get all unique category names
 		{
 			return new HashSet<string>(_uniqueCategories);
 		}
 
-		public HashSet<DateTime> GetUniqueDates()
+		//-----------------------------------------------------------------------
+		public HashSet<DateTime> GetUniqueDates()  // get all unique announcement dates
 		{
 			return new HashSet<DateTime>(_uniqueDates);
 		}
 
-		private void AddToSearchIndex(Announcement announcement)
+		//-----------------------------------------------------------------------
+		private void AddToSearchIndex(Announcement announcement)  
 		{
-			var text = $"{announcement.Title} {announcement.Description}".ToLower();
-			var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			var text = $"{announcement.Title} {announcement.Description}".ToLower();  
+			var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);  
 			
+			// Add each word to the inverted index
 			foreach (var word in words)
 			{
-				var cleanWord = new string(word.Where(c => char.IsLetterOrDigit(c)).ToArray());
+				var cleanWord = new string(word.Where(c => char.IsLetterOrDigit(c)).ToArray());  // remove punctuation
 				if (!string.IsNullOrEmpty(cleanWord))
 				{
 					if (!_searchIndex.ContainsKey(cleanWord))
 					{
-						_searchIndex[cleanWord] = new HashSet<Guid>();
+						_searchIndex[cleanWord] = new HashSet<Guid>();  
 					}
-					_searchIndex[cleanWord].Add(announcement.Id);
+					_searchIndex[cleanWord].Add(announcement.Id);  // add announcement ID
 				}
 			}
 		}
 
-		public void SeedDefaultData()
+		//-----------------------------------------------------------------------
+		public void SeedDefaultData()  // populate with sample announcements
 		{
 			var defaultAnnouncements = new List<Announcement>
 			{
@@ -604,6 +622,7 @@ namespace CityPulse.Services
 				}
 			};
 
+			// Add all default announcements to storage
 			foreach (var announcement in defaultAnnouncements)
 			{
 				AddAnnouncement(announcement);
@@ -611,21 +630,23 @@ namespace CityPulse.Services
 		}
 	}
 
-
+	//-----------------------------------------------------------------------------
+	// Admin authentication service with secure password hashing
 	public sealed class AdminAuthenticationService : IAdminAuthenticationService
 	{
-		
-		private readonly Dictionary<string, string> _adminCredentials;
+		private readonly Dictionary<string, string> _adminCredentials;  
 
-		public AdminAuthenticationService()
+		//-----------------------------------------------------------------------
+		public AdminAuthenticationService()  
 		{
 			_adminCredentials = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			string hashedPassword = HashPassword("Admin@123!");
-			_adminCredentials.Add("admin", hashedPassword);
+			string hashedPassword = HashPassword("Admin@123!");  
+			_adminCredentials.Add("admin", hashedPassword);  
 		}
 
 
-		public bool ValidateCredentials(string username, string password)
+		//-----------------------------------------------------------------------
+		public bool ValidateCredentials(string username, string password)  
 		{
 			if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
 			{
@@ -634,60 +655,54 @@ namespace CityPulse.Services
 
 			if (_adminCredentials.TryGetValue(username, out var storedHashedPassword))
 			{
-				return VerifyPassword(password, storedHashedPassword);
+				return VerifyPassword(password, storedHashedPassword);  
 			}
 
-			return false;
+			return false;  
 		}
 
-		public bool UserExists(string username)
+		//-----------------------------------------------------------------------
+		public bool UserExists(string username)  // check if admin user exists
 		{
 			return _adminCredentials.ContainsKey(username);
 		}
 
-	
-		private static string HashPassword(string password)
+		//-----------------------------------------------------------------------
+		private static string HashPassword(string password)  // hash password using PBKDF2
 		{
-			// Generate a random salt
 			byte[] salt = RandomNumberGenerator.GetBytes(16);
 
-			// Hash the password with PBKDF2
 			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-			byte[] hash = pbkdf2.GetBytes(32);
+			byte[] hash = pbkdf2.GetBytes(32);  
 
-			// Combine salt and hash
 			byte[] hashBytes = new byte[48];
-			Array.Copy(salt, 0, hashBytes, 0, 16);
-			Array.Copy(hash, 0, hashBytes, 16, 32);
+			Array.Copy(salt, 0, hashBytes, 0, 16);  
+			Array.Copy(hash, 0, hashBytes, 16, 32);  
 
-			// Convert to base64 for storage
 			return Convert.ToBase64String(hashBytes);
 		}
 
-		
-		private static bool VerifyPassword(string password, string storedHash)
+		//-----------------------------------------------------------------------
+		private static bool VerifyPassword(string password, string storedHash)  // verify password against the stored hash
 		{
-			// Extract the bytes
+
 			byte[] hashBytes = Convert.FromBase64String(storedHash);
 
-			// Get the salt
 			byte[] salt = new byte[16];
 			Array.Copy(hashBytes, 0, salt, 0, 16);
 
-			// Hash the input password with the same salt
 			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
 			byte[] hash = pbkdf2.GetBytes(32);
 
-			// Compare the results
 			for (int i = 0; i < 32; i++)
 			{
 				if (hashBytes[i + 16] != hash[i])
 				{
-					return false;
+					return false;  
 				}
 			}
 
-			return true;
+			return true;  
 		}
 	}
 }

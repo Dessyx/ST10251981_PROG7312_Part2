@@ -245,7 +245,6 @@ body {
     padding: 40px;
     height: 100%;
     min-height: 480px;
-    text-align: center;
 }
 
 .admin-form .text-center {
@@ -277,6 +276,11 @@ body {
     font-weight: 500;
     color: #333;
     font-size: 14px;
+    text-align: left !important;
+}
+
+.admin-form .form-group label {
+    text-align: left !important;
 }
 
 .admin-form input {

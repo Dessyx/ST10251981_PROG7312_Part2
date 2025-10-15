@@ -90,7 +90,76 @@ ASP.NET Core MVC, C#, JavaScript, Leaflet.js, Bootstrap 5, HTML5, CSS3
 - Responsive design for mobile and desktop
 - Custom in-memory structures (DoublyLinkedList, Queue) for attachments and uploads
 
-## Data Structures
+## 🧩 Data Structures Used in CityPulse (with Reasons)
 
+### 🔧 Custom Data Structures (in Domain.cs)
+
+**DoublyLinkedList<T>**
+
+- **Used for:** Attachments in IssueReport
+- **Why:** Allows quick adding/removing files at both ends. You can move forwards and backwards easily without resizing like an array.
+- **Also used for:** Location suggestions seed data — shows our own custom structure and lets us loop through stored locations smoothly.
+
+**Queue<T> (Custom)**
+
+- **Used for:** File upload queue in IssueReportCreateRequest
+- **Why:** Works in a FIFO (First-In-First-Out) way, which fits how uploads are processed — the first file added is the first one uploaded.
+- **Also used for:** Returning location suggestions in the order they appear.
+
+### ⚙️ Built-in .NET Data Structures (in AnnouncementService)
+
+**SortedDictionary<DateTime, List<Announcement>>**
+
+- **Used for:** Main announcement storage.
+- **Why:** Keeps announcements sorted by date automatically and allows fast date searches (O(log n)).
+
+**Dictionary<AnnouncementCategory, List<Announcement>>**
+
+- **Used for:** Category-based lookup.
+- **Why:** Makes it quick (O(1)) to get announcements in a certain category like Events or Notices.
+
+**Dictionary<Guid, Announcement>**
+
+- **Used for:** Finding announcements by ID.
+- **Why:** Fast O(1) lookup for specific announcements without searching through all items.
+
+**Dictionary<string, HashSet<Guid>>**
+
+- **Used for:** Text search index.
+- **Why:** Maps keywords to announcement IDs for quick searching. You can find results fast by intersecting sets of matching words.
+
+**HashSet<string>**
+
+- **Used for:** Storing unique categories.
+- **Why:** Automatically avoids duplicates and allows instant O(1) checks for category existence.
+
+**HashSet<DateTime>**
+
+- **Used for:** Unique announcement dates.
+- **Why:** Ensures no duplicate dates and helps create a clean list for date filters or calendar views.
+
+**PriorityQueue<Announcement, int>**
+
+- **Used for:** Featured or high-priority announcements.
+- **Why:** Keeps announcements sorted by priority (Critical, High, etc.) so the most important ones show first.
+
+**Stack<Announcement>**
+
+- **Used for:** Tracking recently viewed announcements.
+- **Why:** LIFO (Last-In-First-Out) order matches how users revisit their last viewed announcements.
+
+**Queue<Announcement>**
+
+- **Used for:** Pending announcements waiting for admin approval.
+- **Why:** FIFO order ensures fairness — the first submitted is reviewed first.
+
+### 📋 Standard Collections
+
+**List<T>**
+
+- **Used for:** Return types and temporary collections.
+- **Why:** Easy to use, supports LINQ, allows indexing, and resizes automatically. It's great for MVC views.
+
+---
 
 ## 📺 YOUTUBE LINK:
