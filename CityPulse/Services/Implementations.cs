@@ -21,10 +21,10 @@ namespace CityPulse.Services
 		//-----------------------------------------------------------------------
 		public string CreateReference()  // creates a unique reference number
 		{
-			
-			var datePart = DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);  
-			var randomPart = Random.Shared.Next(1000, 9999);  
-			return $"CP-{datePart}-{randomPart}";  
+		
+			var datePart = DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+			var randomPart = Random.Shared.Next(1000, 9999);
+			return $"CP-{datePart}-{randomPart}";
 		}
 	}
 
@@ -33,31 +33,31 @@ namespace CityPulse.Services
 	// Storing images and documents
     public sealed class LocalStorageService : IStorageService
 	{
-		private readonly string _root;  
+		private readonly string _root;
 		private static readonly long MaxFileSizeBytes = 5 * 1024 * 1024; 
-		private static readonly Regex SafeName = new Regex("[^a-zA-Z0-9_.-]", RegexOptions.Compiled);  
+		private static readonly Regex SafeName = new Regex("[^a-zA-Z0-9_.-]", RegexOptions.Compiled);
 
 		//-----------------------------------------------------------------------
-		public LocalStorageService(IWebHostEnvironment env)  
+		public LocalStorageService(IWebHostEnvironment env)
 		{
-			_root = Path.Combine(env.WebRootPath ?? "wwwroot", "uploads");  
-			Directory.CreateDirectory(_root);  
+			_root = Path.Combine(env.WebRootPath ?? "wwwroot", "uploads");
+			Directory.CreateDirectory(_root);
 		}
 
 		//-----------------------------------------------------------------------
-		public async Task<Attachment> SaveAsync(IFormFile file)  
+		public async Task<Attachment> SaveAsync(IFormFile file)
 		{
 			// Validate file
 			if (file == null || file.Length == 0) throw new InvalidOperationException("Empty file.");
 			if (file.Length > MaxFileSizeBytes) throw new InvalidOperationException("File exceeds 5 MB limit.");
 
-			var safeFileName = SafeName.Replace(Path.GetFileName(file.FileName), "_"); 
-			var uniqueName = $"{Guid.NewGuid():N}_{safeFileName}";  
-			var fullPath = Path.Combine(_root, uniqueName);  
+			var safeFileName = SafeName.Replace(Path.GetFileName(file.FileName), "_");
+			var uniqueName = $"{Guid.NewGuid():N}_{safeFileName}";
+			var fullPath = Path.Combine(_root, uniqueName);
 
 			await using (var stream = File.Create(fullPath))
 			{
-				await file.CopyToAsync(stream);  
+				await file.CopyToAsync(stream);
 			}
 
 			return new Attachment
@@ -88,9 +88,9 @@ namespace CityPulse.Services
 		//-----------------------------------------------------------------------
 		public async Task<IssueReport> CreateAsync(IssueReportCreateRequest request)  // create new issue report
 		{
-			if (request == null) throw new ArgumentNullException(nameof(request));  
+			if (request == null) throw new ArgumentNullException(nameof(request));
 			
-			// Create issue report
+			
 			var report = new IssueReport
 			{
 				ReferenceNumber = _referenceNumberService.CreateReference(),  // generate reference number
@@ -99,11 +99,11 @@ namespace CityPulse.Services
 				Description = request.Description
 			};
 
-			// Process uploaded files
+		
 			while (request.UploadQueue.TryDequeue(out var file))
 			{
-				var saved = await _storageService.SaveAsync(file);  
-				report.Attachments.AddLast(saved);  
+				var saved = await _storageService.SaveAsync(file);
+				report.Attachments.AddLast(saved);
 			}
 
 			return report;
@@ -114,7 +114,7 @@ namespace CityPulse.Services
         public CityPulse.Models.Queue<string> GetLocationSuggestions(string query)
 		{
 			var results = new CityPulse.Models.Queue<string>();  // queue for results
-			if (string.IsNullOrWhiteSpace(query)) return results;  
+			if (string.IsNullOrWhiteSpace(query)) return results;
 
 			// Seed location data 
 			var seeded = new DoublyLinkedList<string>();
@@ -125,16 +125,16 @@ namespace CityPulse.Services
 			seeded.AddLast("Gqeberha");
 			seeded.AddLast("Bloemfontein");
 
-			// Search for matching locations
+		
 			var node = seeded.Head;
 			query = query.Trim();
 			while (node != null)
 			{
-				if (node.Value.StartsWith(query, StringComparison.OrdinalIgnoreCase))  
+				if (node.Value.StartsWith(query, StringComparison.OrdinalIgnoreCase))
 				{
-					results.Enqueue(node.Value); 
+					results.Enqueue(node.Value);
 				}
-				node = node.Next;  
+				node = node.Next;
 			}
 
 			return results;
@@ -179,14 +179,14 @@ namespace CityPulse.Services
 			_recentlyViewed = new Stack<Announcement>();
 			_pendingAnnouncements = new System.Collections.Generic.Queue<Announcement>();
 			
-			// Initialize category lists for all announcement categories
+		
 			foreach (AnnouncementCategory category in Enum.GetValues<AnnouncementCategory>())
 			{
 				_announcementsByCategory[category] = new List<Announcement>();
 				_uniqueCategories.Add(category.ToString());
 			}
 			
-			SeedDefaultData();  
+			SeedDefaultData();
 		}
 
 		//-----------------------------------------------------------------------
@@ -196,12 +196,12 @@ namespace CityPulse.Services
 			{
 				_announcementsByDate[announcement.Date.Date] = new List<Announcement>();
 			}
-			_announcementsByDate[announcement.Date.Date].Add(announcement);			
+			_announcementsByDate[announcement.Date.Date].Add(announcement);
 			_announcementsByCategory[announcement.Category].Add(announcement);
 			_announcementsById[announcement.Id] = announcement;
 			AddToSearchIndex(announcement);
 			_uniqueDates.Add(announcement.Date.Date);
-
+			
 			if (announcement.IsFeatured || announcement.Priority <= AnnouncementPriority.High)
 			{
 				_priorityQueue.Enqueue(announcement, (int)announcement.Priority);
@@ -214,9 +214,9 @@ namespace CityPulse.Services
 			var allAnnouncements = new List<Announcement>();
 			foreach (var dateGroup in _announcementsByDate.Values)
 			{
-				allAnnouncements.AddRange(dateGroup);  
+				allAnnouncements.AddRange(dateGroup);
 			}
-			return allAnnouncements.OrderByDescending(a => a.Date).ToList();  
+			return allAnnouncements.OrderByDescending(a => a.Date).ToList();
 		}
 
 		//-----------------------------------------------------------------------
@@ -231,9 +231,9 @@ namespace CityPulse.Services
 			var results = new List<Announcement>();
 			foreach (var kvp in _announcementsByDate)
 			{
-				if (kvp.Key >= startDate.Date && kvp.Key <= endDate.Date)  
+				if (kvp.Key >= startDate.Date && kvp.Key <= endDate.Date)
 				{
-					results.AddRange(kvp.Value);  
+					results.AddRange(kvp.Value);
 				}
 			}
 			return results.OrderByDescending(a => a.Date).ToList();
@@ -259,14 +259,14 @@ namespace CityPulse.Services
 	{
 		var today = DateTime.Now.Date;
 		return GetAllAnnouncements()
-			.Where(a => a.Date.Date >= today)  
-			.OrderBy(a => a.Date)  
+			.Where(a => a.Date.Date >= today)
+			.OrderBy(a => a.Date)
 			.Take(count)
 			.ToList();
 	}
 
 	//-----------------------------------------------------------------------
-	public Announcement CreateAnnouncementFromViewModel(AnnouncementViewModel viewModel, string createdBy)  
+	public Announcement CreateAnnouncementFromViewModel(AnnouncementViewModel viewModel, string createdBy)
 	{
 
 		var announcement = new Announcement
@@ -287,7 +287,7 @@ namespace CityPulse.Services
 			CreatedBy = createdBy
 		};
 
-		AddAnnouncement(announcement);  
+		AddAnnouncement(announcement);
 		return announcement;
 	}
 
@@ -313,7 +313,7 @@ namespace CityPulse.Services
 			announcements = announcements.Where(a => a.Date >= dateFrom.Value && a.Date <= dateTo.Value).ToList();
 		}
 
-		return announcements.Take(maxResults).ToList();  
+		return announcements.Take(maxResults).ToList();
 	}
 
 	//-----------------------------------------------------------------------
@@ -321,8 +321,8 @@ namespace CityPulse.Services
 	{
 		return new AdminDashboardViewModel
 		{
-			TotalAnnouncements = GetAllAnnouncements().Count,  
-			RecentAnnouncements = GetUpcomingAnnouncements(10)  
+			TotalAnnouncements = GetAllAnnouncements().Count,
+			RecentAnnouncements = GetUpcomingAnnouncements(10)
 		};
 	}
 
@@ -345,12 +345,12 @@ namespace CityPulse.Services
 				_priorityQueue.Enqueue(announcement, (int)announcement.Priority);
 			}
 			
-			return featured.OrderBy(a => a.Priority).ToList();  
+			return featured.OrderBy(a => a.Priority).ToList();
 		}
 
         //-----------------------------------------------------------------------
         // Full-text search using inverted index to search announcements
-        public List<Announcement> SearchAnnouncements(string searchTerm)  
+		public List<Announcement> SearchAnnouncements(string searchTerm)
 		{
 			if (string.IsNullOrWhiteSpace(searchTerm))
 				return GetAllAnnouncements();
@@ -364,11 +364,11 @@ namespace CityPulse.Services
 				{
 					if (matchingIds.Count == 0)
 					{
-						matchingIds = new HashSet<Guid>(_searchIndex[word]);  
+						matchingIds = new HashSet<Guid>(_searchIndex[word]);
 					}
 					else
 					{
-						matchingIds.IntersectWith(_searchIndex[word]);  
+						matchingIds.IntersectWith(_searchIndex[word]);
 					}
 				}
 			}
@@ -405,12 +405,11 @@ namespace CityPulse.Services
 		}
 
 		//-----------------------------------------------------------------------
-		private void AddToSearchIndex(Announcement announcement)  
+		private void AddToSearchIndex(Announcement announcement)
 		{
-			var text = $"{announcement.Title} {announcement.Description}".ToLower();  
-			var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);  
+			var text = $"{announcement.Title} {announcement.Description}".ToLower();
+			var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 			
-			// Add each word to the inverted index
 			foreach (var word in words)
 			{
 				var cleanWord = new string(word.Where(c => char.IsLetterOrDigit(c)).ToArray());  // remove punctuation
@@ -418,9 +417,9 @@ namespace CityPulse.Services
 				{
 					if (!_searchIndex.ContainsKey(cleanWord))
 					{
-						_searchIndex[cleanWord] = new HashSet<Guid>();  
+						_searchIndex[cleanWord] = new HashSet<Guid>();
 					}
-					_searchIndex[cleanWord].Add(announcement.Id);  // add announcement ID
+					_searchIndex[cleanWord].Add(announcement.Id);  
 				}
 			}
 		}
@@ -622,7 +621,6 @@ namespace CityPulse.Services
 				}
 			};
 
-			// Add all default announcements to storage
 			foreach (var announcement in defaultAnnouncements)
 			{
 				AddAnnouncement(announcement);
@@ -631,22 +629,22 @@ namespace CityPulse.Services
 	}
 
 	//-----------------------------------------------------------------------------
-	// Admin authentication service with secure password hashing
+	// Admin authentication service 
 	public sealed class AdminAuthenticationService : IAdminAuthenticationService
 	{
-		private readonly Dictionary<string, string> _adminCredentials;  
+		private readonly Dictionary<string, string> _adminCredentials;
 
 		//-----------------------------------------------------------------------
-		public AdminAuthenticationService()  
+		public AdminAuthenticationService()
 		{
 			_adminCredentials = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			string hashedPassword = HashPassword("Admin@123!");  
-			_adminCredentials.Add("admin", hashedPassword);  
+			string hashedPassword = HashPassword("Admin@123!");
+			_adminCredentials.Add("admin", hashedPassword);
 		}
 
 
 		//-----------------------------------------------------------------------
-		public bool ValidateCredentials(string username, string password)  
+		public bool ValidateCredentials(string username, string password)
 		{
 			if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
 			{
@@ -655,10 +653,10 @@ namespace CityPulse.Services
 
 			if (_adminCredentials.TryGetValue(username, out var storedHashedPassword))
 			{
-				return VerifyPassword(password, storedHashedPassword);  
+				return VerifyPassword(password, storedHashedPassword);
 			}
 
-			return false;  
+			return false;
 		}
 
 		//-----------------------------------------------------------------------
@@ -673,11 +671,11 @@ namespace CityPulse.Services
 			byte[] salt = RandomNumberGenerator.GetBytes(16);
 
 			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-			byte[] hash = pbkdf2.GetBytes(32);  
+			byte[] hash = pbkdf2.GetBytes(32);
 
 			byte[] hashBytes = new byte[48];
-			Array.Copy(salt, 0, hashBytes, 0, 16);  
-			Array.Copy(hash, 0, hashBytes, 16, 32);  
+			Array.Copy(salt, 0, hashBytes, 0, 16);
+			Array.Copy(hash, 0, hashBytes, 16, 32);
 
 			return Convert.ToBase64String(hashBytes);
 		}
@@ -698,11 +696,485 @@ namespace CityPulse.Services
 			{
 				if (hashBytes[i + 16] != hash[i])
 				{
-					return false;  
+					return false;
 				}
 			}
 
-			return true;  
+			return true;
+		}
+	}
+
+	//-----------------------------------------------------------------------------
+	// Recommendation service - analyzes user behavior and suggests relevant content
+	public sealed class RecommendationService : IRecommendationService
+	{
+		private readonly IAnnouncementService _announcementService;		
+		private readonly Dictionary<string, List<string>> _userSearchHistory;			
+		private readonly Dictionary<string, Dictionary<AnnouncementCategory, int>> _userCategoryPreferences;		
+		private readonly Dictionary<Guid, int> _announcementViewCounts;
+		private readonly Dictionary<string, HashSet<Guid>> _userViewedAnnouncements;
+		private readonly SortedDictionary<int, List<Guid>> _trendingAnnouncementsByViewCount;
+
+		//-----------------------------------------------------------------------
+		public RecommendationService(IAnnouncementService announcementService)
+		{
+			_announcementService = announcementService;
+			_userSearchHistory = new Dictionary<string, List<string>>();
+			_userCategoryPreferences = new Dictionary<string, Dictionary<AnnouncementCategory, int>>();
+			_announcementViewCounts = new Dictionary<Guid, int>();
+			_userViewedAnnouncements = new Dictionary<string, HashSet<Guid>>();
+			_trendingAnnouncementsByViewCount = new SortedDictionary<int, List<Guid>>();
+		}
+
+		//-----------------------------------------------------------------------
+		public void TrackSearch(string userId, string searchTerm, string? category)  // track user search activity
+		{
+			if (string.IsNullOrWhiteSpace(userId)) return;
+
+			if (!string.IsNullOrWhiteSpace(searchTerm))
+			{
+				if (!_userSearchHistory.ContainsKey(userId))
+				{
+					_userSearchHistory[userId] = new List<string>();
+				}
+				_userSearchHistory[userId].Add(searchTerm.ToLower());
+				
+
+				if (_userSearchHistory[userId].Count > 20)
+				{
+					_userSearchHistory[userId].RemoveAt(0);
+				}
+			}
+
+			// Track category preference
+			if (!string.IsNullOrWhiteSpace(category) && Enum.TryParse<AnnouncementCategory>(category, out var categoryEnum))
+			{
+				if (!_userCategoryPreferences.ContainsKey(userId))
+				{
+					_userCategoryPreferences[userId] = new Dictionary<AnnouncementCategory, int>();
+				}
+
+				if (!_userCategoryPreferences[userId].ContainsKey(categoryEnum))
+				{
+					_userCategoryPreferences[userId][categoryEnum] = 0;
+				}
+				_userCategoryPreferences[userId][categoryEnum]++;
+			}
+		}
+
+		//-----------------------------------------------------------------------
+		public void TrackView(string userId, Announcement announcement)  // track announcement views
+		{
+			if (string.IsNullOrWhiteSpace(userId) || announcement == null) return;
+
+			// Track view count for trending
+			if (!_announcementViewCounts.ContainsKey(announcement.Id))
+			{
+				_announcementViewCounts[announcement.Id] = 0;
+			}
+			var oldCount = _announcementViewCounts[announcement.Id];
+			_announcementViewCounts[announcement.Id]++;
+			var newCount = _announcementViewCounts[announcement.Id];
+
+
+			UpdateTrendingIndex(announcement.Id, oldCount, newCount);
+
+			if (!_userViewedAnnouncements.ContainsKey(userId))
+			{
+				_userViewedAnnouncements[userId] = new HashSet<Guid>();
+			}
+			_userViewedAnnouncements[userId].Add(announcement.Id);
+
+			if (!_userCategoryPreferences.ContainsKey(userId))
+			{
+				_userCategoryPreferences[userId] = new Dictionary<AnnouncementCategory, int>();
+			}
+			if (!_userCategoryPreferences[userId].ContainsKey(announcement.Category))
+			{
+				_userCategoryPreferences[userId][announcement.Category] = 0;
+			}
+			_userCategoryPreferences[userId][announcement.Category]++;
+		}
+
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetRecommendations(string userId, int count)  // get personalized recommendations
+		{
+			var allAnnouncements = _announcementService.GetAllAnnouncements();
+			var scoredRecommendations = new List<(Announcement announcement, double score)>();
+
+		
+			if (_userCategoryPreferences.ContainsKey(userId) && _userCategoryPreferences[userId].Any())
+			{
+				var preferences = _userCategoryPreferences[userId];
+				var maxPreference = preferences.Values.Max();
+			
+				foreach (var announcement in allAnnouncements)
+				{
+					double score = 0;
+					
+					if (preferences.ContainsKey(announcement.Category))
+					{
+					
+						score += (preferences[announcement.Category] / (double)maxPreference) * 100;
+					}
+
+				
+					if (announcement.IsFeatured)
+					{
+						score += 20;
+					}
+				
+					score += (4 - (int)announcement.Priority) * 5;				
+					score += GetViewCount(announcement.Id) * 2;
+				
+					if (announcement.Date >= DateTime.Now)
+					{
+						score += 10;
+					}
+				
+					if (_userSearchHistory.ContainsKey(userId))
+					{
+						foreach (var searchTerm in _userSearchHistory[userId])
+						{
+							if (announcement.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+							    announcement.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+							{
+								score += 15;
+							}
+						}
+					}
+
+					scoredRecommendations.Add((announcement, score));
+				}
+
+			
+				return scoredRecommendations
+					.OrderByDescending(r => r.score)
+					.Select(r => r.announcement)
+					.Take(count)
+					.ToList();
+			}
+			else
+			{
+			
+				var defaultRecs = new List<Announcement>();		
+				defaultRecs.AddRange(GetTrendingAnnouncements(3));						
+				defaultRecs.AddRange(_announcementService.GetUpcomingAnnouncements(3));
+				
+				return defaultRecs
+					.Distinct()
+					.OrderByDescending(a => a.IsFeatured)
+					.ThenBy(a => a.Priority)
+					.Take(count)
+					.ToList();
+			}
+		}
+
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetTrendingAnnouncements(int count)  // get trending announcements based on view counts
+		{
+			var trending = new List<Announcement>();
+
+		
+			foreach (var kvp in _trendingAnnouncementsByViewCount.Reverse())
+			{
+				foreach (var announcementId in kvp.Value)
+				{
+					var announcement = _announcementService.GetAnnouncementById(announcementId);
+					if (announcement != null)
+					{
+						trending.Add(announcement);
+						if (trending.Count >= count) return trending;
+					}
+				}
+			}
+
+		
+			if (trending.Count < count)
+			{
+				var upcoming = _announcementService.GetUpcomingAnnouncements(count - trending.Count);
+				trending.AddRange(upcoming.Where(u => !trending.Any(t => t.Id == u.Id)));
+			}
+
+			return trending.Take(count).ToList();
+		}
+
+		//-----------------------------------------------------------------------
+		public List<Announcement> GetRelatedAnnouncements(Announcement announcement, int count)  // get similar announcements
+		{
+			if (announcement == null) return new List<Announcement>();
+
+			var related = new HashSet<Announcement>();
+
+		
+			var sameCategory = _announcementService.GetAnnouncementsByCategory(announcement.Category)
+				.Where(a => a.Id != announcement.Id)
+				.Take(count);
+			
+			foreach (var ann in sameCategory)
+			{
+				related.Add(ann);
+			}
+
+		
+			var startDate = announcement.Date.AddDays(-7);
+			var endDate = announcement.Date.AddDays(7);
+			var similarDate = _announcementService.GetAnnouncementsByDateRange(startDate, endDate)
+				.Where(a => a.Id != announcement.Id)
+				.Take(count / 2);
+			
+			foreach (var ann in similarDate)
+			{
+				related.Add(ann);
+			}
+
+			if (!string.IsNullOrWhiteSpace(announcement.Location))
+			{
+				var sameLocation = _announcementService.GetAllAnnouncements()
+					.Where(a => a.Id != announcement.Id && 
+					           !string.IsNullOrWhiteSpace(a.Location) &&
+					           a.Location.Contains(announcement.Location, StringComparison.OrdinalIgnoreCase))
+					.Take(count / 3);
+				
+				foreach (var ann in sameLocation)
+				{
+					related.Add(ann);
+				}
+			}
+
+			var similarPriority = _announcementService.GetAllAnnouncements()
+				.Where(a => a.Id != announcement.Id && 
+				           (a.Priority == announcement.Priority || 
+				            (a.IsFeatured && announcement.IsFeatured)))
+				.Take(count / 3);
+			
+			foreach (var ann in similarPriority)
+			{
+				related.Add(ann);
+			}
+
+			return related
+				.OrderByDescending(a => GetRelevanceScore(announcement, a))
+				.Take(count)
+				.ToList();
+		}
+
+		//-----------------------------------------------------------------------
+		public Dictionary<AnnouncementCategory, int> GetUserPreferences(string userId)  // get user category preferences
+		{
+			if (_userCategoryPreferences.ContainsKey(userId))
+			{
+				return new Dictionary<AnnouncementCategory, int>(_userCategoryPreferences[userId]);
+			}
+			return new Dictionary<AnnouncementCategory, int>();
+		}
+
+		//-----------------------------------------------------------------------
+		private void UpdateTrendingIndex(Guid announcementId, int oldCount, int newCount)  // update trending data structure
+		{
+	
+			if (_trendingAnnouncementsByViewCount.ContainsKey(oldCount))
+			{
+				_trendingAnnouncementsByViewCount[oldCount].Remove(announcementId);
+				if (_trendingAnnouncementsByViewCount[oldCount].Count == 0)
+				{
+					_trendingAnnouncementsByViewCount.Remove(oldCount);
+				}
+			}
+
+
+			if (!_trendingAnnouncementsByViewCount.ContainsKey(newCount))
+			{
+				_trendingAnnouncementsByViewCount[newCount] = new List<Guid>();
+			}
+			_trendingAnnouncementsByViewCount[newCount].Add(announcementId);
+		}
+
+		//-----------------------------------------------------------------------
+		private bool IsAlreadyViewed(string userId, Guid announcementId)  // check if user already viewed announcement
+		{
+			return _userViewedAnnouncements.ContainsKey(userId) && 
+			       _userViewedAnnouncements[userId].Contains(announcementId);
+		}
+
+		//-----------------------------------------------------------------------
+		private int GetViewCount(Guid announcementId)  // get view count for announcement
+		{
+			return _announcementViewCounts.ContainsKey(announcementId) ? _announcementViewCounts[announcementId] : 0;
+		}
+
+		//-----------------------------------------------------------------------
+		private double GetRelevanceScore(Announcement source, Announcement target)  // calculate relevance score between announcements
+		{
+			double score = 0;
+
+			// Same category = +10 points
+			if (source.Category == target.Category) score += 10;
+
+			// Same priority = +5 points
+			if (source.Priority == target.Priority) score += 5;
+
+			// Both featured = +5 points
+			if (source.IsFeatured && target.IsFeatured) score += 5;
+
+			// Date proximity (within 7 days) = +3 points
+			var daysDiff = Math.Abs((source.Date - target.Date).TotalDays);
+			if (daysDiff <= 7) score += 3;
+
+			// Location match = +4 points
+			if (!string.IsNullOrWhiteSpace(source.Location) && 
+			    !string.IsNullOrWhiteSpace(target.Location) &&
+			    source.Location.Equals(target.Location, StringComparison.OrdinalIgnoreCase))
+			{
+				score += 4;
+			}
+
+			
+			score += GetViewCount(target.Id) * 0.1;
+
+			return score;
+		}
+	}
+
+	//-----------------------------------------------------------------------------
+	// User service - manages user authentication and accounts
+	public sealed class UserService : IUserService
+	{
+		private readonly Dictionary<Guid, User> _usersById;
+		private readonly Dictionary<string, User> _usersByUsername;
+		private readonly Dictionary<string, User> _usersByEmail;
+
+		//-----------------------------------------------------------------------
+		public UserService()
+		{
+			_usersById = new Dictionary<Guid, User>();
+			_usersByUsername = new Dictionary<string, User>(StringComparer.OrdinalIgnoreCase);
+			_usersByEmail = new Dictionary<string, User>(StringComparer.OrdinalIgnoreCase);
+		}
+
+		//-----------------------------------------------------------------------
+		public async Task<User?> RegisterAsync(UserRegisterViewModel model)  // register new user
+		{
+			// Validate unique constraints
+			if (UsernameExists(model.Username))
+				return null;
+			
+			if (EmailExists(model.Email))
+				return null;
+
+			// Create new user
+			var user = new User
+			{
+				Id = Guid.NewGuid(),
+				Username = model.Username,
+				Email = model.Email,
+				PasswordHash = HashPassword(model.Password),
+				FirstName = model.FirstName,
+				LastName = model.LastName,
+				CreatedAt = DateTime.Now,
+				IsActive = true
+			};
+
+			// Add to storage
+			_usersById[user.Id] = user;
+			_usersByUsername[user.Username] = user;
+			_usersByEmail[user.Email] = user;
+
+			return await Task.FromResult(user);
+		}
+
+		//-----------------------------------------------------------------------
+		public async Task<User?> LoginAsync(string usernameOrEmail, string password)  // authenticate user
+		{
+			if (string.IsNullOrWhiteSpace(usernameOrEmail) || string.IsNullOrWhiteSpace(password))
+				return null;
+
+			// Find user by username or email
+			User? user = null;
+			if (_usersByUsername.ContainsKey(usernameOrEmail))
+			{
+				user = _usersByUsername[usernameOrEmail];
+			}
+			else if (_usersByEmail.ContainsKey(usernameOrEmail))
+			{
+				user = _usersByEmail[usernameOrEmail];
+			}
+
+			// Verify password and active status
+			if (user != null && user.IsActive && VerifyPassword(password, user.PasswordHash))
+			{
+				UpdateLastLogin(user.Id);
+				return await Task.FromResult(user);
+			}
+
+			return null;
+		}
+
+		//-----------------------------------------------------------------------
+		public User? GetUserById(Guid userId)  // get user by ID
+		{
+			return _usersById.ContainsKey(userId) ? _usersById[userId] : null;
+		}
+
+		//-----------------------------------------------------------------------
+		public User? GetUserByUsername(string username)  // get user by username
+		{
+			return _usersByUsername.ContainsKey(username) ? _usersByUsername[username] : null;
+		}
+
+		//-----------------------------------------------------------------------
+		public User? GetUserByEmail(string email)  // get user by email
+		{
+			return _usersByEmail.ContainsKey(email) ? _usersByEmail[email] : null;
+		}
+
+		//-----------------------------------------------------------------------
+		public bool UsernameExists(string username)  // check if username exists
+		{
+			return _usersByUsername.ContainsKey(username);
+		}
+
+		//-----------------------------------------------------------------------
+		public bool EmailExists(string email)  // check if email exists
+		{
+			return _usersByEmail.ContainsKey(email);
+		}
+
+		//-----------------------------------------------------------------------
+		public void UpdateLastLogin(Guid userId)  // update last login timestamp
+		{
+			if (_usersById.ContainsKey(userId))
+			{
+				_usersById[userId].LastLoginAt = DateTime.Now;
+			}
+		}
+
+		//-----------------------------------------------------------------------
+		private static string HashPassword(string password)  // hash password using PBKDF2
+		{
+			byte[] salt = RandomNumberGenerator.GetBytes(16);
+			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+			byte[] hash = pbkdf2.GetBytes(32);
+			byte[] hashBytes = new byte[48];
+			Array.Copy(salt, 0, hashBytes, 0, 16);
+			Array.Copy(hash, 0, hashBytes, 16, 32);
+			return Convert.ToBase64String(hashBytes);
+		}
+
+		//-----------------------------------------------------------------------
+		private static bool VerifyPassword(string password, string storedHash)  // verify password against stored hash
+		{
+			byte[] hashBytes = Convert.FromBase64String(storedHash);
+			byte[] salt = new byte[16];
+			Array.Copy(hashBytes, 0, salt, 0, 16);
+			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+			byte[] hash = pbkdf2.GetBytes(32);
+			for (int i = 0; i < 32; i++)
+			{
+				if (hashBytes[i + 16] != hash[i])
+					return false;
+			}
+			return true;
 		}
 	}
 }

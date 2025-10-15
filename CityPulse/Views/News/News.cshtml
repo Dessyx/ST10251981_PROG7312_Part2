@@ -105,6 +105,80 @@
         </div>
     </div>
 
+    <!-- Recommendations Section -->
+    @if (ViewBag.Recommendations != null && ((List<CityPulse.Models.Announcement>)ViewBag.Recommendations).Any())
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-primary shadow-sm" style="border-width: 2px; border-radius: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary fw-bold mb-3">
+                            <i class="bi bi-stars me-2"></i>Recommended For You
+                            <span class="badge bg-primary ms-2">Based on your interests</span>
+                        </h5>
+                        <p class="text-muted small mb-3">Personalized suggestions based on your search history and preferences</p>
+                        
+                        <div class="row g-3">
+                            @foreach (var recommendation in ((List<CityPulse.Models.Announcement>)ViewBag.Recommendations).Take(3))
+                            {
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="card h-100 shadow-sm hover-lift border-0" style="cursor: pointer;" data-announcement-id="@recommendation.Id">
+                                        <div class="card-body">
+                                            <span class="badge @GetCategoryBadgeClass(recommendation.Category) mb-2">
+                                                <i class="@GetCategoryIcon(recommendation.Category) me-1"></i>@recommendation.Category
+                                            </span>
+                                            <h6 class="fw-bold mb-2">@recommendation.Title</h6>
+                                            <p class="text-muted small mb-2">
+                                                <i class="bi bi-calendar3 me-1"></i>@recommendation.Date.ToString("MMM dd, yyyy")
+                                            </p>
+                                            <p class="card-text small">@(recommendation.Description.Length > 100 ? recommendation.Description.Substring(0, 100) + "..." : recommendation.Description)</p>
+                                            <button class="btn btn-sm @GetCategoryButtonClass(recommendation.Category) mt-2 w-100 add-to-preferences" 
+                                                    data-announcement-id="@recommendation.Id" 
+                                                    data-category="@recommendation.Category"
+                                                    onclick="addToPreferences(this, '@recommendation.Id', '@recommendation.Category')">
+                                                <i class="bi bi-heart me-1"></i>Add to Interests
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Trending Section -->
+    @if (ViewBag.Trending != null && ((List<CityPulse.Models.Announcement>)ViewBag.Trending).Any())
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-warning shadow-sm" style="border-width: 2px; border-radius: 15px; background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning fw-bold mb-3">
+                            <i class="bi bi-fire me-2"></i>Trending Now
+                            <span class="badge bg-warning text-dark ms-2">Most Popular</span>
+                        </h5>
+                        <p class="text-muted small mb-3">Most viewed announcements in your community</p>
+                        
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var trending in ((List<CityPulse.Models.Announcement>)ViewBag.Trending).Take(5))
+                            {
+                                <div class="trending-chip" style="cursor: pointer;" data-announcement-id="@trending.Id">
+                                    <span class="badge @GetCategoryBadgeClass(trending.Category) py-2 px-3">
+                                        <i class="@GetCategoryIcon(trending.Category) me-1"></i>@trending.Title
+                                        <i class="bi bi-arrow-right ms-2"></i>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Results Summary -->
     <div class="row mb-3">
         <div class="col-12">
@@ -175,14 +249,11 @@
                             <p class="card-text">@announcement.Description</p>
 
                             <div class="d-flex gap-2">
-                                <a href="#" class="btn btn-danger">
-                                    <i class="bi bi-file-text me-1"></i>Read Full Details
-                                </a>
-                                <button class="btn btn-outline-danger" title="Share event">
-                                    <i class="bi bi-share"></i>
-                                </button>
-                                <button class="btn btn-outline-danger" title="Save for later">
-                                    <i class="bi bi-bookmark"></i>
+                                <button class="btn btn-danger w-100 add-to-preferences" 
+                                        data-announcement-id="@announcement.Id" 
+                                        data-category="@announcement.Category"
+                                        onclick="addToPreferences(this, '@announcement.Id', '@announcement.Category')">
+                                    <i class="bi bi-heart me-1"></i>Add to My Interests
                                 </button>
                             </div>
                         </div>
@@ -231,9 +302,12 @@
                             <p class="card-text flex-grow-1">@announcement.Description</p>
 
                             <div class="mt-auto">
-                                <a href="#" class="btn @GetCategoryButtonClass(announcement.Category) w-100">
-                                    <i class="@GetCategoryButtonIcon(announcement.Category) me-1"></i>@GetCategoryButtonText(announcement.Category)
-                                </a>
+                                <button class="btn @GetCategoryButtonClass(announcement.Category) w-100 add-to-preferences" 
+                                        data-announcement-id="@announcement.Id" 
+                                        data-category="@announcement.Category"
+                                        onclick="addToPreferences(this, '@announcement.Id', '@announcement.Category')">
+                                    <i class="bi bi-heart me-1"></i>Add to My Interests
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -344,33 +418,6 @@
         };
     }
 
-    string GetCategoryButtonIcon(CityPulse.Models.AnnouncementCategory category)
-    {
-        return category switch
-        {
-            CityPulse.Models.AnnouncementCategory.Announcement => "bi bi-file-text",
-            CityPulse.Models.AnnouncementCategory.Event => "bi bi-calendar-plus",
-            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bi bi-download",
-            CityPulse.Models.AnnouncementCategory.Notice => "bi bi-map",
-            CityPulse.Models.AnnouncementCategory.Program => "bi bi-file-earmark-text",
-            CityPulse.Models.AnnouncementCategory.Emergency => "bi bi-shield-exclamation",
-            _ => "bi bi-info-circle"
-        };
-    }
-
-    string GetCategoryButtonText(CityPulse.Models.AnnouncementCategory category)
-    {
-        return category switch
-        {
-            CityPulse.Models.AnnouncementCategory.Announcement => "Read More",
-            CityPulse.Models.AnnouncementCategory.Event => "Register Now",
-            CityPulse.Models.AnnouncementCategory.ServiceUpdate => "Download",
-            CityPulse.Models.AnnouncementCategory.Notice => "View Map",
-            CityPulse.Models.AnnouncementCategory.Program => "Apply Now",
-            CityPulse.Models.AnnouncementCategory.Emergency => "Safety Guidelines",
-            _ => "Learn More"
-        };
-    }
 }
 
 @section Styles {

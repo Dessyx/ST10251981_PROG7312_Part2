@@ -91,7 +91,7 @@
     display: none;
 }
 
-/* Form Steps */
+
 .form-step {
     display: none;
 }
@@ -112,7 +112,7 @@
     }
 }
 
-/* Step Navigation Buttons */
+
 .step-navigation {
     display: flex;
     justify-content: space-between;
@@ -125,7 +125,7 @@
     padding: 0.5rem 1rem;
 }
 
-/* Input Validation States */
+
 .form-control.is-invalid,
 .form-select.is-invalid {
     border-color: #dc3545;
@@ -156,82 +156,67 @@
 }
 
 
-.form-select,
-.form-control {
+
+#announcementForm .form-select,
+#announcementForm .form-control {
     position: relative !important;
     z-index: 100 !important;
     pointer-events: auto !important;
 }
 
-
-#categorySelect {
+#announcementForm #categorySelect {
     position: relative !important;
     z-index: 150 !important;
     pointer-events: auto !important;
     cursor: pointer !important;
 }
 
-.category-guidelines {
+#announcementForm .category-guidelines {
     pointer-events: none !important;
     user-select: none !important;
     position: relative;
     z-index: 1;
 }
 
-.category-guidelines * {
+#announcementForm .category-guidelines * {
     pointer-events: none !important;
     user-select: none !important;
 }
 
-
-.flex-grow-1 {
+#announcementForm .flex-grow-1 {
     position: relative;
     z-index: 50;
 }
 
 
-.form-step .card {
+#announcementForm .form-step .card {
     overflow: visible !important;
 }
 
-.form-step .card-body {
+#announcementForm .form-step .card-body {
     overflow: visible !important;
 }
 
 
-.form-label {
+#announcementForm .form-label {
     position: relative;
     z-index: 10;
     pointer-events: none;
 }
 
-
-.container-fluid {
-    position: relative;
-    z-index: auto;
-}
-
-
-.btn {
+#announcementForm .btn {
     pointer-events: auto !important;
     position: relative;
     z-index: 10;
 }
 
-
-.btn-outline-dark {
+#announcementForm .btn-outline-dark {
     pointer-events: auto !important;
     cursor: pointer !important;
 }
 
-
-h3, h5, a {
+#announcementForm h3,
+#announcementForm h5 {
     pointer-events: auto;
     position: relative;
-}
-
-
-.row {
-    position: relative;
-    z-index: auto;
 }

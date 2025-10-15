@@ -1,4 +1,4 @@
-/* Card Hover Effects */
+
 .hover-lift {
     transition: all 0.3s ease;
     border: 1px solid rgba(0,0,0,0.125);
@@ -10,7 +10,7 @@
     border-color: rgba(0,0,0,0.2);
 }
 
-/* Featured Card Styling */
+
 .featured-card {
     position: relative;
     border: 2px solid #dc3545;
@@ -30,7 +30,7 @@
     box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
-/* Filter Chip Styling */
+
 .filter-chip {
     transition: all 0.2s ease;
     border-radius: 20px;
@@ -42,7 +42,7 @@
     transform: scale(1.05);
 }
 
-/* Blue chip (Today) */
+
 .filter-chip-blue {
     background-color: #d9e6f8;
     color: #2f7fbf;
@@ -60,7 +60,7 @@
     border-color: #2f7fbf;
 }
 
-/* Green chip (This Week) */
+
 .filter-chip-green {
     background-color: #d4f2db;
     color: #28a745;
@@ -78,7 +78,7 @@
     border-color: #28a745;
 }
 
-/* Orange chip (This Month) */
+
 .filter-chip-orange {
     background-color: #ffe5cc;
     color: #fd7e14;
@@ -96,7 +96,7 @@
     border-color: #fd7e14;
 }
 
-/* Blue Alt chip (Upcoming Events) */
+
 .filter-chip-blue-alt {
     background-color: #cce5ff;
     color: #007bff;
@@ -114,7 +114,7 @@
     border-color: #007bff;
 }
 
-/* Category Badge Colors */
+
 .bg-info { background-color: #17a2b8 !important; }
 .bg-success { background-color: #28a745 !important; }
 .bg-warning { background-color: #ffc107 !important; }
@@ -122,7 +122,7 @@
 .bg-primary { background-color: #007bff !important; }
 .bg-notice-orange { background-color: #fd7e14 !important; }
 
-/* Notice Orange Button */
+
 .btn-notice-orange {
     background-color: #fd7e14;
     border-color: #fd7e14;
@@ -135,24 +135,24 @@
     color: white;
 }
 
-/* Card Body Flex Layout */
+
 .card-body.d-flex.flex-column {
     display: flex;
     flex-direction: column;
 }
 
-/* Gradient Background for Newsletter */
+
 .bg-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-/* Form Control Focus Effects */
+
 .form-control:focus, .form-select:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
-/* View Toggle Buttons */
+
 .view-toggle {
     border-radius: 20px;
     overflow: hidden;
@@ -178,7 +178,7 @@
     border-color: #212529;
 }
 
-/* Responsive Card Heights */
+
 .event-card .card {
     height: 100%;
     display: flex;
@@ -189,7 +189,7 @@
     flex: 1;
 }
 
-/* List View Styling */
+
 .list-view-mode .event-card {
     margin-bottom: 1rem;
 }
@@ -251,7 +251,7 @@
     flex-direction: column !important;
 }
 
-/* List view info section */
+
 .list-info {
     flex: 1;
     min-width: 0;
@@ -263,24 +263,24 @@
     align-items: center;
 }
 
-/* Icon Styling */
+
 .bi {
     vertical-align: middle;
 }
 
-/* Bootstrap Icon Colors */
+
 .text-primary { color: #007bff !important; }
 .text-danger { color: #dc3545 !important; }
 .text-info { color: #17a2b8 !important; }
 .text-success { color: #28a745 !important; }
 .text-warning { color: #ffc107 !important; }
 
-/* Smooth Transitions */
+
 * {
     transition: all 0.2s ease;
 }
 
-/* Result Count Badge */
+
 #resultCount {
     font-size: 1rem;
     width: 2.5rem;
@@ -290,5 +290,77 @@
     justify-content: center;
     font-weight: 600;
     padding: 0;
+}
+
+
+.add-to-preferences {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-to-preferences:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.add-to-preferences:active {
+    transform: scale(0.98);
+}
+
+.add-to-preferences.btn-success {
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+
+.trending-chip {
+    transition: transform 0.2s ease;
+}
+
+.trending-chip:hover {
+    transform: scale(1.05);
+}
+
+.trending-chip:active {
+    transform: scale(0.95);
+}
+
+
+.event-card .card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.event-card .card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+}
+
+.event-card .card:active {
+    transform: scale(0.98);
+}
+
+
+[data-announcement-id] {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+[data-announcement-id]:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
+}
+
+
+#toastContainer {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
 }
 

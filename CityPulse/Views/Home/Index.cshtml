@@ -54,7 +54,7 @@
                         Stay informed about official municipal notices, regulations, and announcements.
                         Access important information that affects your community.
                     </p>
-                    <a class="btn btn-primary" asp-controller="ReportIssues" asp-action="Create" title="Report a municipal issue">Report Issues</a>
+                    <a href="#" class="btn btn-primary" onclick="checkLoginAndRedirect('/ReportIssues/Create'); return false;" title="Report a municipal issue">Report Issues</a>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
                         Stay updated with community events, municipal programs, and city announcements.
                         Never miss important news happening in your area.
                     </p>
-                    <a class="btn btn-primary" asp-controller="News" asp-action="News" title="View latest news and announcements">View News</a>
+                    <a href="#" class="btn btn-primary" onclick="checkLoginAndRedirect('/News/News'); return false;" title="View latest news and announcements">View News</a>
                 </div>
             </div>
         </div>

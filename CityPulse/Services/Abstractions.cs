@@ -56,8 +56,32 @@ namespace CityPulse.Services.Abstractions
 		bool ValidateCredentials(string username, string password);  // verifies admin login credentials
 		bool UserExists(string username);  // checks if admin user exists
 	}
+
+	// ----------------------------------------------------------------------------
+	// Recommendation service interface - analyzes user patterns and suggests relevant announcements
+	public interface IRecommendationService
+	{
+		void TrackSearch(string userId, string searchTerm, string? category);  // track user search activity
+		void TrackView(string userId, Announcement announcement);  // track announcement views
+		List<Announcement> GetRecommendations(string userId, int count);  // get personalized recommendations
+		List<Announcement> GetTrendingAnnouncements(int count);  // get trending announcements
+		List<Announcement> GetRelatedAnnouncements(Announcement announcement, int count);  // get similar announcements
+		Dictionary<AnnouncementCategory, int> GetUserPreferences(string userId);  // get user category preferences
+	}
+
+	// ----------------------------------------------------------------------------
+	// User authentication service interface - manages user accounts
+	public interface IUserService
+	{
+		Task<User?> RegisterAsync(UserRegisterViewModel model);  // register new user
+		Task<User?> LoginAsync(string usernameOrEmail, string password);  // authenticate user
+		User? GetUserById(Guid userId);  // get user by ID
+		User? GetUserByUsername(string username);  // get user by username
+		User? GetUserByEmail(string email);  // get user by email
+		bool UsernameExists(string username);  // check if username exists
+		bool EmailExists(string email);  // check if email exists
+		void UpdateLastLogin(Guid userId);  // update last login timestamp
+	}
 }
 
-//----------------------------------------------- <<< End of File >>>--------------------------------
-
-// TODO: user login 
+//----------------------------------------------- <<< End of File >>>-------------------------------- 

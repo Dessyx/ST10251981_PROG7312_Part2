@@ -482,8 +482,7 @@ h2, h3 {
 }
 
 
-
-.modal {
+.custom-modal-overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -498,7 +497,7 @@ h2, h3 {
 }
 
 
-.modal-content {
+.custom-modal-overlay .modal-content {
 	max-width: 600px;
 	width: 90%;
 	border-radius: 1rem;
@@ -506,7 +505,7 @@ h2, h3 {
 }
 
 
-.modal .close {
+.custom-modal-overlay .close {
 	position: absolute;
 	top: 10px;
 	right: 15px;

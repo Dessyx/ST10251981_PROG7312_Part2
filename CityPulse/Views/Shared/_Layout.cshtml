@@ -42,7 +42,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
                                 <li>
-                                    <a class="dropdown-item" asp-controller="ReportIssues" asp-action="Create">Report an Issue</a>
+                                    <a class="dropdown-item" href="#" onclick="checkLoginAndRedirect('/ReportIssues/Create'); return false;">Report an Issue</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Service Request Status (Soon)</a>
@@ -59,7 +59,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="communityDropdown">
                                 <li>
-                                    <a class="dropdown-item" asp-controller="News" asp-action="News">News & Announcements</a>
+                                    <a class="dropdown-item" href="#" onclick="checkLoginAndRedirect('/News/News'); return false;">News & Announcements</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Events Calendar (Soon)</a>
@@ -77,9 +77,32 @@
                                 <img src="/images/Notifications.png" alt="Notifications" class="nav-icon">
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Admin" asp-action="Login" title="Admin Login">
-                                <img src="/images/Profile.png" alt="Profile" class="nav-icon rounded-circle">
+                        @if (Context.Session.GetString("UserId") != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <img src="/images/Profile.png" alt="Profile" class="nav-icon rounded-circle">
+                                    <span class="ms-1">@Context.Session.GetString("Username")</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><h6 class="dropdown-header">@Context.Session.GetString("UserFullName")</h6></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" onclick="logoutUser(); return false;">Logout</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" onclick="showLoginModal(); return false;" title="Login">
+                                    <img src="/images/Profile.png" alt="Login" class="nav-icon rounded-circle">
+                                    <span class="ms-1">Login</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item ms-2">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Login" title="Admin">
+                                <small>Admin</small>
                             </a>
                         </li>
                     </ul>
@@ -97,6 +120,94 @@
     <footer class="site-footer text-center py-3">
         &copy; 2025 CityPulse Municipal Services. All rights reserved.
     </footer>
+
+    <!-- Login/Register Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Welcome to CityPulse</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Login Form -->
+                    <div id="loginForm">
+                        <div class="text-center mb-3">
+                            <img src="/images/CityPulse.png" alt="CityPulse" style="height: 50px;">
+                            <p class="text-muted mt-2">Login to save your preferences and track your reports</p>
+                        </div>
+                        <div class="alert alert-danger d-none" id="loginError"></div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username or Email</label>
+                            <input type="text" class="form-control" id="loginUsername" placeholder="Enter username or email" style="border-radius: 10px;" required minlength="3">
+                            <div class="invalid-feedback">Username must be at least 3 characters</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter password" style="border-radius: 10px;" required minlength="6">
+                            <div class="invalid-feedback">Password must be at least 6 characters</div>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100 mb-2" onclick="loginUser()" style="border-radius: 10px;">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary w-100" onclick="showRegisterForm()" style="border-radius: 10px;">
+                            Don't have an account? Register
+                        </button>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="registerForm" class="d-none">
+                        <div class="text-center mb-3">
+                            <img src="/images/CityPulse.png" alt="CityPulse" style="height: 50px;">
+                            <p class="text-muted mt-2">Create your free account</p>
+                        </div>
+                        <div class="alert alert-danger d-none" id="registerError"></div>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="regFirstName" placeholder="John" style="border-radius: 10px;" required minlength="2">
+                                <div class="invalid-feedback">Min 2 characters, letters only</div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label class="form-label fw-semibold">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="regLastName" placeholder="Doe" style="border-radius: 10px;" required minlength="2">
+                                <div class="invalid-feedback">Min 2 characters, letters only</div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="regUsername" placeholder="Choose username (3-50 chars)" style="border-radius: 10px;" required minlength="3" maxlength="50" pattern="[a-zA-Z0-9_]+">
+                            <div class="invalid-feedback">3-50 characters, letters/numbers/underscore only</div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="regEmail" placeholder="you@example.com" style="border-radius: 10px;" required>
+                            <div class="invalid-feedback">Please enter a valid email address</div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="regPassword" placeholder="Min 6 chars (A-Z, a-z, 0-9)" style="border-radius: 10px;" required minlength="6" maxlength="100">
+                            <div class="invalid-feedback">6-100 chars: uppercase, lowercase, and number required</div>
+                            <div class="form-text small">
+                                <i class="bi bi-info-circle"></i> Must include: uppercase, lowercase, number
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="regConfirmPassword" placeholder="Re-enter password" style="border-radius: 10px;" required>
+                            <div class="invalid-feedback">Passwords must match</div>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100 mb-2" onclick="registerUser()" style="border-radius: 10px;">
+                            <i class="bi bi-person-plus"></i> Create Account
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary w-100" onclick="showLoginForm()" style="border-radius: 10px;">
+                            Already have an account? Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
