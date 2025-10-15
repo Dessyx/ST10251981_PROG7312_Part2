@@ -3,52 +3,31 @@
 ## 📝 DESCRIPTION  
 This project is a web application built with ASP.NET Core MVC, C#, JavaScript, and Leaflet.js. The system is a efficient and user-friendly platform for citizens to access and request various municipal services. 
 
-## WHAT IS THE PURPOSE OF THE APP?  
-This application was built to empower residents to easily report municipal issues, increase transparency in issue resolution, and later on enable administrators to monitor, verify, and resolve reports efficiently. By providing real-time maps, progress tracking, and user-friendly reporting tools, the app encourages engagement and helps improve service delivery.
-
----
-
-## 💡 DESIGN OVERVIEW  
-
-### **UI/UX Design**  
-- Multi-step reporting form with progress bar  
-- Interactive map showing all reports with status color-coding  
-- Modal pop-up for successful submissions  
-- Styled Back, Next, and Submit buttons  
-- Accessible design with proper contrast and touch targets  
-- Responsive layout for desktop and mobile  
+---  
 
 ### **🎨 Color Scheme**  
-- Back button: White with black border  
-- Next button: Blue (#27A9F5)  
-- Submit button: Green (#43F773)  
+
+**Navigation Buttons:**
+- Back button: White with black border
+- Next button: Blue (#27A9F5)
+- Submit button: Green (#43F773)
+
+**Announcement Categories:**
+- Events: Cyan/Info Blue (#17a2b8)
+- Service Updates: Green (#28a745)
+- Announcements: Primary Blue (#007bff)
+- Notices: Orange (#fd7e14)
+- Programs: Gray (#6c757d)
+- Emergency: Red (#dc3545)
+
+**Status Indicators:**
+- Success/Confirmation: Green
+- Information: Blue
+- Warning: Yellow/Orange
+- Error/Critical: Red
+- Featured Items: Red border with gradient background
 ---
-
-## 💿 BACKEND ARCHITECTURE  
-
-**Data Management**  
-- Reports represented by `IssueReport` model: ReferenceNumber, Location, Category, Description, Attachments, CreatedUtc  
-- Attachments stored in `Attachment` model with FileName, ContentType, StoredPath, and LengthBytes  
-- Multi-step submission uses `IssueReportCreateRequest` to handle user input and file queue  
-
-**Custom Data Structures**  
-- `DoublyLinkedList<T>` to manage attachments  
-- `Queue<T>` for handling file uploads in FIFO order  
-- Both structures are generic and lightweight, built for in-memory operations  
-
-**Map Integration (Leaflet.js)**  
-- OpenStreetMap tiles for geolocation  
-- Status color-coded pins: red, yellow, green  
-- Pop-ups for “Still a Problem” or “Resolved” confirmations  
-
-**Form Handling**  
-- Multi-step form validation and progress tracking  
-- File upload support with queue management  
-- Success modal with reference number and copy-to-clipboard  
-
-**Security Features**  
-- Input validation on all fields  
-- Error handling with user-friendly messages  
+ 
 
 ---
 
@@ -58,11 +37,11 @@ This application was built to empower residents to easily report municipal issue
 2. On the Local tab, click on the last option: "Download ZIP".
 3. Once the zip file has downloaded, open your local file explorer.
 4. Go to your Downloads.
-5. Open the "ST10251981_PROG6212_Part1.zip" folder, should be most recent in Downloads.
-6. Open the "ST10251981_PROG6212_Part1" folder, this folder is not a zip.
+5. Open the "ST10251981_PROG6212_POE.zip" folder, should be most recent in Downloads.
+6. Open the "ST10251981_PROG6212_POE" folder, this folder is not a zip.
 7. Open the CityPulse.sln file.
 8. The project should begin loading.
-9. On the top in the middle, double click the http button.
+9. On the top in the middle, double click the https button.
 10. The program will compile and you may use the program.
 
 ## 👾 TECHNOLOGIES USED
@@ -76,89 +55,90 @@ ASP.NET Core MVC, C#, JavaScript, Leaflet.js, Bootstrap 5, HTML5, CSS3
 2. Select location from search suggestions or map
 3. Upload images/documents with reports
 4. Track report progress in real-time
-5. Verify reports as “Still a Problem” or “Resolved”
+5. Verify reports as "Still a Problem" or "Resolved"
 6. View ward-level statistics and interactive map pins
-7. Search for announcements/news using keywords from titles or descriptions
-8. Filter announcements by category and date range
-9. View a variety of announcements
-10. Admins can login and create announcements 
+7. Create accounts and login for personalized recommendations
+8. Search for announcements/news using keywords from titles or descriptions
+9. Filter announcements by category and date range
+10. View personalized recommendations based on their interests
+11. Add announcements to their interests for better recommendations
+12. Admins can login and create announcements
 
-### Additional Features:
 
-- Success modal pop-up with reference number and copy functionality
-- Styled buttons for clear navigation (Back, Next, Submit)
-- Responsive design for mobile and desktop
-- Custom in-memory structures (DoublyLinkedList, Queue) for attachments and uploads
+### Admin log in details
+- username: admin
+- password: Admin@123!
 
-## 🧩 Data Structures Used in CityPulse (with Reasons)
+## 🎯 Personalized Recommendation System
 
-### 🔧 Custom Data Structures (in Domain.cs)
+The application features an intelligent recommendation engine that learns from user behavior to suggest relevant announcements and events. When users create an account and log in, the system automatically tracks their search patterns and category preferences to build a personalized profile.
+
+**How It Works:**
+
+Every time you search for something like "water" or "community," the system remembers those terms. When you filter by a specific category like "Events" or "Programs," that preference gets saved with extra weight. Even just clicking on announcements helps the system learn what kind of content you're interested in. All of this happens automatically in the background without any extra effort from you.
+
+**The Recommendation Algorithm:**
+
+The system uses a smart scoring algorithm to rank announcements based on your preferences. If you've clicked on Events five times and Programs twice, Event announcements get higher scores and appear more often in your recommendations. Search terms you've used also boost matching announcements, so searching for "water" multiple times means you'll see more water-related content. The algorithm combines category preferences, search history, trending content, and upcoming events to create a personalized feed just for you.
+
+**Data Structures Powering Recommendations:**
+
+I use Dictionary structures to track search history (storing your last 20 searches) and category preferences (counting how many times you've interacted with each category). A SortedDictionary keeps track of trending announcements by view count, automatically organizing them so popular content surfaces quickly. HashSets prevent showing you duplicate recommendations and make it fast to check if you've already seen something.
+
+
+## 🧩 Data Structures Used in CityPulse
+
+### 🔧 Custom Data Structures
 
 **DoublyLinkedList<T>**
 
-- **Used for:** Attachments in IssueReport
-- **Why:** Allows quick adding/removing files at both ends. You can move forwards and backwards easily without resizing like an array.
-- **Also used for:** Location suggestions seed data — shows our own custom structure and lets us loop through stored locations smoothly.
+We use this to store attachments in issue reports since it's easy to add or remove files from either end without having to resize anything (like you would with arrays). It also lets you move forward and backward through the list easily. We also used it for location suggestion seed data so we can loop through stored locations smoothly while showing off our own custom data structure.
 
-**Queue<T> (Custom)**
+**Queue<T>**
 
-- **Used for:** File upload queue in IssueReportCreateRequest
-- **Why:** Works in a FIFO (First-In-First-Out) way, which fits how uploads are processed — the first file added is the first one uploaded.
-- **Also used for:** Returning location suggestions in the order they appear.
+This is used to manage the file upload queue when creating issue reports. It works in a First-In-First-Out way — so the first file added is the first one uploaded, which just makes sense for uploads. We also use it to return location suggestions in the same order they appear, so users get results in a natural flow.
 
-### ⚙️ Built-in .NET Data Structures (in AnnouncementService)
+### ⚙️ Built-in .NET Data Structures
 
 **SortedDictionary<DateTime, List<Announcement>>**
 
-- **Used for:** Main announcement storage.
-- **Why:** Keeps announcements sorted by date automatically and allows fast date searches (O(log n)).
+This one stores announcements sorted automatically by date. It's super handy because it makes finding announcements for a specific day or range really fast and organized.
 
 **Dictionary<AnnouncementCategory, List<Announcement>>**
 
-- **Used for:** Category-based lookup.
-- **Why:** Makes it quick (O(1)) to get announcements in a certain category like Events or Notices.
+Used for category-based lookups, so when we need to grab all announcements under something like "Events" or "Notices," we can do it instantly without searching through everything manually.
 
 **Dictionary<Guid, Announcement>**
 
-- **Used for:** Finding announcements by ID.
-- **Why:** Fast O(1) lookup for specific announcements without searching through all items.
+This makes it easy to find a specific announcement using its unique ID. Since it's O(1), lookups are super fast — perfect when we only need one item.
 
 **Dictionary<string, HashSet<Guid>>**
 
-- **Used for:** Text search index.
-- **Why:** Maps keywords to announcement IDs for quick searching. You can find results fast by intersecting sets of matching words.
+Used for the text search feature. It basically maps keywords to announcement IDs so we can quickly find matches without scanning every single announcement. Makes searches a lot faster and more efficient.
 
 **HashSet<string>**
 
-- **Used for:** Storing unique categories.
-- **Why:** Automatically avoids duplicates and allows instant O(1) checks for category existence.
+We use this to store all the announcement categories. It automatically stops duplicates and lets us check if a category exists right away. It's great for things like category filters or dropdowns.
 
 **HashSet<DateTime>**
 
-- **Used for:** Unique announcement dates.
-- **Why:** Ensures no duplicate dates and helps create a clean list for date filters or calendar views.
+This one keeps track of all the unique dates that have announcements. It prevents duplicates and helps us build clean date filters or calendar views — so users only see dates that actually have announcements.
 
 **PriorityQueue<Announcement, int>**
 
-- **Used for:** Featured or high-priority announcements.
-- **Why:** Keeps announcements sorted by priority (Critical, High, etc.) so the most important ones show first.
+Handles high-priority announcements. It keeps them sorted by priority level automatically, so important stuff (like critical updates) always shows up first.
 
 **Stack<Announcement>**
 
-- **Used for:** Tracking recently viewed announcements.
-- **Why:** LIFO (Last-In-First-Out) order matches how users revisit their last viewed announcements.
+Used for recently viewed announcements. Since it works in a Last-In-First-Out way, it fits perfectly for "recently viewed" features — the last thing you looked at is always on top.
 
 **Queue<Announcement>**
 
-- **Used for:** Pending announcements waiting for admin approval.
-- **Why:** FIFO order ensures fairness — the first submitted is reviewed first.
-
-### 📋 Standard Collections
+Stores announcements that are waiting for admin approval. It's fair because it works First-In-First-Out — the first one submitted gets reviewed first.
 
 **List<T>**
 
-- **Used for:** Return types and temporary collections.
-- **Why:** Easy to use, supports LINQ, allows indexing, and resizes automatically. It's great for MVC views.
+We use lists everywhere for temporary collections, returning data, or passing stuff to MVC views. They're flexible, easy to use with LINQ, and resize automatically — so they just make sense for most general collection needs.
 
 ---
 

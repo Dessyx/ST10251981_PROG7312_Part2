@@ -99,7 +99,7 @@ namespace CityPulse.Services
 				Description = request.Description
 			};
 
-		
+
 			while (request.UploadQueue.TryDequeue(out var file))
 			{
 				var saved = await _storageService.SaveAsync(file);
@@ -125,7 +125,7 @@ namespace CityPulse.Services
 			seeded.AddLast("Gqeberha");
 			seeded.AddLast("Bloemfontein");
 
-		
+
 			var node = seeded.Head;
 			query = query.Trim();
 			while (node != null)
@@ -419,7 +419,7 @@ namespace CityPulse.Services
 					{
 						_searchIndex[cleanWord] = new HashSet<Guid>();
 					}
-					_searchIndex[cleanWord].Add(announcement.Id);  
+					_searchIndex[cleanWord].Add(announcement.Id);
 				}
 			}
 		}

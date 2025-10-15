@@ -5,7 +5,7 @@ using CityPulse.Services.Abstractions;    // imports
 namespace CityPulse.Controllers
 {
     // ----------------------------------------------------------------------------
-    // User authentication controller - handles login, register, logout
+    // User authentication controller 
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -19,7 +19,7 @@ namespace CityPulse.Controllers
 
         //-----------------------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UserLoginViewModel model)  // process login via AJAX
+        public async Task<IActionResult> Login([FromBody] UserLoginViewModel model)  
         {
             if (string.IsNullOrWhiteSpace(model.UsernameOrEmail) || string.IsNullOrWhiteSpace(model.Password))
             {
@@ -29,12 +29,10 @@ namespace CityPulse.Controllers
             var user = await _userService.LoginAsync(model.UsernameOrEmail, model.Password);
             if (user != null)
             {
-                // Set session
                 HttpContext.Session.SetString("UserId", user.Id.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("UserFullName", $"{user.FirstName} {user.LastName}");
-                
-                // Ensure session is committed
+                               
                 await HttpContext.Session.CommitAsync();
 
                 return Json(new { success = true, message = "Login successful", userId = user.Id.ToString() });
@@ -45,7 +43,7 @@ namespace CityPulse.Controllers
 
         //-----------------------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] UserRegisterViewModel model)  // process registration via AJAX
+        public async Task<IActionResult> Register([FromBody] UserRegisterViewModel model) 
         {
             // Basic validation
             if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Email) || 

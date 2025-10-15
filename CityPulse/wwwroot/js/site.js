@@ -196,8 +196,6 @@ function registerUser() {
         if (data.success) {
             console.log('Registration successful! User:', data.username);
             
-            showToast(`Account created! Please login as "${data.username}" 🎉`, 'success');
-            
             showLoginForm();
             
             document.getElementById('loginUsername').value = data.username || username;
@@ -205,8 +203,14 @@ function registerUser() {
             document.getElementById('loginPassword').focus();
             
             const loginError = document.getElementById('loginError');
-            loginError.className = 'alert alert-success';
-            loginError.textContent = '✅ Account created! Please enter your password to login.';
+            loginError.className = '';
+            loginError.classList.remove('d-none');
+            loginError.style.color = '#28a745';
+            loginError.style.fontWeight = '600';
+            loginError.style.border = 'none';
+            loginError.style.background = 'transparent';
+            loginError.style.padding = '0.5rem 0';
+            loginError.textContent = 'Account created successfully! Please enter your password to login.';
         } else {
             showError('registerError', data.message || 'Registration failed. Username or email may already exist.');
         }
@@ -236,45 +240,6 @@ function showError(elementId, message) {
     const errorElement = document.getElementById(elementId);
     errorElement.textContent = message;
     errorElement.classList.remove('d-none');
-}
-
-//toast notification
-function showToast(message, type = 'success') {
-    // Check if toast container exists
-    let toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'toastContainer';
-        toastContainer.style.position = 'fixed';
-        toastContainer.style.top = '80px';
-        toastContainer.style.right = '20px';
-        toastContainer.style.zIndex = '9999';
-        document.body.appendChild(toastContainer);
-    }
-    
-
-    let icon = 'check-circle-fill';
-    if (type === 'warning') icon = 'exclamation-triangle-fill';
-    else if (type === 'danger') icon = 'x-circle-fill';
-    else if (type === 'info') icon = 'info-circle-fill';
-    
-
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type} alert-dismissible fade show shadow-lg`;
-    toast.style.minWidth = '300px';
-    toast.style.borderRadius = '10px';
-    toast.innerHTML = `
-        <i class="bi bi-${icon} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-    `;
-    
-    toastContainer.appendChild(toast);
-    
-
-    setTimeout(() => {
-        toast.remove();
-    }, 4000);
 }
 
 // Check if user is logged in

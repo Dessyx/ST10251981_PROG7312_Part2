@@ -13,26 +13,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const gridViewBtn = document.getElementById('gridView');
     const listViewBtn = document.getElementById('listView');
 
-    // Search functionality
+    // Search functionality 
+    let searchTimeout;
     searchInput.addEventListener('input', function() {
         filterEvents();
+        
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            if (this.value.trim().length > 0) {
+                triggerAutoTracking();
+            }
+        }, 1000); 
     });
 
     // Category filter
     categoryFilter.addEventListener('change', function() {
         filterEvents();
+       
+        if (this.value !== 'all') {
+            setTimeout(() => {
+                triggerAutoTracking();
+            }, 500);
+        }
     });
 
     // Date filters
     dateFrom.addEventListener('change', function() {
         filterEvents();
+        setTimeout(() => {
+            triggerAutoTracking();
+        }, 500);
     });
 
     dateTo.addEventListener('change', function() {
         filterEvents();
+        setTimeout(() => {
+            triggerAutoTracking();
+        }, 500);
     });
 
-    // Clear filters button
+    
     clearFiltersBtn.addEventListener('click', function() {
         searchInput.value = '';
         categoryFilter.value = 'all';
@@ -42,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filterEvents();
     });
 
-    // Quick filter chips
+    
     filterChips.forEach(chip => {
         chip.addEventListener('click', function() {
             filterChips.forEach(c => c.classList.remove('active'));
@@ -152,10 +172,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
- 
         resultCount.textContent = visibleCount;
 
-   
         if (visibleCount === 0) {
             eventsContainer.classList.add('d-none');
             noResults.classList.remove('d-none');
@@ -164,13 +182,70 @@ document.addEventListener('DOMContentLoaded', function() {
             noResults.classList.add('d-none');
         }
     }
+    
+   
+    function triggerAutoTracking() {
+        console.log('🔍 TRIGGER AUTO-TRACKING CALLED');
+        
+        const isLoggedIn = document.querySelector('[id="userDropdown"]') !== null;
+        console.log('   Login status:', isLoggedIn);
+        
+        if (!isLoggedIn) {
+            console.log('⚠️ Not logged in - skipping auto-tracking');
+            return;
+        }
+        
+        const searchTerm = searchInput.value.trim();
+        const selectedCategory = categoryFilter.value;
+        
+        console.log('   Search term:', searchTerm || 'none');
+        console.log('   Category:', selectedCategory);
+        
+        
+        const allCards = document.querySelectorAll('.event-card');
+        console.log('   Total cards on page:', allCards.length);
+        
+       
+        const visibleCards = Array.from(allCards).filter(card => {
+            const isVisible = card.style.display !== 'none';
+            return isVisible;
+        });
+        
+        console.log('   Visible cards:', visibleCards.length);
+        
+        const matchedAnnouncements = visibleCards
+            .map(card => {
+                const button = card.querySelector('.add-to-preferences');
+                if (button) {
+                    return {
+                        id: button.dataset.announcementId,
+                        category: button.dataset.category
+                    };
+                }
+                return null;
+            })
+            .filter(item => item !== null)
+            .slice(0, 6); 
+        
+        console.log('   Announcements to track:', matchedAnnouncements.length);
+        matchedAnnouncements.forEach((item, i) => {
+            console.log(`      ${i+1}. ${item.category} (ID: ${item.id.substring(0,8)}...)`);
+        });
+        
+        if (matchedAnnouncements.length > 0) {
+            console.log('🚀 Starting auto-track...');
+            autoTrackFilterPreferences(searchTerm, selectedCategory, matchedAnnouncements);
+        } else {
+            console.log('❌ No announcements to track!');
+        }
+    }
 
-    // Reset search button
+   
     document.getElementById('resetSearch')?.addEventListener('click', function() {
         clearFiltersBtn.click();
     });
 
-    // Track announcement views for recommendations
+   
     function trackAnnouncementView(announcementId) {
         fetch('/News/TrackView', {
             method: 'POST',
@@ -191,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.trackAnnouncementView = trackAnnouncementView;
 
-    // Track clicks on recommendation cards - clicking card adds to preferences
+   
     document.querySelectorAll('[data-announcement-id]').forEach(card => {
         card.addEventListener('click', function(e) {
       
@@ -208,8 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     this.style.transform = '';
                 }, 200);
-                
-                showToast('Added to your interests!', 'success');
             }
         });
     });
@@ -254,18 +327,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         const count = clickCounts[announcementId];
                         const isLoggedIn = document.querySelector('[id="userDropdown"]') !== null;
-                        
-                        if (count === 1) {
-                            if (isLoggedIn) {
-                                showToast(`${category} added to your interests! 💝`, 'success');
-                            } else {
-                                showToast(`${category} tracked! Login to save to your account. 💝`, 'info');
-                            }
-                        } else if (count === 2) {
-                            showToast(`You really like ${category}! Building stronger preference... 💪`, 'success');
-                        } else if (count >= 3) {
-                            showToast(`${category} is now a TOP interest! Expect more recommendations! 🌟`, 'success');
-                        }
                         
                         
                         if (isLoggedIn && count >= 2) {
@@ -379,7 +440,7 @@ function addToPreferences(button, announcementId, category) {
     });
 }
 
-// Refresh recommendations section
+
 function refreshRecommendations() {
     console.log('🔄 Refreshing recommendations...');
     
@@ -404,7 +465,7 @@ function refreshRecommendations() {
                 }
                 
              
-                const recommendationsContainer = document.querySelector('.row.mb-4 .card.border-primary .row.g-3');
+                const recommendationsContainer = document.getElementById('recommendationsContainer');
                 
                 if (recommendationsContainer) {
                 
@@ -414,44 +475,47 @@ function refreshRecommendations() {
                     data.recommendations.slice(0, 3).forEach(rec => {
                         const col = document.createElement('div');
                         col.className = 'col-12 col-md-6 col-lg-4';
-                        col.innerHTML = `
-                            <div class="card h-100 shadow-sm hover-lift border-0" style="cursor: pointer;" data-announcement-id="${rec.id}">
-                                <div class="card-body">
-                                    <span class="badge ${getCategoryBadgeClass(rec.category)} mb-2">
-                                        <i class="${getCategoryIcon(rec.category)} me-1"></i>${rec.category}
-                                    </span>
-                                    <h6 class="fw-bold mb-2">${rec.title}</h6>
-                                    <p class="text-muted small mb-2">
-                                        <i class="bi bi-calendar3 me-1"></i>${formatDate(rec.date)}
-                                    </p>
-                                    <p class="card-text small">${truncateText(rec.description, 100)}</p>
-                                    <button class="btn btn-sm ${getCategoryButtonClass(rec.category)} mt-2 w-100 add-to-preferences" 
-                                            data-announcement-id="${rec.id}" 
-                                            data-category="${rec.category}"
-                                            onclick="addToPreferences(this, '${rec.id}', '${rec.category}')">
-                                        <i class="bi bi-heart me-1"></i>Add to Interests
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+                               col.innerHTML = `
+                                   <div class="card h-100 shadow-sm hover-lift border-0" style="cursor: pointer;" data-announcement-id="${rec.id}">
+                                       <div class="card-body">
+                                           <span class="badge ${getCategoryBadgeClass(rec.category)} mb-2">
+                                               <i class="${getCategoryIcon(rec.category)} me-1"></i>${rec.category}
+                                           </span>
+                                           <h6 class="fw-bold mb-2">${rec.title}</h6>
+                                           <p class="text-muted small mb-2">
+                                               <i class="bi bi-calendar3 me-1"></i>${formatDate(rec.date)}
+                                           </p>
+                                           <p class="card-text small">${truncateText(rec.description, 100)}</p>
+                                       </div>
+                                   </div>
+                               `;
                         recommendationsContainer.appendChild(col);
                     });
                     
                    
-                    const recommendationsCard = document.querySelector('.row.mb-4 .card.border-primary');
+                    const recommendationsCard = document.getElementById('recommendationsCard');
                     if (recommendationsCard) {
-                        recommendationsCard.style.boxShadow = '0 0 30px rgba(13, 110, 253, 0.5)';
+                        recommendationsCard.style.boxShadow = '0 0 30px rgba(40, 167, 69, 0.6)';
+                        recommendationsCard.style.transition = 'box-shadow 0.5s ease';
+                        
+                       
+                        recommendationsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        
                         setTimeout(() => {
                             recommendationsCard.style.boxShadow = '';
-                        }, 2000);
+                        }, 2500);
                     }
                     
-                    showToast('Recommendations updated! 🎯', 'info');
+                    console.log('✅ RECOMMENDATIONS UPDATED! Scroll up to see them.');
+                } else {
+                    console.log('⚠️ Recommendations container not found on page');
                 }
+            } else {
+                console.log('⚠️ No recommendations returned');
             }
         })
         .catch(error => {
-            console.error('Error refreshing recommendations:', error);
+            console.error('❌ Error refreshing recommendations:', error);
         });
 }
 
@@ -502,42 +566,53 @@ function truncateText(text, maxLength) {
     return text.substring(0, maxLength) + '...';
 }
 
-// Show toast notification
-function showToast(message, type = 'success') {
 
-    let toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'toastContainer';
-        toastContainer.style.position = 'fixed';
-        toastContainer.style.top = '80px';
-        toastContainer.style.right = '20px';
-        toastContainer.style.zIndex = '9999';
-        document.body.appendChild(toastContainer);
+function autoTrackFilterPreferences(searchTerm, selectedCategory, matchedAnnouncements) {
+    const isLoggedIn = document.querySelector('[id="userDropdown"]') !== null;
+    if (!isLoggedIn) {
+        console.log('⚠️ Not logged in - skipping auto-track');
+        return;
     }
     
-
-    let icon = 'check-circle-fill';
-    if (type === 'warning') icon = 'exclamation-triangle-fill';
-    else if (type === 'danger') icon = 'x-circle-fill';
-    else if (type === 'info') icon = 'info-circle-fill';
+    const itemsToTrack = matchedAnnouncements.slice(0, 6);
+    if (itemsToTrack.length === 0) {
+        console.log('⚠️ No items to track');
+        return;
+    }
+    
+    console.log(`🎯 AUTO-TRACKING ${itemsToTrack.length} items...`);
+    if (searchTerm) console.log(`   🔍 Search: "${searchTerm}"`);
+    if (selectedCategory !== 'all') console.log(`   📂 Category: ${selectedCategory}`);
+    
+    let trackedCount = 0;
+    const totalItems = itemsToTrack.length;
     
    
-    const toast = document.createElement('div');
-    toast.className = `alert alert-${type} alert-dismissible fade show shadow-lg`;
-    toast.style.minWidth = '300px';
-    toast.style.borderRadius = '10px';
-    toast.innerHTML = `
-        <i class="bi bi-${icon} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-    `;
-    
-    toastContainer.appendChild(toast);
-    
-   
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+    itemsToTrack.forEach((item, index) => {
+        setTimeout(() => {
+            fetch('/News/TrackView', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ announcementId: item.id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    trackedCount++;
+                    console.log(`   ✅ Tracked ${trackedCount}/${totalItems}: ${item.category}`);
+                    
+                   
+                    if (trackedCount === totalItems) {
+                        console.log(`🔄 All ${totalItems} items tracked! Refreshing recommendations...`);
+                        setTimeout(() => {
+                            refreshRecommendations();
+                        }, 300);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error(`❌ Track error:`, error);
+            });
+        }, index * 150);
+    });
 }
-

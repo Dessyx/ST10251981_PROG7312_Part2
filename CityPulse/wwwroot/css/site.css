@@ -6,7 +6,7 @@ html, body {
 	font-size: 14px;
 }
 
-/* Navbar Logo Styling */
+
 .navbar-logo {
 	height: 40px;
 	width: auto;
@@ -595,4 +595,47 @@ h2, h3 {
 	.contact-info {
 		margin-top: 1.5rem;
 	}
+}
+
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-nav .btn {
+    transition: all 0.2s ease;
+}
+
+.navbar-nav .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.navbar-nav .btn-outline-dark:hover {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+.navbar-nav .btn-outline-dark:hover i {
+    color: #212529 !important;
+}
+
+.navbar-nav .dropdown-menu {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
