@@ -145,25 +145,15 @@ namespace CityPulse.Services
 	// Announcement Service with Advanced Data Structures
 	public sealed class AnnouncementService : IAnnouncementService
 	{
-		// Primary storage: SortedDictionary for date-based organization
-		private readonly SortedDictionary<DateTime, List<Announcement>> _announcementsByDate;
 		
-		// Secondary indexes for efficient lookups
+		private readonly SortedDictionary<DateTime, List<Announcement>> _announcementsByDate;
 		private readonly Dictionary<AnnouncementCategory, List<Announcement>> _announcementsByCategory;
 		private readonly Dictionary<Guid, Announcement> _announcementsById;
-		private readonly Dictionary<string, HashSet<Guid>> _searchIndex; // Inverted index for text search
-		
-		// Sets for unique values
+		private readonly Dictionary<string, HashSet<Guid>> _searchIndex; 	
 		private readonly HashSet<string> _uniqueCategories;
 		private readonly HashSet<DateTime> _uniqueDates;
-		
-		// Priority queue for featured/important announcements
 		private readonly PriorityQueue<Announcement, int> _priorityQueue;
-		
-		// Stack for recently viewed announcements
 		private readonly Stack<Announcement> _recentlyViewed;
-		
-		// Queue for pending announcements (admin workflow)
 		private readonly System.Collections.Generic.Queue<Announcement> _pendingAnnouncements;
 
 		//-----------------------------------------------------------------------
@@ -190,7 +180,7 @@ namespace CityPulse.Services
 		}
 
 		//-----------------------------------------------------------------------
-		public void AddAnnouncement(Announcement announcement)  // add announcement to all data structures
+		public void AddAnnouncement(Announcement announcement)  // adds announcement to all data structures
 		{
 			if (!_announcementsByDate.ContainsKey(announcement.Date.Date))
 			{

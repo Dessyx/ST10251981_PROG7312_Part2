@@ -29,20 +29,20 @@ namespace CityPulse.Controllers
         //-----------------------------------------------------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(AdminLoginViewModel model)  // process admin login
+        public IActionResult Login(AdminLoginViewModel model)  
         {
             if (ModelState.IsValid)
             {
-                // Use secure authentication service to validate credentials
+       
                 if (_authService.ValidateCredentials(model.Username, model.Password))
                 {
-                    HttpContext.Session.SetString("IsAdmin", "true");  // set admin session
-                    HttpContext.Session.SetString("AdminUsername", model.Username);  // store username
-                    return RedirectToAction("Dashboard");  // redirect to dashboard
+                    HttpContext.Session.SetString("IsAdmin", "true");  
+                    HttpContext.Session.SetString("AdminUsername", model.Username);  
+                    return RedirectToAction("Dashboard");  
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Invalid username or password");  // show error
+                    ModelState.AddModelError("", "Invalid username or password");  
                 }
             }
             return View(model);
@@ -52,7 +52,7 @@ namespace CityPulse.Controllers
         [HttpGet]
         public IActionResult Dashboard()  // display admin dashboard
         {
-            if (!IsAdminLoggedIn())  // check authentication
+            if (!IsAdminLoggedIn())  
             {
                 return RedirectToAction("Login");
             }
@@ -65,7 +65,7 @@ namespace CityPulse.Controllers
         [HttpGet]
         public IActionResult AddAnnouncement()  // display add announcement form
         {
-            if (!IsAdminLoggedIn())  // check authentication
+            if (!IsAdminLoggedIn())  
             {
                 return RedirectToAction("Login");
             }
@@ -77,7 +77,7 @@ namespace CityPulse.Controllers
         //-----------------------------------------------------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddAnnouncement(AnnouncementViewModel model)  // process new announcement
+        public IActionResult AddAnnouncement(AnnouncementViewModel model)  
         {
             if (!IsAdminLoggedIn())  
             {
@@ -86,9 +86,9 @@ namespace CityPulse.Controllers
 
             if (ModelState.IsValid)
             {
-                var username = HttpContext.Session.GetString("AdminUsername") ?? "Admin";  // get admin username
-                _announcementService.CreateAnnouncementFromViewModel(model, username);  // create announcement
-                return RedirectToAction("Dashboard");  // redirect to dashboard
+                var username = HttpContext.Session.GetString("AdminUsername") ?? "Admin";  
+                _announcementService.CreateAnnouncementFromViewModel(model, username);  
+                return RedirectToAction("Dashboard");  
             }
 
             return View(model);  
@@ -98,7 +98,7 @@ namespace CityPulse.Controllers
         [HttpGet]
         public IActionResult Logout()  // log out admin user
         {
-            HttpContext.Session.Remove("IsAdmin");  // clear admin session
+            HttpContext.Session.Remove("IsAdmin");  
             return RedirectToAction("Login");
         }
 

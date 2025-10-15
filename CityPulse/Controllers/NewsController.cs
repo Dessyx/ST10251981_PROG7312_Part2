@@ -23,20 +23,13 @@ namespace CityPulse.Controllers
         [HttpGet]
         public IActionResult News()  // display news page with all announcements
         {
-            var announcements = _announcementService.GetAllAnnouncements();  // retrieve all announcements
-            
-            // Get user ID (from logged-in user or session)
+            var announcements = _announcementService.GetAllAnnouncements();  
             var userId = GetUserIdentifier();
-            
-            // Get personalized recommendations
             var recommendations = _recommendationService.GetRecommendations(userId, 6);
             ViewBag.Recommendations = recommendations;
-            
-            // Get trending announcements
             var trending = _recommendationService.GetTrendingAnnouncements(5);
             ViewBag.Trending = trending;
             
-            // Check if user is logged in
             ViewBag.IsLoggedIn = HttpContext.Session.GetString("UserId") != null;
             ViewBag.Username = HttpContext.Session.GetString("Username");
             
@@ -47,9 +40,7 @@ namespace CityPulse.Controllers
         [HttpGet]
         public IActionResult Search(string searchTerm, string category, DateTime? dateFrom, DateTime? endDate)  // search announcements with filters
         {
-            var userId = GetUserIdentifier();  // get user identifier
-            
-            // Track search for recommendations
+            var userId = GetUserIdentifier();  
             _recommendationService.TrackSearch(userId, searchTerm, category);
             
             var announcements = _announcementService.SearchWithFilters(searchTerm, category, dateFrom, endDate, 20);  // get the filtered results
@@ -61,11 +52,10 @@ namespace CityPulse.Controllers
         public IActionResult GetRecommendations(int count = 6)  // get personalized recommendations
         {
             var userId = GetUserIdentifier();
-            
-            // Get user preferences for debugging
+        
             var preferences = _recommendationService.GetUserPreferences(userId);
             
-            _logger.LogInformation("GetRecommendations - UserId: {UserId}, Preferences: {Preferences}", 
+            _logger.LogInformation("GetRecommendations - UserId: {UserId}, Preferences: {Preferences}", // Ai was used for troubleshooting(ChatGPT, 2025)
                 userId, string.Join(", ", preferences.Select(p => $"{p.Key}={p.Value}")));
             
             var recommendations = _recommendationService.GetRecommendations(userId, count);
@@ -102,7 +92,7 @@ namespace CityPulse.Controllers
                     _recommendationService.TrackView(userId, announcement);
                     
                     var isLoggedIn = HttpContext.Session.GetString("UserId") != null;
-                    _logger.LogInformation("View tracked successfully - IsLoggedIn: {IsLoggedIn}, Category: {Category}", isLoggedIn, announcement.Category);
+                    _logger.LogInformation("View tracked successfully - IsLoggedIn: {IsLoggedIn}, Category: {Category}", isLoggedIn, announcement.Category); // (ChatGPT, 2025)
                     
                     return Json(new { success = true, isLoggedIn = isLoggedIn, category = announcement.Category.ToString() });
                 }
@@ -112,25 +102,24 @@ namespace CityPulse.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in TrackView");
+                _logger.LogError(ex, "Error in TrackView"); // (ChatGPT, 2025)
                 return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
 
         //-----------------------------------------------------------------------
-        private string GetUserIdentifier()  // get unique user identifier (logged-in user ID or session ID)
+        private string GetUserIdentifier()  
         {
-            // Try to get logged-in user ID first
+            // Try to get logged-in user ID first, AI helped me troubleshoot a login issue (ChatGPT, 2025) 
             var userId = HttpContext.Session.GetString("UserId");
             if (!string.IsNullOrEmpty(userId))
             {
-                _logger.LogInformation("User identified as logged-in user: {UserId}", userId);
+                _logger.LogInformation("User identified as logged-in user: {UserId}", userId); // (ChatGPT, 2025)
                 return userId;
             }
             
-            // Fallback to session ID for guest users
             var guestId = "guest_" + HttpContext.Session.Id;
-            _logger.LogInformation("User identified as guest: {GuestId}", guestId);
+            _logger.LogInformation("User identified as guest: {GuestId}", guestId); // (ChatGPT, 2025)
             return guestId;
         }
     }

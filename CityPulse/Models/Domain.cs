@@ -2,8 +2,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace CityPulse.Models
+namespace CityPulse.Models   
 {
+	//-----------------------------------------------------------------------
+	// Different types of issues citizens can report
 	public enum IssueCategory
 	{
 		Sanitation,
@@ -14,6 +16,8 @@ namespace CityPulse.Models
 		Other
 	}
 
+    //-----------------------------------------------------------------------
+	// A single issue report submitted by a citizen
 	public sealed class IssueReport
 	{
 		[Required]
@@ -35,6 +39,7 @@ namespace CityPulse.Models
 		public DateTime CreatedUtc { get; set; } = DateTime.UtcNow; // time created
 	}
 
+	// Info about files attached to reports (images, documents, etc.)
 	public sealed class Attachment
 	{
 		[Required]
@@ -46,6 +51,7 @@ namespace CityPulse.Models
 		public long LengthBytes { get; set; }
 	}
 
+	// What I need from the user when they submit a new report
 	public sealed class IssueReportCreateRequest
 	{
 		[Required]
@@ -64,6 +70,8 @@ namespace CityPulse.Models
 	}
 
 
+	//-----------------------------------------------------------------------
+	// Single node in the doubly linked list
 	public sealed class DoublyLinkedListNode<T>
 	{
 		public T Value { get; }
@@ -76,7 +84,7 @@ namespace CityPulse.Models
 		}
 	}
 
-
+	// My own doubly linked list (lets us go forward and backward through items)
 	public sealed class DoublyLinkedList<T>
 	{
 		public DoublyLinkedListNode<T>? Head { get; private set; }
@@ -110,6 +118,7 @@ namespace CityPulse.Models
 		}
 	}
 
+
 	public sealed class QueueNode<T>
 	{
 		public T Value { get; }
@@ -117,6 +126,7 @@ namespace CityPulse.Models
 		public QueueNode(T value) { Value = value; }
 	}
 
+	// queue (first in, first out)
 	public sealed class Queue<T>
 	{
 		private QueueNode<T>? _head;
@@ -149,7 +159,9 @@ namespace CityPulse.Models
 		}
 	}
 
-	// Announcement Models
+
+	//-----------------------------------------------------------------------	
+	// Types of announcements that can be posted
 	public enum AnnouncementCategory
 	{
 		Announcement,
@@ -160,6 +172,7 @@ namespace CityPulse.Models
 		Emergency
 	}
 
+	// How important an announcement is
 	public enum AnnouncementPriority
 	{
 		Low = 3,
@@ -168,6 +181,7 @@ namespace CityPulse.Models
 		Critical = 0
 	}
 
+	// A single announcement or event posted by admins
 	public sealed class Announcement
 	{
 		public Guid Id { get; set; }
@@ -186,6 +200,8 @@ namespace CityPulse.Models
 		public string CreatedBy { get; set; } = string.Empty;
 	}
 
+	//-----------------------------------------------------------------------	
+	// Form for admins to log in
 	public sealed class AdminLoginViewModel
 	{
 		[Required]
@@ -198,12 +214,14 @@ namespace CityPulse.Models
 		public string Password { get; set; } = string.Empty;
 	}
 
+	// Admin dashboard 
 	public sealed class AdminDashboardViewModel
 	{
 		public int TotalAnnouncements { get; set; }
 		public List<Announcement> RecentAnnouncements { get; set; } = new();
 	}
 
+	// Form for admins to create new announcements
 	public sealed class AnnouncementViewModel
 	{
 		[Required]
@@ -251,7 +269,8 @@ namespace CityPulse.Models
 		public AnnouncementPriority Priority { get; set; } = AnnouncementPriority.Normal;
 	}
 
-	// User Authentication Models
+	//-----------------------------------------------------------------------
+	// A registered user account
 	public sealed class User
 	{
 		public Guid Id { get; set; }
@@ -265,6 +284,7 @@ namespace CityPulse.Models
 		public bool IsActive { get; set; } = true;
 	}
 
+	// Form for users to log in
 	public sealed class UserLoginViewModel
 	{
 		[Required(ErrorMessage = "Username or email is required")]
@@ -280,6 +300,7 @@ namespace CityPulse.Models
 		public bool RememberMe { get; set; }
 	}
 
+	// Form for users to create an account
 	public sealed class UserRegisterViewModel
 	{
 		[Required(ErrorMessage = "Username is required")]
@@ -315,10 +336,11 @@ namespace CityPulse.Models
 		public string LastName { get; set; } = string.Empty;
 	}
 
+	// Helps track when users view announcements (for recommendations)
 	public sealed class TrackViewModel
 	{
 		public Guid AnnouncementId { get; set; }
 	}
 }
 
-
+//---------------------------------------------------------- <<< End of File >>>--------------------------------

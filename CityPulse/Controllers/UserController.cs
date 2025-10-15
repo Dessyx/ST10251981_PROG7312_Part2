@@ -4,6 +4,7 @@ using CityPulse.Services.Abstractions;    // imports
 
 namespace CityPulse.Controllers
 {
+
     // ----------------------------------------------------------------------------
     // User authentication controller 
     public class UserController : Controller
