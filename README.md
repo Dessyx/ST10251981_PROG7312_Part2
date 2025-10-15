@@ -142,4 +142,4 @@ We use lists everywhere for temporary collections, returning data, or passing st
 
 ---
 
-## 📺 YOUTUBE LINK:
+## 📺 YOUTUBE LINK: https://youtu.be/G_S5Ybnx8RE 
