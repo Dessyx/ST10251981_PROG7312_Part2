@@ -6,15 +6,15 @@
 
 .hover-lift:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
-    border-color: rgba(0,0,0,0.2);
+    box-shadow: 0 12px 24px rgba(47, 127, 191, 0.2) !important;
+    border-color: #2f7fbf;
 }
 
 
 .featured-card {
     position: relative;
-    border: 2px solid #dc3545;
-    background: linear-gradient(to bottom, #fff9f9, #ffffff);
+    border: 2px solid #fd7e14;
+    background: linear-gradient(to bottom, #fff8f0, #ffffff);
 }
 
 .card-ribbon {
@@ -27,7 +27,7 @@
 .card-ribbon .badge {
     font-size: 0.85rem;
     padding: 0.5rem 1rem;
-    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 4px 8px rgba(253, 126, 20, 0.3);
 }
 
 
@@ -98,29 +98,30 @@
 
 
 .filter-chip-blue-alt {
-    background-color: #cce5ff;
-    color: #007bff;
-    border-color: #007bff;
+    background-color: #e8e8e8;
+    color: #212529;
+    border-color: #212529;
 }
 
 .filter-chip-blue-alt:hover {
-    background-color: #007bff;
+    background-color: #212529;
     color: white;
 }
 
 .filter-chip-blue-alt.active {
-    background-color: #007bff;
+    background-color: #212529;
     color: white;
-    border-color: #007bff;
+    border-color: #212529;
 }
 
 
-.bg-info { background-color: #17a2b8 !important; }
+.bg-info { background-color: #2f7fbf !important; }
 .bg-success { background-color: #28a745 !important; }
-.bg-warning { background-color: #ffc107 !important; }
-.bg-danger { background-color: #dc3545 !important; }
-.bg-primary { background-color: #007bff !important; }
+.bg-warning { background-color: #fd7e14 !important; }
+.bg-danger { background-color: #fd7e14 !important; }
+.bg-primary { background-color: #2f7fbf !important; }
 .bg-notice-orange { background-color: #fd7e14 !important; }
+.bg-dark { background-color: #212529 !important; }
 
 
 .btn-notice-orange {
@@ -143,13 +144,13 @@
 
 
 .bg-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2f7fbf 0%, #1a5a8a 100%);
 }
 
 
 .form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #2f7fbf;
+    box-shadow: 0 0 0 0.2rem rgba(47, 127, 191, 0.25);
 }
 
 
@@ -269,11 +270,11 @@
 }
 
 
-.text-primary { color: #007bff !important; }
-.text-danger { color: #dc3545 !important; }
-.text-info { color: #17a2b8 !important; }
+.text-primary { color: #2f7fbf !important; }
+.text-danger { color: #fd7e14 !important; }
+.text-info { color: #2f7fbf !important; }
 .text-success { color: #28a745 !important; }
-.text-warning { color: #ffc107 !important; }
+.text-warning { color: #fd7e14 !important; }
 
 
 * {

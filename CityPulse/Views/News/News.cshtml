@@ -180,9 +180,9 @@
                 @if (announcement.IsFeatured)
                 {
                     <!-- Featured Announcement -->
-                    <div class="card border-danger shadow-lg h-100 featured-card">
+                    <div class="card shadow-lg h-100 featured-card">
                         <div class="card-ribbon">
-                            <span class="badge bg-danger">
+                            <span class="badge bg-notice-orange">
                                 <i class="bi bi-pin-angle-fill"></i> FEATURED
                             </span>
                         </div>
@@ -204,7 +204,7 @@
                                 @if (!string.IsNullOrEmpty(announcement.AffectedAreas))
                                 {
                                     <p class="text-muted small mb-0">
-                                        <i class="bi bi-geo-alt me-2 text-danger"></i>
+                                        <i class="bi bi-geo-alt me-2" style="color: #fd7e14;"></i>
                                         <strong>Affected Areas:</strong> @announcement.AffectedAreas
                                     </p>
                                 }
@@ -213,7 +213,7 @@
                             <p class="card-text">@announcement.Description</p>
 
                             <div class="d-flex gap-2">
-                                <button class="btn btn-danger w-100 add-to-preferences" 
+                                <button class="btn btn-notice-orange w-100 add-to-preferences" 
                                         data-announcement-id="@announcement.Id" 
                                         data-category="@announcement.Category"
                                         onclick="addToPreferences(this, '@announcement.Id', '@announcement.Category')">
@@ -305,12 +305,12 @@
         return category switch
         {
             CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary",
-            CityPulse.Models.AnnouncementCategory.Event => "bg-info",
+            CityPulse.Models.AnnouncementCategory.Event => "bg-primary",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success",
             CityPulse.Models.AnnouncementCategory.Notice => "bg-notice-orange",
-            CityPulse.Models.AnnouncementCategory.Program => "bg-secondary",
-            CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger",
-            _ => "bg-secondary"
+            CityPulse.Models.AnnouncementCategory.Program => "bg-dark text-white",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bg-notice-orange",
+            _ => "bg-dark text-white"
         };
     }
 
@@ -319,12 +319,12 @@
         return category switch
         {
             CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary text-white",
-            CityPulse.Models.AnnouncementCategory.Event => "bg-info text-white",
+            CityPulse.Models.AnnouncementCategory.Event => "bg-primary text-white",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success text-white",
             CityPulse.Models.AnnouncementCategory.Notice => "bg-notice-orange text-white",
-            CityPulse.Models.AnnouncementCategory.Program => "bg-secondary text-white",
-            CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger text-white",
-            _ => "bg-secondary text-white"
+            CityPulse.Models.AnnouncementCategory.Program => "bg-dark text-white",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bg-notice-orange text-white",
+            _ => "bg-dark text-white"
         };
     }
 
@@ -347,12 +347,12 @@
         return category switch
         {
             CityPulse.Models.AnnouncementCategory.Announcement => "btn-primary",
-            CityPulse.Models.AnnouncementCategory.Event => "btn-info text-white",
+            CityPulse.Models.AnnouncementCategory.Event => "btn-primary text-white",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "btn-success",
             CityPulse.Models.AnnouncementCategory.Notice => "btn-notice-orange",
-            CityPulse.Models.AnnouncementCategory.Program => "btn-secondary text-white",
-            CityPulse.Models.AnnouncementCategory.Emergency => "btn-danger",
-            _ => "btn-secondary"
+            CityPulse.Models.AnnouncementCategory.Program => "btn-dark text-white",
+            CityPulse.Models.AnnouncementCategory.Emergency => "btn-notice-orange",
+            _ => "btn-dark"
         };
     }
 

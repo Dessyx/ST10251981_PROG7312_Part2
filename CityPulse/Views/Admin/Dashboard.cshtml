@@ -70,15 +70,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card stat-card border-info shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                    <div class="card stat-card shadow-sm" style="border-width: 2px; border-radius: 15px; border-color: #fd7e14;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="text-muted mb-1 small">Active Events</p>
-                                    <h2 class="fw-bold text-info mb-0">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Event)</h2>
+                                    <h2 class="fw-bold mb-0" style="color: #fd7e14;">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Event)</h2>
                                 </div>
                                 <div>
-                                    <i class="bi bi-calendar-event stat-icon text-info"></i>
+                                    <i class="bi bi-calendar-event stat-icon" style="color: #fd7e14;"></i>
                                 </div>
                             </div>
                         </div>
@@ -102,15 +102,15 @@
                 </div>
 
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card stat-card border-danger shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                    <div class="card stat-card shadow-sm" style="border-width: 2px; border-radius: 15px; border-color: #212529;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="text-muted mb-1 small">Emergency Alerts</p>
-                                    <h2 class="fw-bold text-danger mb-0">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Emergency)</h2>
+                                    <h2 class="fw-bold mb-0" style="color: #212529;">@Model.RecentAnnouncements.Count(a => a.Category == CityPulse.Models.AnnouncementCategory.Emergency)</h2>
                                 </div>
                                 <div>
-                                    <i class="bi bi-exclamation-triangle stat-icon text-danger"></i>
+                                    <i class="bi bi-exclamation-triangle stat-icon" style="color: #212529;"></i>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +149,7 @@
                                                         <strong>@announcement.Title</strong>
                                                         @if (announcement.IsFeatured)
                                                         {
-                                                            <span class="badge bg-warning ms-2">Featured</span>
+                                                            <span class="badge ms-2" style="background-color: #fd7e14; color: white;">Featured</span>
                                                         }
                                                     </td>
                                                     <td>
@@ -166,7 +166,7 @@
                                                     <td>
                                                         @if (announcement.IsFeatured)
                                                         {
-                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                            <i class="bi bi-star-fill" style="color: #fd7e14;"></i>
                                                         }
                                                         else
                                                         {
@@ -225,15 +225,15 @@
                             <tbody>
                                 <tr>
                                     <td><strong>CP-20251014-1234</strong></td>
-                                    <td><span class="badge bg-warning text-dark">Roads</span></td>
+                                    <td><span class="badge" style="background-color: #fd7e14; color: white;">Roads</span></td>
                                     <td>Cape Town CBD</td>
                                     <td>Oct 12, 2025</td>
-                                    <td><span class="badge bg-info">Pending</span></td>
+                                    <td><span class="badge bg-primary">Pending</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-success" style="border-radius: 10px;">
                                             <i class="bi bi-check-circle"></i> Verify
                                         </button>
-                                        <button class="btn btn-sm btn-danger" style="border-radius: 10px;">
+                                        <button class="btn btn-sm" style="border-radius: 10px; background-color: #212529; color: white;">
                                             <i class="bi bi-x-circle"></i> Reject
                                         </button>
                                     </td>
@@ -243,27 +243,27 @@
                                     <td><span class="badge bg-primary">Water</span></td>
                                     <td>Johannesburg North</td>
                                     <td>Oct 13, 2025</td>
-                                    <td><span class="badge bg-info">Pending</span></td>
+                                    <td><span class="badge bg-primary">Pending</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-success" style="border-radius: 10px;">
                                             <i class="bi bi-check-circle"></i> Verify
                                         </button>
-                                        <button class="btn btn-sm btn-danger" style="border-radius: 10px;">
+                                        <button class="btn btn-sm" style="border-radius: 10px; background-color: #212529; color: white;">
                                             <i class="bi bi-x-circle"></i> Reject
                                         </button>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><strong>CP-20251013-9012</strong></td>
-                                    <td><span class="badge bg-danger">Sanitation</span></td>
+                                    <td><span class="badge" style="background-color: #fd7e14; color: white;">Sanitation</span></td>
                                     <td>Durban Central</td>
                                     <td>Oct 13, 2025</td>
-                                    <td><span class="badge bg-info">Pending</span></td>
+                                    <td><span class="badge bg-primary">Pending</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-success" style="border-radius: 10px;">
                                             <i class="bi bi-check-circle"></i> Verify
                                         </button>
-                                        <button class="btn btn-sm btn-danger" style="border-radius: 10px;">
+                                        <button class="btn btn-sm" style="border-radius: 10px; background-color: #212529; color: white;">
                                             <i class="bi bi-x-circle"></i> Reject
                                         </button>
                                     </td>
@@ -330,18 +330,18 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card stat-card border-warning shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                    <div class="card stat-card shadow-sm" style="border-width: 2px; border-radius: 15px; border-color: #fd7e14;">
                         <div class="card-body text-center">
-                            <i class="bi bi-clock-history text-warning" style="font-size: 2rem;"></i>
+                            <i class="bi bi-clock-history" style="font-size: 2rem; color: #fd7e14;"></i>
                             <h3 class="fw-bold mt-2">32</h3>
                             <p class="text-muted mb-0">Pending</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card stat-card border-info shadow-sm" style="border-width: 2px; border-radius: 15px;">
+                    <div class="card stat-card shadow-sm" style="border-width: 2px; border-radius: 15px; border-color: #212529;">
                         <div class="card-body text-center">
-                            <i class="bi bi-people text-info" style="font-size: 2rem;"></i>
+                            <i class="bi bi-people" style="font-size: 2rem; color: #212529;"></i>
                             <h3 class="fw-bold mt-2">1,245</h3>
                             <p class="text-muted mb-0">Active Users</p>
                         </div>
@@ -368,12 +368,12 @@
         return category switch
         {
             CityPulse.Models.AnnouncementCategory.Announcement => "bg-primary",
-            CityPulse.Models.AnnouncementCategory.Event => "bg-info",
+            CityPulse.Models.AnnouncementCategory.Event => "bg-primary",
             CityPulse.Models.AnnouncementCategory.ServiceUpdate => "bg-success",
-            CityPulse.Models.AnnouncementCategory.Notice => "bg-warning text-dark",
-            CityPulse.Models.AnnouncementCategory.Program => "bg-secondary",
-            CityPulse.Models.AnnouncementCategory.Emergency => "bg-danger",
-            _ => "bg-secondary"
+            CityPulse.Models.AnnouncementCategory.Notice => "bg-notice-orange",
+            CityPulse.Models.AnnouncementCategory.Program => "bg-dark text-white",
+            CityPulse.Models.AnnouncementCategory.Emergency => "bg-notice-orange",
+            _ => "bg-dark text-white"
         };
     }
 
@@ -381,11 +381,11 @@
     {
         return priority switch
         {
-            CityPulse.Models.AnnouncementPriority.Critical => "bg-danger",
-            CityPulse.Models.AnnouncementPriority.High => "bg-warning text-dark",
-            CityPulse.Models.AnnouncementPriority.Normal => "bg-info",
-            CityPulse.Models.AnnouncementPriority.Low => "bg-secondary",
-            _ => "bg-secondary"
+            CityPulse.Models.AnnouncementPriority.Critical => "bg-notice-orange",
+            CityPulse.Models.AnnouncementPriority.High => "bg-notice-orange",
+            CityPulse.Models.AnnouncementPriority.Normal => "bg-primary",
+            CityPulse.Models.AnnouncementPriority.Low => "bg-dark text-white",
+            _ => "bg-dark text-white"
         };
     }
 }
