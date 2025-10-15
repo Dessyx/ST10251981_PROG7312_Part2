@@ -26,13 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000); 
     });
 
-      // Category filter
-      categoryFilter.addEventListener('change', function() {
+    // Category filter
+    categoryFilter.addEventListener('change', function() {
         filterEvents();
-              
-        setTimeout(() => {
-            triggerAutoTracking();
-        }, 500);
+        
+        if (this.value !== 'all') {
+            setTimeout(() => {
+                triggerAutoTracking();
+            }, 500);
+        }
     });
 
     // Date filters
